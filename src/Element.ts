@@ -4,10 +4,34 @@ import {StringLiteral} from "./StringLiteral";
 const CLASS_IDENTIFIER = '.';
 const ID_IDENTIFIER = '#';
 
-export class Element {
+/**
+ * Determines if parameter is a Renderable
+ * @param param
+ */
+function isRenderable(param?: string | Renderable | Attributes): param is Renderable {
+    return param !== undefined && (param as Renderable).render !== undefined;
+}
+
+/**
+ * Determines if parameter is a a string
+ * @param param
+ */
+function isString(param?: string | Renderable | Attributes): param is string {
+    return param !== undefined && typeof param === 'string';
+}
+
+/**
+ * Determines if parameter is a Attributes
+ * @param param
+ */
+function isAttributes(param?: string | Renderable | Attributes): param is Attributes {
+    return param !== undefined && (!isString(param) && !isRenderable(param));
+}
+
+export abstract class Element {
     private readonly tag: string;
     private id: string;
-    private classes: string[];
+    private classes: string[] = [];
     private attributes: Attributes;
     private children: Renderable[] = [];
 
@@ -30,53 +54,45 @@ export class Element {
      * TODO: Each element should know its templates in an array. Parents will check this array to index the templates.
      * H.div(H.strong('{{some}}'), H.strong('{{else}}')).with({...}).render();
      */
-    constructor(tag: string, tier1?: string | Renderable | Attributes, tier2?: string | Renderable | Attributes,  tier3?: string | Renderable, ...children: Renderable[]) {
+    constructor(tag: string, tier1?: string | Renderable | Attributes, tier2?: string | Renderable | Attributes,  ...children: (Renderable|string)[]) {
         this.tag = tag;
 
-        const tier1IsString = typeof tier1 === 'string';
-        const tier1IsRenderable = this.isRenderable(tier1);
-        const tier1IsAttribute = !tier1IsString && !tier1IsRenderable;
-        const tier2IsString = typeof tier2 === 'string';
-        const tier2IsRenderable  = this.isRenderable(tier1);
-        const tier2IsAttribute = !tier2IsString && !tier2IsRenderable;
-        const tier3IsString = typeof tier3 === 'string';
-
-        if (tier1IsString) {
-            if (Element.isIdentifierString(tier1 as string)) {
-                this.setIdentifierString(tier1 as string);
+        if (isString(tier1)) {
+            if (Element.isIdentifierString(tier1)) {
+                this.setIdentifierString(tier1);
             } else {
-                this.children.push(new StringLiteral(tier1 as string));
+                this.children.push(new StringLiteral(tier1));
             }
-        } else if (tier1IsRenderable) {
-            this.children.push(tier1 as Renderable);
-        } else  {
-            this.attributes = tier1 as Attributes;
+        } else if (isRenderable(tier1)) {
+            this.children.push(tier1);
+        } else if (isAttributes(tier1)) {
+            this.attributes = tier1;
+        } else { // Tier 1 does not exist so we do not need to check further
+            return;
         }
 
-        if (tier2IsString) {
-            this.children.push(new StringLiteral(tier2 as string));
-        } else if (tier2IsRenderable) {
-            this.children.push(tier2 as Renderable);
-        } else {
-            if (tier1IsAttribute && tier2IsAttribute) {
-                throw new Error('Attribute field has been declared twice');
+        if (isString(tier2)) {
+            this.children.push(new StringLiteral(tier2));
+        } else if (isRenderable(tier2)) {
+            this.children.push(tier2);
+        } else if (isAttributes(tier2)) {
+            if (isAttributes(tier1) && isAttributes(tier2)) {
+                throw new Error('Attributes field has been declared twice.');
             }
-            if (tier1IsRenderable || (tier1IsString && !Element.isIdentifierString(tier1 as string))) {
-                throw new Error('Attribute must come before children');
+            if (isRenderable(tier2) || (isString(tier1) && !Element.isIdentifierString(tier1))) {
+                throw new Error('Attributes must come before children.');
             }
-            this.attributes = tier2 as Attributes;
-        }
-
-        if (tier3IsString) {
-            this.children.push(new StringLiteral(tier3 as string));
-        } else {
-            this.children.push(tier3 as Renderable);
+            this.attributes = tier2;
+        } else { // Tier 2 does not exist so we do not need to check further
+            return;
         }
 
         if (children.length > 0) {
-            this.children = this.children.concat(children);
+            this.setChildren(...children);
         }
     }
+
+    // ---------------------- GETTERS ----------------------
 
     /** Get element tag */
     getTag(): string {
@@ -88,8 +104,8 @@ export class Element {
         return this.id;
     }
 
-    /** Get element list */
-    getClass(): Array<string> {
+    /** Get element class list */
+    getClassList(): Array<string> {
         return this.classes;
     }
 
@@ -103,13 +119,42 @@ export class Element {
         return this.attributes;
     }
 
-    /**
-     * Determines if parameter is a Renderable
-     * @param param
-     */
-    private isRenderable(param?: string | Renderable | Attributes): param is Renderable {
-        return (param as Renderable).render !== undefined;
+    // ---------------------- SETTERS ---------------------/
+
+    /** Get element id */
+    setId(id: string): void {
+        this.id = id;
     }
+
+    /** Set element class list */
+    setClassList(classes: Array<string>): void {
+        this.classes = classes;
+    }
+
+    /** Set the identifiers */
+    setIdentifiers(identifier: string): void {
+        if (Element.isIdentifierString(identifier)) {
+            this.setIdentifierString(identifier);
+        }
+    }
+
+    /** Set children */
+    setChildren(...children: (Renderable | string)[]): void {
+        for (let child of children) {
+            if (isString(child)) {
+                this.children.push(new StringLiteral(child));
+            } else {
+                this.children.push(child);
+            }
+        }
+    }
+
+    /** set attributes */
+    setAttributes(attributes: Attributes): void {
+        this.attributes = attributes;
+    }
+
+    // ---------------------- PRIVATE ---------------------
 
     /**
      * Determines if a string is an identifier string. An identifier string either starts with "#" or "." and specifies
@@ -120,7 +165,8 @@ export class Element {
     private static isIdentifierString(tester: string): boolean {
         const string = tester.trim();
 
-        if (string.length === 0) {
+        // identifier string can't be empty and must start with either "." or "#"
+        if (string.length === 0 || (!string.startsWith("#") && !string.startsWith("."))) {
             return false;
         }
         return string
@@ -137,6 +183,10 @@ export class Element {
         const identifiers = identifier.trim().split(CLASS_IDENTIFIER);
         if (identifiers[0].startsWith(ID_IDENTIFIER)) {
             this.id = identifiers!.shift()!.substr(1);
+        } else {
+            // Else, it starts with a "." which results in a beginning empty string
+            // that we need to remove.
+            identifiers.shift();
         }
         this.classes = identifiers;
     }
