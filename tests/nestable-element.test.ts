@@ -1,0 +1,115 @@
+import { expect } from 'chai';
+import {NestableElement} from "../src/NestableElement";
+import {EmptyElement} from "../src/EmptyElement";
+
+describe('NestableElement', () => {
+    it('renders an empty div element without attributes', () => {
+        const element = new NestableElement('div');
+        const rendered = element.render();
+        expect(rendered).to.equal('<div></div>');
+    });
+
+    it('renders an empty div element with an id', () => {
+        const element = new NestableElement('div', '#image');
+        const rendered = element.render();
+        expect(rendered).to.equal('<div id="image"></div>');
+    });
+
+    it('renders an empty div element with an class', () => {
+        const element = new NestableElement('div', '.image');
+        const rendered = element.render();
+        expect(rendered).to.equal('<div class="image"></div>');
+    });
+
+    it('renders an empty div element with an id and class', () => {
+        const element = new NestableElement('div', '#image.image');
+        const rendered = element.render();
+        expect(rendered).to.equal('<div id="image" class="image"></div>');
+    });
+
+    it('renders an empty div element with attributes', () => {
+        const element = new NestableElement('div', { style: "width: 100px;" });
+        const rendered = element.render();
+        expect(rendered).to.equal('<div style="width: 100px;"></div>');
+    });
+
+    it('renders an empty div element with attributes and id', () => {
+        const element = new NestableElement('div', '#image', { style: "width: 100px;" });
+        const rendered = element.render();
+        expect(rendered).to.equal('<div id="image" style="width: 100px;"></div>');
+    });
+
+    it('renders an empty div element with attributes and class', () => {
+        const element = new NestableElement('div', '.image', { style: "width: 100px;" });
+        const rendered = element.render();
+        expect(rendered).to.equal('<div class="image" style="width: 100px;"></div>');
+    });
+
+    it('renders an empty element with attributes, id and class', () => {
+        const element = new NestableElement('div', '#image.image', { style: "width: 100px;" });
+        const rendered = element.render();
+        expect(rendered).to.equal('<div id="image" class="image" style="width: 100px;"></div>');
+    });
+
+    it('renders an empty element without attributes', () => {
+        const element = new NestableElement('div');
+        const rendered = element.render();
+        expect(rendered).to.equal('<div></div>');
+    });
+
+    it('renders an empty div nested inside of an empty div', () => {
+        const element = new NestableElement('div', new NestableElement('div'));
+        const rendered = element.render();
+        expect(rendered).to.equal('<div><div></div></div>');
+    });
+
+    it('renders a div with 5 empty div children', () => {
+        const element = new NestableElement('div',
+            new NestableElement('div'),
+            new NestableElement('div'),
+            new NestableElement('div'),
+            new NestableElement('div'),
+            new NestableElement('div')
+        );
+        const rendered = element.render();
+        expect(rendered).to.equal('<div><div></div><div></div><div></div><div></div><div></div></div>');
+    });
+
+    it('renders a div (with id and class) with 5 empty div children', () => {
+        const element = new NestableElement('div', '#hi.class1',
+            new NestableElement('div'),
+            new NestableElement('div'),
+            new NestableElement('div'),
+            new NestableElement('div'),
+            new NestableElement('div')
+        );
+        const rendered = element.render();
+        expect(rendered).to.equal('<div id="hi" class="class1"><div></div><div></div><div></div><div></div><div></div></div>');
+    });
+
+    it('renders a div (with id, class, and attributes) with 5 empty div children', () => {
+        const element = new NestableElement('div', '#hi.class1', { style: "width: 100px;" },
+            new NestableElement('div'),
+            new NestableElement('div'),
+            new NestableElement('div'),
+            new NestableElement('div'),
+            new NestableElement('div')
+        );
+        const rendered = element.render();
+        expect(rendered).to.equal('<div id="hi" class="class1" style="width: 100px;"><div></div><div></div><div></div><div></div><div></div></div>');
+    });
+
+    it('renders a div (with id, class, and attributes) with four div\'s nested inside.', () => {
+        const element = new NestableElement('div', '#hi.class1', { style: "width: 100px;" },
+            new NestableElement('div',
+                new NestableElement('div',
+                    new NestableElement('div',
+                        new NestableElement('div')
+                    )
+                )
+            )
+        );
+        const rendered = element.render();
+        expect(rendered).to.equal('<div id="hi" class="class1" style="width: 100px;"><div><div><div><div></div></div></div></div></div>');
+    });
+});
