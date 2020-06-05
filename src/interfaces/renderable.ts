@@ -1,8 +1,10 @@
+import {SimpleObject} from "./simple-object";
+
 /** Rendering Operation */
 export interface Renderable {
     /**
      *
      * @param templates
      */
-    render(templates?: Object): string;
+    render(templates?: SimpleObject): string;
 }
