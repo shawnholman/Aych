@@ -44,7 +44,7 @@ export class StringLiteral implements Renderable {
      * @param string
      */
     private setString(string: string) {
-        this.string = string;
+        this.string = StringLiteral.escapeHtml(string);
         this.setAvailableTemplates(string);
     }
 
@@ -59,4 +59,17 @@ export class StringLiteral implements Renderable {
             this.templates = foundTemplates.map((item) => item.substring(2, item.length - 2));
         }
     }
-};
+
+    /**
+     * Escape HTML inside of a string
+     * @param unsafe the string to escape
+     */
+    private static escapeHtml(unsafe:string): string {
+        return unsafe
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+}

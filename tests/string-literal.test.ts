@@ -18,4 +18,10 @@ describe('StringLiteral', () => {
         expect(string.hasTemplate()).to.be.true;
         expect(render).to.equal("this is a string");
     });
+
+    it('renders string literal with escaped html characters', () => {
+        const string = new StringLiteral("<div></div>");
+        const render = string.render();
+        expect(render).to.equal("&lt;div&gt;&lt;/div&gt;");
+    });
 });
