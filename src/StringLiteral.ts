@@ -5,7 +5,7 @@ const TEMPLATE_END_TAG = '}}';
 const TEMPLATE_TAG = new RegExp(TEMPLATE_START_TAG + '([A-z]+)' + TEMPLATE_END_TAG);
 
 export class StringLiteral implements Renderable {
-    private string: string = '';
+    private string: string;
     private templates: string[] = [];
 
     constructor(str: string) {
@@ -29,7 +29,7 @@ export class StringLiteral implements Renderable {
     /**
      * Resolves templates inside of a string.
      * @param string the string to template
-     * @param templates the date to use for the tempalte
+     * @param templates the date to use for the template
      */
     private static template(string: string, templates: SimpleObject) {
         let templateEntries = Object.entries(templates);

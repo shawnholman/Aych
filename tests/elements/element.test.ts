@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { Element } from '../src/element';
+import { Element } from '../../src/elements';
 
 class MockElement extends Element {}
 

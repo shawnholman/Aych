@@ -1,4 +1,4 @@
-import {Attributes, Renderable, SimpleObject} from "./interfaces";
+import {Attributes, SimpleObject} from "../interfaces";
 import {RenderableElement} from "./RenderableElement";
 
 export class EmptyElement extends RenderableElement {
@@ -9,7 +9,7 @@ export class EmptyElement extends RenderableElement {
     }
 
 
-    render(templates?: SimpleObject): string {
+    internalRender(templates?: SimpleObject): string {
         const tag = this.getTag();
         const attributeList = this.getHtmlAttributeList();
         return `<${tag}${attributeList}>`;

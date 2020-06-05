@@ -1,8 +1,28 @@
-import {Renderable, SimpleObject} from "./interfaces";
+import {Renderable, SimpleObject} from "../interfaces";
 import {Element} from "./Element";
 
 export abstract class RenderableElement extends Element implements Renderable {
-    abstract render(templates?: SimpleObject): string;
+    protected templates: SimpleObject;
+
+    render(templates?: SimpleObject): string {
+        return this.internalRender(templates || this.templates);
+    }
+
+    /**
+     * The internal render functions is used to tell the RenderableElement class how
+     * the particular element is rendered.
+     * @param templates
+     */
+    abstract internalRender(templates?: SimpleObject): string;
+
+    /**
+     * Sets the templates to use during rendering
+     * @param templates
+     */
+    with(templates: SimpleObject): Renderable {
+        this.templates = templates;
+        return this;
+    }
 
     // ---------------------- INTERNAL API ----------------------
 

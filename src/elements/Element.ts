@@ -1,6 +1,6 @@
-import {Attributes, Renderable} from './interfaces';
-import {StringLiteral} from "./StringLiteral";
-import {isAttributes, isRenderable, isString} from "./Util";
+import {Attributes, Renderable} from '../interfaces';
+import {StringLiteral} from "../StringLiteral";
+import {isAttributes, isRenderable, isString} from "../Util";
 
 const CLASS_IDENTIFIER = '.';
 const ID_IDENTIFIER = '#';
@@ -25,7 +25,6 @@ export abstract class Element {
      * child and nothing should follow it. If this parameter is an Element, then it will become a child and
      * every following parameter will need to be an Element as well. If this parameter is an Attributes, then it will
      * set the attributes of the element and will need to be followed by a set of Elements or none.
-     * @param tier3 The third level of parameters. This will either be a string child or another nested Element.
      * @param children A set of children elements.
      *
      * TODO: Each element should know its templates in an array. Parents will check this array to index the templates.
