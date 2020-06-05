@@ -23,7 +23,7 @@ export abstract class RenderableElement extends Element implements Renderable {
     }
 
     /** Builds the inside of the element */
-    protected renderChildren(templates: SimpleObject): string {
+    protected renderChildren(templates?: SimpleObject): string {
         return this.getChildren().reduce((current, next) => {
             return current + next.render(templates);
         }, '');
