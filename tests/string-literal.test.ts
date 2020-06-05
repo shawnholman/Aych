@@ -1,6 +1,5 @@
 import { expect } from 'chai';
 import { StringLiteral } from '../src/StringLiteral';
-import {SimpleObject} from "../src/interfaces";
 
 describe('StringLiteral', () => {
     it('renders string literal without template', () => {

@@ -32,10 +32,9 @@ export class StringLiteral implements Renderable {
      * @param templates the date to use for the tempalte
      */
     private static template(string: string, templates: SimpleObject) {
-        for (let key in templates) {
-            if (templates.hasOwnProperty(key)) {
-                string = string.replace(TEMPLATE_START_TAG + key + TEMPLATE_END_TAG, templates[key].toString());
-            }
+        let templateEntries = Object.entries(templates);
+        for (const [name, value] of templateEntries) {
+            string = string.replace(TEMPLATE_START_TAG + name + TEMPLATE_END_TAG, value.toString());
         }
         return string;
     }
