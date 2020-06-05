@@ -10,7 +10,8 @@ export class EmptyElement extends RenderableElement {
 
 
     render(templates?: SimpleObject): string {
-        const TAG = this.getTag();
-        return `<${TAG}${this.getHtmlAttributeList()}>`;
+        const tag = this.getTag();
+        const attributeList = this.getHtmlAttributeList();
+        return `<${tag}${attributeList}>`;
     }
 }
