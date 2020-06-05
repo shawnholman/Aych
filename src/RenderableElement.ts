@@ -10,12 +10,12 @@ export abstract class RenderableElement extends Element implements Renderable {
     protected getHtmlAttributeList(): string {
         const attributesEntries = Object.entries(this.getAttributes());
 
-        if (this.getId()) {
-            attributesEntries.push(['id', this.getId()]);
-        }
         if (this.getClassList().length > 0) {
             const classString = this.getClassList().join(" ");
-            attributesEntries.push(['class', classString]);
+            attributesEntries.unshift(['class', classString]);
+        }
+        if (this.getId()) {
+            attributesEntries.unshift(['id', this.getId()]);
         }
         return attributesEntries.reduce((str, [name, value]) => {
             return str + ` ${name}="${value}"`;
