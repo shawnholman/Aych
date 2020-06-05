@@ -1,32 +1,9 @@
 import {Attributes, Renderable} from './interfaces';
 import {StringLiteral} from "./StringLiteral";
+import {isAttributes, isRenderable, isString} from "./Util";
 
 const CLASS_IDENTIFIER = '.';
 const ID_IDENTIFIER = '#';
-
-/**
- * Determines if parameter is a Renderable
- * @param param
- */
-function isRenderable(param?: string | Renderable | Attributes): param is Renderable {
-    return param !== undefined && (param as Renderable).render !== undefined;
-}
-
-/**
- * Determines if parameter is a a string
- * @param param
- */
-function isString(param?: string | Renderable | Attributes): param is string {
-    return param !== undefined && typeof param === 'string';
-}
-
-/**
- * Determines if parameter is a Attributes
- * @param param
- */
-function isAttributes(param?: string | Renderable | Attributes): param is Attributes {
-    return param !== undefined && (!isString(param) && !isRenderable(param));
-}
 
 export abstract class Element {
     private readonly tag: string;
@@ -57,24 +34,20 @@ export abstract class Element {
     constructor(tag: string, tier1?: string | Renderable | Attributes, tier2?: string | Renderable | Attributes,  ...children: (Renderable|string)[]) {
         this.tag = tag;
 
-        if (isString(tier1)) {
-            if (Element.isIdentifierString(tier1)) {
+        if (isString(tier1) || isRenderable(tier1)) {
+            if (isString(tier1) && Element.isIdentifierString(tier1)) {
                 this.setIdentifierString(tier1);
             } else {
-                this.children.push(new StringLiteral(tier1));
+                this.addChild(tier1);
             }
-        } else if (isRenderable(tier1)) {
-            this.children.push(tier1);
         } else if (isAttributes(tier1)) {
             this.attributes = tier1;
         } else { // Tier 1 does not exist so we do not need to check further
             return;
         }
 
-        if (isString(tier2)) {
-            this.children.push(new StringLiteral(tier2));
-        } else if (isRenderable(tier2)) {
-            this.children.push(tier2);
+        if (isString(tier2) || isRenderable(tier2)) {
+            this.addChild(tier2);
         } else if (isAttributes(tier2)) {
             if (isAttributes(tier1) && isAttributes(tier2)) {
                 throw new Error('Attributes field has been declared twice.');
@@ -138,15 +111,30 @@ export abstract class Element {
         }
     }
 
-    /** Set children */
+    /**
+     * Set children
+     * @param children one or more chidren
+     */
     setChildren(...children: (Renderable | string)[]): void {
         for (let child of children) {
-            if (isString(child)) {
-                this.children.push(new StringLiteral(child));
+            this.addChild(child);
+        }
+    }
+
+    /**
+     * Append a child.
+     * @param child either a string or renderable
+     */
+    addChild(child: Renderable | string): void {
+        if (isString(child)) {
+            // empty strings do not require an object made
+            if (child.trim().length === 0) {
+                return;
             } else {
-                this.children.push(child);
+                child = new StringLiteral(child);
             }
         }
+        this.children.push(child);
     }
 
     /** set attributes */
