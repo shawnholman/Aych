@@ -32,7 +32,7 @@ export abstract class Element {
     private readonly tag: string;
     private id: string;
     private classes: string[] = [];
-    private attributes: Attributes;
+    private attributes: Attributes = {};
     private children: Renderable[] = [];
 
     /**
