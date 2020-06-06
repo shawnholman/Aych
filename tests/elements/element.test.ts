@@ -3,7 +3,7 @@ import { Element } from '../../src/elements';
 
 class MockElement extends Element {}
 
-describe('element', () => {
+describe('Element', () => {
     it('can be created with just a tag', () => {
         let element = new MockElement('div');
 

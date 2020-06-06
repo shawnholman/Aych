@@ -136,7 +136,10 @@ export abstract class Element {
         this.children.push(child);
     }
 
-    /** set attributes */
+    /**
+     * Sets the attributes
+     * @param attributes
+     */
     setAttributes(attributes: Attributes): void {
         this.attributes = attributes;
     }
