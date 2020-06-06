@@ -1,10 +1,10 @@
-import {Attributes, Renderable, SimpleObject} from "./interfaces";
+import {Renderable, SimpleObject} from "./interfaces";
 import {isString} from "./Util";
 import {StringLiteral} from "./StringLiteral";
 
 export class If implements Renderable {
-    private condition: boolean;
-    private element: Renderable;
+    private readonly condition: boolean;
+    private readonly element: Renderable;
 
     constructor(condition: boolean, element: Renderable | string) {
         this.condition = condition;
@@ -16,6 +16,7 @@ export class If implements Renderable {
         }
     }
 
+    /** @inheritdoc */
     render(templates?: SimpleObject): string {
         return this.condition ? this.element.render(templates) : '';
     }

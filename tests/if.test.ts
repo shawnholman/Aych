@@ -1,6 +1,5 @@
 import { expect } from 'chai';
-import {NestableElement} from "../src/NestableElement";
-import {EmptyElement} from "../src/EmptyElement";
+import {NestableElement} from "../src/elements";
 import {If} from "../src/If";
 
 describe('If', () => {
