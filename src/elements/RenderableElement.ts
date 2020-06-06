@@ -4,6 +4,7 @@ import {Element} from "./Element";
 export abstract class RenderableElement extends Element implements Renderable {
     protected templates: SimpleObject;
 
+    /** @inheritdoc */
     render(templates?: SimpleObject): string {
         return this.internalRender(templates || this.templates);
     }
@@ -14,6 +15,8 @@ export abstract class RenderableElement extends Element implements Renderable {
      * @param templates
      */
     abstract internalRender(templates?: SimpleObject): string;
+
+    // ---------------------- PUBLIC API ----------------------
 
     /**
      * Sets the templates to use during rendering
