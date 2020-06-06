@@ -8,7 +8,7 @@ export class EmptyElement extends RenderableElement {
         super(tag, tier1, tier2);
     }
 
-
+    /** @inheritdoc */
     internalRender(templates?: SimpleObject): string {
         const tag = this.getTag();
         const attributeList = this.getHtmlAttributeList();
