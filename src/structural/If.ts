@@ -1,6 +1,6 @@
-import {Renderable, SimpleObject} from "./interfaces";
-import {isString} from "./Util";
-import {StringLiteral} from "./StringLiteral";
+import {Renderable, SimpleObject} from "../interfaces";
+import {isString} from "../Util";
+import {StringLiteral} from "../core";
 
 export class If implements Renderable {
     private readonly condition: boolean;

@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { StringLiteral } from '../src/StringLiteral';
+import { StringLiteral } from '../../src/core';
 
 describe('StringLiteral', () => {
     it('renders string literal without template', () => {
@@ -68,7 +68,7 @@ describe('StringLiteral', () => {
     it('throws an error if the template cannot be found', () => {
         expect(function () {
             const string = new StringLiteral('{{this.was.a.deep[2].literal}}');
-            const render = string.render({
+            string.render({
                 'this': {
                     is: {}
                 }

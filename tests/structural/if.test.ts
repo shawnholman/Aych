@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import {NestableElement} from "../src/elements";
-import {If} from "../src/If";
+import {NestableElement} from "../../src/elements";
+import {If} from "../../src/structural";
 
 describe('If', () => {
     it('renders an empty div if true', () => {

@@ -1,5 +1,5 @@
-import {Renderable, SimpleObject} from "./interfaces";
-import {Aych} from "./core/Aych";
+import {Renderable, SimpleObject} from "../interfaces";
+import {Aych} from "./Aych";
 
 const TEMPLATE_START_TAG = '{{';
 const TEMPLATE_END_TAG = '}}';
@@ -34,7 +34,7 @@ export class StringLiteral implements Renderable {
             const key = groups[PIPE_KEY_INDEX];
             const pipeFunctionName = groups[PIPE_FUNC_NAME_INDEX];
             const pipeParameters = groups[PIPE_PARAMETERS_INDEX];
-            const value = this.getValueFromObject(templates, key);
+            const value = StringLiteral.getValueFromObject(templates, key);
 
             return Aych.Piper.pipe(value, pipeFunctionName, pipeParameters);
         });
@@ -45,7 +45,7 @@ export class StringLiteral implements Renderable {
      * validate that the potential template is usable.
      * @param string
      */
-    static probablyHasTemplates(string: string) {
+    private static probablyHasTemplates(string: string) {
         return string.includes(TEMPLATE_START_TAG) && string.includes(TEMPLATE_END_TAG);
     }
 
@@ -70,11 +70,11 @@ export class StringLiteral implements Renderable {
      *     getFromObject({ array: [1, 2, 3, 4] }, 'array[2]') ===> 2
      *     getFromObject({ array: [{}, { key: 'value' }]}, 'array[1].key') ===> 'value'
      */
-    private getValueFromObject(object: SimpleObject, key: string): string {
+    private static getValueFromObject(object: SimpleObject, key: string): string {
         let keys = key.trim().split(".");
         let found = false;
         let track: any = object;
-        let last: string | undefined;
+        let last: string | undefined = undefined;
 
         while (keys.length > 0) {
             let key = keys[0].trim();

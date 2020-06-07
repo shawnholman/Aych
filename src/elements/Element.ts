@@ -1,5 +1,5 @@
 import {Attributes, Renderable} from '../interfaces';
-import {StringLiteral} from "../StringLiteral";
+import {StringLiteral} from "../core";
 import {isAttributes, isRenderable, isString} from "../Util";
 
 const CLASS_IDENTIFIER = '.';

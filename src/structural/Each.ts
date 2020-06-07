@@ -1,6 +1,6 @@
-import {Renderable, SimpleObject} from "./interfaces";
-import {isRenderable, isString} from "./Util";
-import {StringLiteral} from "./StringLiteral";
+import {Renderable, SimpleObject} from "../interfaces";
+import {isRenderable, isString} from "../Util";
+import {StringLiteral} from "../core";
 
 type EachRenderFunction = (item: string, index: number, items: Iterable<any>) => (Renderable | string);
 

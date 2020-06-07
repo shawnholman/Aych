@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import {NestableElement} from "../src/elements";
-import {Each} from "../src/Each";
+import {NestableElement} from "../../src/elements";
+import {Each} from "../../src/structural";
 
 describe('Each', () => {
     const TEST_ARRAY = ['dog', 'cat', 'rat'];
