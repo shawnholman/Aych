@@ -3,63 +3,73 @@ import { StringLiteral } from '../src/StringLiteral';
 
 describe('StringLiteral', () => {
     it('renders string literal without template', () => {
-        const string = new StringLiteral("this is a string");
+        const string = new StringLiteral('this is a string');
         const render = string.render();
-        expect(render).to.equal("this is a string");
+        expect(render).to.equal('this is a string');
     });
 
     it('renders string literal with template', () => {
-        const string = new StringLiteral("{{this}} is a {{string}}");
+        const string = new StringLiteral('{{this}} is a {{string}}');
         const render = string.render({
-            "this": "this",
-            "string": "string",
+            'this': 'this',
+            'string': 'string',
         });
-        expect(render).to.equal("this is a string");
+        expect(render).to.equal('this is a string');
     });
 
     it('renders string literal after template pipes (no arguments)', () => {
-        const string = new StringLiteral("{{this|uppercase}} is a {{string}}");
+        const string = new StringLiteral('{{this|uppercase}} is a {{string}}');
         const render = string.render({
-            "this": "this",
-            "string": "string",
+            'this': 'this',
+            'string': 'string',
         });
-        expect(render).to.equal("THIS is a string");
+        expect(render).to.equal('THIS is a string');
     });
 
     it('renders string literal after template pipes (with arguments)', () => {
-        const string = new StringLiteral("{{this|substr(0,5)}} is a {{string}}");
+        const string = new StringLiteral('{{this|substr(0,5)}} is a {{string}}');
         const render = string.render({
-            "this": "this123",
-            "string": "string",
+            'this': 'this123',
+            'string': 'string',
         });
-        expect(render).to.equal("this1 is a string");
+        expect(render).to.equal('this1 is a string');
     });
 
     it('renders string with deep literal', () => {
-        const string = new StringLiteral("{{this.is.a.deep[2].literal}}");
+        const string = new StringLiteral('{{this.is.a.deep[2].literal}}');
         const render = string.render({
-            "this": {
+            'this': {
                 is: {
                     a: {
-                        deep: [1,2, { literal: "really!" }]
+                        deep: [1,2, { literal: 'really!' }]
                     }
                 }
             }
         });
-        expect(render).to.equal("really!");
+        expect(render).to.equal('really!');
     });
 
     it('renders string literal with escaped html characters', () => {
-        const string = new StringLiteral("<div></div>");
+        const string = new StringLiteral('<div></div>');
         const render = string.render();
-        expect(render).to.equal("&lt;div&gt;&lt;/div&gt;");
+        expect(render).to.equal('&lt;div&gt;&lt;/div&gt;');
+    });
+
+    it('renders does not throw an error if the optional is used', () => {
+        const string = new StringLiteral('{{this.was?.a.deep[2].literal}}');
+        const render = string.render({
+            'this': {
+                is: {}
+            }
+        });
+        expect(render).to.equal('');
     });
 
     it('throws an error if the template cannot be found', () => {
-        const string = new StringLiteral("{{this.was.a.deep[2].literal}}");
         expect(function () {
+            const string = new StringLiteral('{{this.was.a.deep[2].literal}}');
             const render = string.render({
-                "this": {
+                'this': {
                     is: {}
                 }
             });
@@ -68,16 +78,16 @@ describe('StringLiteral', () => {
 
     it('throws an error if the templates array index out of bounds', () => {
         expect(function () {
-            const string = new StringLiteral("{{array[-2]}}");
+            const string = new StringLiteral('{{array[-2]}}');
             string.render({
-                "array": [1, 2, 3, 4],
+                'array': [1, 2, 3, 4],
             });
         }).to.throw('Index should be greater than 0 >>> array[-2]');
 
         expect(function () {
-            const string = new StringLiteral("{{array[32]}}");
+            const string = new StringLiteral('{{array[32]}}');
             string.render({
-                "array": [1, 2, 3, 4],
+                'array': [1, 2, 3, 4],
             });
         }).to.throw('Index should be less than 4 >>> array[32]');
     });
