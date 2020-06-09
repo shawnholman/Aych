@@ -1,5 +1,5 @@
 export class Piper {
-    private static pipes: Map<string, Function>;
+    private static pipes = new Map<string, Function>();
 
     /**
      * Adds to a list of pipes in piper.
