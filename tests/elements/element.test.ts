@@ -89,12 +89,10 @@ describe('Element', () => {
         expect(element.getChildren()[1].render()).to.equal('this is a second child');
     });
 
-    it('has valid identifier string, attributes, and all renderable children', () => {
-        // todo
-    });
+    it('does not attempt to create an empty child.', () => {
+        let element = new MockElement('div', '#id.class1.class2.class3', {style:"width:100px;"}, '');
 
-    it('has valid identifier string, attributes, and mix string and renderable children', () => {
-        // todo
+        expect(element.getChildren()).to.have.lengthOf(0);
     });
 
     it('can be set via setters', () => {
@@ -113,6 +111,10 @@ describe('Element', () => {
         expect(element.getChildren()).to.have.lengthOf(2);
         expect(element.getChildren()[0].render()).to.equal('this is a child');
         expect(element.getChildren()[1].render()).to.equal('this is a second child');
+
+        element.setIdentifiers('#hello.col.col-xs');
+        expect(element.getId()).to.equal("hello");
+        expect(element.getClassList()).to.deep.equal(['col', 'col-xs']);
 
         element.setIdentifiers('#hello.col.col-xs');
         expect(element.getId()).to.equal("hello");

@@ -55,12 +55,20 @@ describe('StringLiteral', () => {
         expect(render).to.equal('&lt;div&gt;&lt;/div&gt;');
     });
 
-    it('renders does not throw an error if the optional is used', () => {
+    it('renders does not throw an error if the optional is used with object', () => {
         const string = new StringLiteral('{{this.was?.a.deep[2].literal}}');
         const render = string.render({
             'this': {
                 is: {}
             }
+        });
+        expect(render).to.equal('');
+    });
+
+    it('renders does not throw an error if the optional is used with array', () => {
+        const string = new StringLiteral('{{this[2]?.was}}');
+        const render = string.render({
+            'this': [0, 0, {}],
         });
         expect(render).to.equal('');
     });

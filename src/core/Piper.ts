@@ -7,10 +7,14 @@ export class Piper {
      * @param func
      */
     static install(pipeName: string, func: Function) {
-        if ((pipeName = pipeName.trim()).length > 0) {
+        pipeName = pipeName.trim();
+        if (pipeName.match(/^[a-zA-Z]+$/g)) {
+            if (Piper.pipes.has(pipeName)) {
+                throw new Error(`Pipe already exists: ${pipeName}.`);
+            }
             Piper.pipes.set(pipeName, func);
         } else {
-            throw new Error('Pipes cannot be set using the empty string.');
+            throw new Error('Pipe names must only contain letters. Whitespaces are trimmed.');
         }
     }
 
@@ -35,7 +39,7 @@ export class Piper {
                 // @ts-ignore TODO: Find a fix to remove the need for this ignore statement.
                 return Piper.pipes.get(pipeName).apply(null, [value, ...transformedParams]);
             } else {
-                throw new Error(`Pipe ${pipeName} does not exist.`);
+                throw new Error(`Pipe does not exist: ${pipeName}.`);
             }
         }
         return value;

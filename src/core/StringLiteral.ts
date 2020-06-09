@@ -122,7 +122,8 @@ export class StringLiteral implements Renderable {
                     throw new Error(key + " is not a property of " + last);
                 }
             }
-            last = keys.shift();
+            last = key;
+            keys.shift()
         }
 
         return found ? track.toString() : '';
