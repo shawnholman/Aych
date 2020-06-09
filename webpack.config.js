@@ -4,9 +4,9 @@ var nodeExternals = require('webpack-node-externals');
 
 module.exports = {
     mode: "development",
-    entry: './src/arch.ts',
+    entry: './src/H.ts',
     output: {
-        filename: 'arch.js', // <-- Important
+        filename: 'H.js', // <-- Important
         libraryTarget: 'this' // <-- Important
     },
     target: 'node', // <-- Important

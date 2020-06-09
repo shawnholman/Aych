@@ -13,7 +13,8 @@
     "**/*.d.ts",
     "**/*.test.ts",
     "dist/**",
-    "**/interfaces/**"
+    "**/interfaces/**",
+    "index.ts"
   ],
   "sourceMap": true,
   "reporter": [
