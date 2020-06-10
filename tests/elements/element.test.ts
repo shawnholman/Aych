@@ -116,7 +116,11 @@ describe('Element', () => {
         expect(element.getId()).to.equal("hello");
         expect(element.getClassList()).to.deep.equal(['col', 'col-xs']);
 
-        element.setIdentifiers('#hello.col.col-xs');
+        // these setters should have no affect on the identifiers
+        element.setIdentifiers('hello.col.col-xs');
+        element.setIdentifiers('   ');
+        element.setIdentifiers('.');
+
         expect(element.getId()).to.equal("hello");
         expect(element.getClassList()).to.deep.equal(['col', 'col-xs']);
     });

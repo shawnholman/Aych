@@ -9,12 +9,18 @@ describe('StringLiteral', () => {
     });
 
     it('renders string literal with template', () => {
-        const string = new StringLiteral('{{this}} is a {{string}}');
+        const string = new StringLiteral('{{first}} is a {{last}}');
         const render = string.render({
-            'this': 'this',
-            'string': 'string',
+            'first': 'this',
+            'last': 'string',
         });
         expect(render).to.equal('this is a string');
+    });
+
+    it('renders string literal with escaped html characters', () => {
+        const string = new StringLiteral('<div></div>');
+        const render = string.render();
+        expect(render).to.equal('&lt;div&gt;&lt;/div&gt;');
     });
 
     it('renders string literal after template pipes (no arguments)', () => {
@@ -49,28 +55,20 @@ describe('StringLiteral', () => {
         expect(render).to.equal('really!');
     });
 
-    it('renders string literal with escaped html characters', () => {
-        const string = new StringLiteral('<div></div>');
-        const render = string.render();
-        expect(render).to.equal('&lt;div&gt;&lt;/div&gt;');
-    });
-
-    it('renders does not throw an error if the optional is used with object', () => {
-        const string = new StringLiteral('{{this.was?.a.deep[2].literal}}');
+    it('renders without throwing errors with optional', () => {
+        const string = new StringLiteral('{{this?.was.a.deep[2].literal}}');
         const render = string.render({
             'this': {
                 is: {}
             }
         });
         expect(render).to.equal('');
-    });
 
-    it('renders does not throw an error if the optional is used with array', () => {
-        const string = new StringLiteral('{{this[2]?.was}}');
-        const render = string.render({
+        const string2 = new StringLiteral('{{this[2]?.was}}');
+        const render2 = string2.render({
             'this': [0, 0, {}],
         });
-        expect(render).to.equal('');
+        expect(render2).to.equal('');
     });
 
     it('throws an error if the template cannot be found', () => {
@@ -84,19 +82,30 @@ describe('StringLiteral', () => {
         }).to.throw('was is not a property of this');
     });
 
+    it('throws an error if the value of the key does not return an array', () => {
+        expect(function () {
+            const string = new StringLiteral('{{this[2].was.a.deep[2].literal}}');
+            string.render({
+                'this': {
+                    is: {}
+                }
+            });
+        }).to.throw('this is not an array.');
+    });
+
     it('throws an error if the templates array index out of bounds', () => {
         expect(function () {
             const string = new StringLiteral('{{array[-2]}}');
             string.render({
                 'array': [1, 2, 3, 4],
             });
-        }).to.throw('Index should be greater than 0 >>> array[-2]');
+        }).to.throw('Index should be greater than 0: array[-2]');
 
         expect(function () {
             const string = new StringLiteral('{{array[32]}}');
             string.render({
                 'array': [1, 2, 3, 4],
             });
-        }).to.throw('Index should be less than 4 >>> array[32]');
+        }).to.throw('Index should be less than 4: array[32]');
     });
 });

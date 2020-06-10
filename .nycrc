@@ -14,7 +14,8 @@
     "**/*.test.ts",
     "dist/**",
     "**/interfaces/**",
-    "index.ts"
+    "**/index.ts",
+    "src/H.ts"
   ],
   "sourceMap": true,
   "reporter": [
