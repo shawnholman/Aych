@@ -64,7 +64,7 @@ export abstract class Element {
         }
     }
 
-    // ---------------------- GETTERS ----------------------
+    // ---------------------- PUBLIC API ----------------------
 
     /** Get element tag */
     getTag(): string {
@@ -91,8 +91,6 @@ export abstract class Element {
         return this.attributes;
     }
 
-    // ---------------------- SETTERS ---------------------/
-
     /** Get element id */
     setId(id: string): void {
         this.id = id;
@@ -107,6 +105,8 @@ export abstract class Element {
     setIdentifiers(identifier: string): void {
         if (Element.isIdentifierString(identifier)) {
             this.setIdentifierString(identifier);
+        } else {
+            console.warn('Identifier string was not valid. Setter had no effect.');
         }
     }
 
@@ -156,11 +156,10 @@ export abstract class Element {
         const string = tester.trim();
 
         // identifier string can't be empty and must start with either "." or "#"
-        if (string.length === 0 || (!string.startsWith("#") && !string.startsWith("."))) {
+        if (string.length === 0) {
             return false;
         }
-        return string
-            .replace(/(#[A-z-_][A-z0-9-_]*)?([.][A-z-_][A-z0-9-_]*)*/, '') === '';
+        return string.match(/^(#[A-z-_][A-z0-9-_]*)?([.][A-z-_][A-z0-9-_]*)*$/) !== null;
     }
 
     /**
