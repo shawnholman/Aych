@@ -72,60 +72,62 @@ export class StringLiteral implements Renderable {
      */
     private static getValueFromObject(object: SimpleObject, key: string): string {
         let keys = key.trim().split(".");
-        let found = false;
         let track: any = object;
-        let last: string | undefined = undefined;
+        let prevKey: string | undefined = undefined;
 
         while (keys.length > 0) {
             let key = keys[0].trim();
             let isOptional = false;
+
             if (key.endsWith("?")) {
                 isOptional = true;
                 // remove the optional sign
                 key = key.slice(0, -1);
             }
 
-            let keyIsArray = key.match(/([\w-_][\w\d-_]*)\[([-]?\d+)]/);
+            // Checks to see if the key is an array. It should match: key[1] for example
+            // the match would return ['key[1]', 'key', '1']
+            let keyIsArray = key.match(/^([\w-_][\w\d-_]*)\[([-]?\d+)]$/);
             if (keyIsArray) {
-                let name = keyIsArray[1];
-                let index = parseInt(keyIsArray[2]);
+                key = keyIsArray[1];
+            }
 
-                if (index < 0) {
-                    throw new Error(`Index should be greater than 0 >>> ${name}[${index}]`);
-                }
-                if (track.hasOwnProperty(name)) {
-                    let child = track[name];
+            if (track.hasOwnProperty(key)) {
+                if (keyIsArray) {
+                    let index = parseInt(keyIsArray[2]);
 
-                    if (Array.isArray(child) && index < child.length) {
-                        track = child[index];
-                        found = true;
-                    } else {
-                        if (isOptional) {
-                            return '';
+                    if (index < 0) {
+                        throw new Error(`Index out of bounds: ${key}[${index}].`);
+                    }
+
+                    let child = track[key];
+                    if (Array.isArray(child)) {
+                        if (index >= child.length) {
+                            if (isOptional) {
+                                return '';
+                            }
+                            throw new Error(`Index out of bounds: ${key}[${index}].`);
                         }
-                        throw new Error(`Index should be less than ${child.length} >>> ${name}[${index}]`);
+                        track = child[index];
+                    } else {
+                        throw new Error(key + ' is not an array.');
                     }
                 } else {
-                    if (isOptional) {
-                        return '';
-                    }
-                    throw new Error(name + " is not a property of " + last);
+                    track = track[key];
                 }
             } else {
-                if (track.hasOwnProperty(key)) {
-                    track = track[key];
-                    found = true;
-                } else {
-                    if (isOptional) {
-                        return '';
-                    }
-                    throw new Error(key + " is not a property of " + last);
+                if (isOptional) {
+                    return '';
                 }
+                if (prevKey === undefined) {
+                    throw new Error(key + " is undefined.");
+                }
+                throw new Error(key + ` is not a property of ${prevKey}.`);
             }
-            last = key;
-            keys.shift()
+            prevKey = key;
+            keys.shift();
         }
 
-        return found ? track.toString() : '';
+        return track.toString();
     }
 }
