@@ -112,7 +112,7 @@ export abstract class Element {
 
     /**
      * Set children
-     * @param children one or more chidren
+     * @param children one or more children
      */
     setChildren(...children: (Renderable | string)[]): void {
         for (let child of children) {
