@@ -52,7 +52,7 @@ export class StringLiteral implements Renderable {
     }
 
     /** @inheritdoc */
-    when(condition: boolean, templates?: SimpleObject): string {
+    if(condition: boolean, templates?: SimpleObject): string {
         return new If(condition, this).render(templates);
     }
 

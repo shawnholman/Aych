@@ -147,13 +147,13 @@ describe('StringLiteral', () => {
     it('renders element using the if method', () => {
         let element = new StringLiteral('test:{{additional?}}');
 
-        expect(element.when(true))
+        expect(element.if(true))
             .to.equal('test:');
 
-        expect(element.when(true, {additional: 'true'}))
+        expect(element.if(true, {additional: 'true'}))
             .to.equal('test:true');
 
-        expect(element.when(false))
+        expect(element.if(false))
             .to.equal('');
     });
 });
