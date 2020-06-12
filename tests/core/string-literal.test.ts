@@ -121,4 +121,39 @@ describe('StringLiteral', () => {
             string.render(arrayObj);
         }).to.throw('Index out of bounds: array[32].');
     });
+
+    it('renders element using the each method', () => {
+        let element = new StringLiteral('{{i}}:{{item}};');
+
+        expect(element.each([1,2,3]))
+            .to.equal('0:1;1:2;2:3;');
+
+        let element2 = new StringLiteral('{{i}}:{{item}}:{{additional}};');
+        expect(element2.each([1,2,3], {additional: 'true'}))
+            .to.equal('0:1:true;1:2:true;2:3:true;');
+    });
+
+    it('renders element using the repeat method', () => {
+        let element = new StringLiteral('{{i}}:{{item}};');
+
+        expect(element.repeat(3))
+            .to.equal('0:0;1:1;2:2;');
+
+        let element2 = new StringLiteral('{{i}}:{{item}}:{{additional}};')
+        expect(element2.repeat(3, {additional: 'true'}))
+            .to.equal('0:0:true;1:1:true;2:2:true;');
+    });
+
+    it('renders element using the if method', () => {
+        let element = new StringLiteral('test:{{additional?}}');
+
+        expect(element.when(true))
+            .to.equal('test:');
+
+        expect(element.when(true, {additional: 'true'}))
+            .to.equal('test:true');
+
+        expect(element.when(false))
+            .to.equal('');
+    });
 });
