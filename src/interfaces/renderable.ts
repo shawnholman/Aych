@@ -33,5 +33,5 @@ export interface Renderable {
      * @param condition determines whether or not to render the renderable.
      * @param templates the data to inject into the string
      */
-    when(condition: boolean, templates?: SimpleObject): string;
+    if(condition: boolean, templates?: SimpleObject): string;
 }
