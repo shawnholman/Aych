@@ -1,12 +1,28 @@
 import {Renderable, SimpleObject} from "../interfaces";
 import {Element} from "./Element";
+import {Each, If} from "../structural";
 
 export abstract class RenderableElement extends Element implements Renderable {
     protected templates: SimpleObject;
 
     /** @inheritdoc */
     render(templates?: SimpleObject): string {
-        return this.internalRender(templates || this.templates);
+        return this.internalRender({ ...this.templates, ...templates });
+    }
+
+    /** @inheritdoc */
+    each(items: Iterable<any>, templates?: SimpleObject): string {
+        return new Each(items, this).render(templates);
+    }
+
+    /** @inheritdoc */
+    repeat(x: number, templates?: SimpleObject): string {
+        return new Each([...Array(x).keys()], this).render(templates);
+    }
+
+    /** @inheritdoc */
+   if(condition: boolean, templates?: SimpleObject): string {
+        return new If(condition, this).render(templates);
     }
 
     /**
