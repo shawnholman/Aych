@@ -26,9 +26,6 @@ export abstract class Element {
      * every following parameter will need to be an Element as well. If this parameter is an Attributes, then it will
      * set the attributes of the element and will need to be followed by a set of Elements or none.
      * @param children A set of children elements.
-     *
-     * TODO: Each element should know its templates in an array. Parents will check this array to index the templates.
-     * H.div(H.strong('{{some}}'), H.strong('{{else}}')).with({...}).render();
      */
     constructor(tag: string, tier1?: string | Renderable | Attributes, tier2?: string | Renderable | Attributes,  ...children: (Renderable|string)[]) {
         this.tag = tag;

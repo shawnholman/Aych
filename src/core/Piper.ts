@@ -36,8 +36,7 @@ export class Piper {
                     if (el === 'false') return false;
                     return el;
                 });
-                // @ts-ignore TODO: Find a fix to remove the need for this ignore statement.
-                return Piper.pipes.get(pipeName).apply(null, [value, ...transformedParams]);
+                return Piper.pipes.get(pipeName)!.apply('ho', [value, ...transformedParams]);
             } else {
                 throw new Error(`Pipe does not exist: ${pipeName}.`);
             }
