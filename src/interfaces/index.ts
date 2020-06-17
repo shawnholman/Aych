@@ -1,3 +1,3 @@
 export * from './attributes';
-export * from './renderable';
+export * from './render-options';
 export * from './simple-object';

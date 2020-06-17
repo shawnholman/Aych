@@ -1,15 +1,9 @@
-import {Attributes, SimpleObject} from "../interfaces";
-import {RenderableElement} from "./RenderableElement";
+import {SimpleObject} from "../interfaces";
+import {Element} from "./Element";
 
-export class EmptyElement extends RenderableElement {
-
-    /** Empty elements gets constructed without children */
-    constructor(tag: string, tier1?: string | Attributes, tier2?: Attributes) {
-        super(tag, tier1, tier2);
-    }
-
+export class EmptyElement extends Element {
     /** @inheritdoc */
-    internalRender(templates?: SimpleObject): string {
+    protected internalRender(templates?: SimpleObject): string {
         const tag = this.getTag();
         const attributeList = this.getHtmlAttributeList();
         return `<${tag}${attributeList}>`;

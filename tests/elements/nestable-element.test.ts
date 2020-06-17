@@ -111,4 +111,15 @@ describe('NestableElement', () => {
         const rendered = element.render();
         expect(rendered).to.equal('<div id="hi" class="class1" style="width: 100px;"><div><div><div><div></div></div></div></div></div>');
     });
+
+    /**
+     *
+     it('prioritizes templates that are closest to the caller', () => {
+        let element = new MockElement2('test');
+        let element2 = new MockElement2('hey', element.with({'test':'tester'})).with({'test':'test2'});
+        let render = element2.render();
+
+        expect(render).to.equal('');
+    });
+     */
 });

@@ -1,6 +1,5 @@
-import {Renderable, SimpleObject} from "../interfaces";
-import {Aych} from "./Aych";
-import {Each, If} from "../structural";
+import {SimpleObject} from "../interfaces";
+import {Renderable, Piper} from ".";
 
 const TEMPLATE_START_TAG = '{{';
 const TEMPLATE_END_TAG = '}}';
@@ -18,15 +17,16 @@ const PIPE_FUNC_NAME_INDEX = 8;
 const PIPE_PARAMETERS_INDEX = 10;
 
 
-export class StringLiteral implements Renderable {
+export class StringLiteral extends Renderable {
     private readonly string: string;
 
     constructor(str: string) {
+        super();
         this.string = StringLiteral.escapeHtml(str);
     }
 
     /** @inheritdoc */
-    render(templates?: SimpleObject): string {
+    internalRender(templates?: SimpleObject): string {
         if (!StringLiteral.probablyHasTemplates(this.string)) {
             return this.string;
         }
@@ -37,23 +37,8 @@ export class StringLiteral implements Renderable {
             const pipeParameters = groups[PIPE_PARAMETERS_INDEX];
             const value = StringLiteral.getValueFromObject(templates || {}, key);
 
-            return Aych.Piper.pipe(value, pipeFunctionName, pipeParameters);
+            return Piper.pipe(value, pipeFunctionName, pipeParameters);
         });
-    }
-
-    /** @inheritdoc */
-    each(items: Iterable<any>, templates?: SimpleObject): string {
-        return new Each(items, this).render(templates);
-    }
-
-    /** @inheritdoc */
-    repeat(x: number, templates?: SimpleObject): string {
-        return new Each([...Array(x).keys()], this).render(templates);
-    }
-
-    /** @inheritdoc */
-    if(condition: boolean, templates?: SimpleObject): string {
-        return new If(condition, this).render(templates);
     }
 
     /**

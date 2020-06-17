@@ -122,7 +122,7 @@ describe('StringLiteral', () => {
         }).to.throw('Index out of bounds: array[32].');
     });
 
-    it('renders element using the each method', () => {
+    /*it('renders element using the each method', () => {
         let element = new StringLiteral('{{i}}:{{item}};');
 
         expect(element.each([1,2,3]))
@@ -155,5 +155,5 @@ describe('StringLiteral', () => {
 
         expect(element.if(false))
             .to.equal('');
-    });
+    });*/
 });

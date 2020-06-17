@@ -1,13 +1,13 @@
-import {Renderable, SimpleObject} from "../interfaces";
+import {SimpleObject} from "../interfaces";
 import {isString} from "../Util";
-import {StringLiteral} from "../core";
-import {Each} from "./Each";
+import {Renderable, StringLiteral} from "../core";
 
-export class If implements Renderable {
+export class If extends Renderable {
     private readonly condition: boolean;
     private readonly element: Renderable;
 
     constructor(condition: boolean, element: Renderable | string) {
+        super();
         this.condition = condition;
 
         if (isString(element)) {
@@ -18,22 +18,7 @@ export class If implements Renderable {
     }
 
     /** @inheritdoc */
-    render(templates?: SimpleObject): string {
+    protected internalRender(templates?: SimpleObject): string {
         return this.condition ? this.element.render(templates) : '';
-    }
-
-    /** @inheritdoc */
-    each(items: Iterable<any>, templates?: SimpleObject): string {
-        return new Each(items, this).render(templates);
-    }
-
-    /** @inheritdoc */
-    repeat(x: number, templates?: SimpleObject): string {
-        return new Each([...Array(x).keys()], this).render(templates);
-    }
-
-    /** @inheritdoc */
-    if(condition: boolean, templates?: SimpleObject): string {
-        return new If(condition, this).render(templates);
     }
 }

@@ -1,9 +1,13 @@
+
+import {Attributes, SimpleObject} from "./interfaces";
+import {Renderable} from './core';
+
+/** TODO: [p2] add tests
+
 /**
  * Determines if parameter is a Renderable
  * @param param
  */
-import {Attributes, Renderable} from "./interfaces";
-
 export function isRenderable(param?: any): param is Renderable {
     return param !== undefined && (param as Renderable).render !== undefined;
 }
@@ -22,4 +26,13 @@ export function isString(param?: any): param is string {
  */
 export function isAttributes(param?: any): param is Attributes {
     return param !== undefined && (!isString(param) && !isRenderable(param));
+}
+
+/**
+ * Merge two simple objects together
+ * @param priority the priority object will not have any of its properties overriden
+ * @param object priority will get merged into this object
+ */
+export function merge(priority?: SimpleObject, object?: SimpleObject) {
+    return { ...object, ...priority };
 }

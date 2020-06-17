@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import {NestableElement} from "../../src/elements";
 import {Each} from "../../src/structural";
+import {StringLiteral} from "../../src/core";
 
 describe('Each', () => {
     const TEST_ARRAY = ['dog', 'cat', 'rat'];

@@ -1,7 +1,18 @@
 import { expect } from 'chai';
-import { Element } from '../../src/elements';
+import {Element} from '../../src/elements';
+import {SimpleObject} from "../../src/interfaces";
 
-class MockElement extends Element {}
+class MockElement extends Element {
+    internalRender(templates?: SimpleObject): string {
+        return '';
+    }
+}
+
+class MockElement2 extends Element {
+    internalRender(templates?: SimpleObject): string {
+        return JSON.stringify(templates);
+    }
+}
 
 describe('Element', () => {
     it('can be created with just a tag', () => {
@@ -10,7 +21,6 @@ describe('Element', () => {
         expect(element.getTag()).to.equal('div');
         expect(element.getId()).to.not.exist;
         expect(element.getClassList()).to.be.empty;
-        expect(element.getChildren()).to.be.empty;
     });
 
     it('gets created with an identifier (class only)', () => {
@@ -39,8 +49,6 @@ describe('Element', () => {
 
         expect(element.getId()).to.not.equal('id');
         expect(element.getClassList()).to.be.empty;
-        expect(element.getChildren()).to.have.lengthOf(1);
-        expect(element.getChildren()[0].render()).to.equal('id.class1.class2.class3');
     });
 
     it('has an attribute when in tier1 position', () => {
@@ -57,42 +65,10 @@ describe('Element', () => {
         expect(element.getAttributes()).to.deep.equal({style:"width:100px;"});
     });
 
-    it('throws an error when putting a child before attributes', () => {
-        expect(function () {
-            new MockElement('div', 'string', {style:"width:100px;"});
-        }).to.throw('Attributes must come before children.');
-    });
-
     it('throws an error when multiple attributes are set', () => {
         expect(function () {
             new MockElement('div', {style:"width:100px;"}, {style:"width:100px;"});
         }).to.throw('Attributes field has been declared twice.');
-    });
-
-    it('has an child when string tier2 position with valid tier1 identifier string', () => {
-        let element = new MockElement('div', '#id.class1.class2.class3', 'this is a child');
-
-        expect(element.getId()).to.equal('id');
-        expect(element.getClassList()).to.deep.equal(['class1', 'class2', 'class3']);
-        expect(element.getChildren()).to.have.lengthOf(1);
-        expect(element.getChildren()[0].render()).to.equal('this is a child');
-    });
-
-    it('has valid identifier string, attributes, and all string children', () => {
-        let element = new MockElement('div', '#id.class1.class2.class3', {style:"width:100px;"}, 'this is a child', 'this is a second child');
-
-        expect(element.getId()).to.equal('id');
-        expect(element.getClassList()).to.deep.equal(['class1', 'class2', 'class3']);
-        expect(element.getAttributes()).to.deep.equal({style:"width:100px;"});
-        expect(element.getChildren()).to.have.lengthOf(2);
-        expect(element.getChildren()[0].render()).to.equal('this is a child');
-        expect(element.getChildren()[1].render()).to.equal('this is a second child');
-    });
-
-    it('does not attempt to create an empty child.', () => {
-        let element = new MockElement('div', '#id.class1.class2.class3', {style:"width:100px;"}, '');
-
-        expect(element.getChildren()).to.have.lengthOf(0);
     });
 
     it('can be set via setters', () => {
@@ -107,11 +83,6 @@ describe('Element', () => {
         element.setAttributes({style:"width:100px;"});
         expect(element.getAttributes()).to.deep.equal({style:"width:100px;"});
 
-        element.setChildren('this is a child', 'this is a second child');
-        expect(element.getChildren()).to.have.lengthOf(2);
-        expect(element.getChildren()[0].render()).to.equal('this is a child');
-        expect(element.getChildren()[1].render()).to.equal('this is a second child');
-
         element.setIdentifiers('#hello.col.col-xs');
         expect(element.getId()).to.equal("hello");
         expect(element.getClassList()).to.deep.equal(['col', 'col-xs']);
@@ -125,4 +96,59 @@ describe('Element', () => {
         expect(element.getClassList()).to.deep.equal(['col', 'col-xs']);
     });
 
+    it('renders element with templates set using the \'with\' tag', () => {
+        let element = new MockElement2('test').with({'test':'test'});
+        let element2 = new MockElement2('test').render({'test':'test'});
+
+        expect(element.render()).to.equal(element2);
+    });
+
+    it('does not prioritize templates from the render methods by default', () => {
+        let element = new MockElement2('test');
+        let render = element.with({'test':'test', 'test2': 'test2'}).render({'test':'false'});
+
+        expect(render).to.equal(JSON.stringify({'test':'test','test2':'test2'}));
+    });
+
+    it('prioritizes templates from the render methods when prioritizeRenderTemplates option is true', () => {
+        let element = new MockElement2('test');
+        let render = element.with({'test':'test', 'test2': 'test2'}).render({'test':'false'}, {
+            prioritizeRenderTemplates: true,
+        });
+
+        expect(render).to.equal(JSON.stringify({'test':'false','test2':'test2'}));
+    });
+
+    /*it('renders element using the each method', () => {
+        let element = new MockElement2('');
+
+        expect(element.each([1,2,3]))
+            .to.equal('{"item":1,"i":0}{"item":2,"i":1}{"item":3,"i":2}');
+
+        expect(element.each([1,2,3], {additional: 'true'}))
+            .to.equal('{"item":1,"i":0,"additional":"true"}{"item":2,"i":1,"additional":"true"}{"item":3,"i":2,"additional":"true"}');
+    });
+
+    it('renders element using the repeat method', () => {
+        let element = new MockElement2('');
+
+        expect(element.repeat(3))
+            .to.equal('{"item":0,"i":0}{"item":1,"i":1}{"item":2,"i":2}');
+
+        expect(element.repeat(3, {additional: 'true'}))
+            .to.equal('{"item":0,"i":0,"additional":"true"}{"item":1,"i":1,"additional":"true"}{"item":2,"i":2,"additional":"true"}');
+    });
+
+    it('renders element using the if method', () => {
+        let element = new MockElement2('').with({'test':'test'});
+
+        expect(element.if(true))
+            .to.equal('{"test":"test"}');
+
+        expect(element.if(true, {additional: 'true'}))
+            .to.equal('{"test":"test","additional":"true"}');
+
+        expect(element.if(false))
+            .to.equal('');
+    });*/
 });
