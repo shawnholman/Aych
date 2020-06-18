@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import {expect} from 'chai';
 import {EmptyElement} from "../../src/elements";
 
 describe('EmptyElement', () => {

@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import {expect} from 'chai';
 import {NestableElement} from "../../src/elements";
 import {If} from "../../src/structural";
 

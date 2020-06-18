@@ -1,5 +1,5 @@
-import { expect } from 'chai';
-import { StringLiteral } from '../../src/core';
+import {expect} from 'chai';
+import {StringLiteral} from '../../src/core';
 
 const THIS_IS = {
     "this": {

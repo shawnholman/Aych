@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import {expect} from 'chai';
 import {Element} from '../../src/elements';
 import {SimpleObject} from "../../src/interfaces";
 

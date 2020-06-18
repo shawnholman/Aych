@@ -1,5 +1,5 @@
 import {SimpleObject} from "../interfaces";
-import {Renderable, Piper} from ".";
+import {Piper, Renderable} from ".";
 
 const TEMPLATE_START_TAG = '{{';
 const TEMPLATE_END_TAG = '}}';

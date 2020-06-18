@@ -1,4 +1,3 @@
-
 import {Attributes, SimpleObject} from "./interfaces";
 import {Renderable} from './core';
 

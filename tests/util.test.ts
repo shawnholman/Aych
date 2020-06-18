@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import {expect} from 'chai';
 import {isAttributes, isRenderable, isString, merge} from "../src/Util";
 import {Attributes, SimpleObject} from "../src/interfaces";
 import {Renderable} from "../src/core";
