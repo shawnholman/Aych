@@ -30,13 +30,13 @@ describe('Util', () => {
     });
 
     it('merges together two objects', () => {
-       let obj1 = {
+       const obj1 = {
          1: 1,
          2: 2,
          3: 3,
          4: 4,
        };
-        let obj2 = {
+        const obj2 = {
             1: 1,
             2: 4,
             3: 6,

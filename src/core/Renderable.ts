@@ -11,8 +11,8 @@ export abstract class Renderable {
     protected templates: SimpleObject = {};
 
     /**
-     * Sets the templates to use during rendering
-     * @param templates
+     * Sets the templates.
+     * @param templates Key-value pairs that map to a template rendered in StringLiteral's
      */
     with(templates: SimpleObject): Renderable {
         this.templates = templates;
@@ -20,7 +20,9 @@ export abstract class Renderable {
     }
 
     /**
-     * Append the templates to the current ones
+     * Appends templates to the existing templates object.
+     * @param templates Key-value pairs that map to a template rendered in StringLiteral's
+     * @param prioritize Whether or not to allow appended templates to override existing template properties
      */
     append(templates: SimpleObject, prioritize = false): Renderable {
         this.templates = prioritize ? merge(templates, this.templates) : merge(this.templates, templates);
@@ -51,9 +53,8 @@ export abstract class Renderable {
     }*/
 
     /**
-     * The internal render functions is used to tell the RenderableElement class how
-     * the particular element is rendered.
-     * @param templates
+     * The internal render functions is used to define how a subclass renders itself.
+     * @param templates Key-value pairs that map to a template rendered in StringLiteral's
      */
     protected abstract internalRender(templates: SimpleObject): string;
 }

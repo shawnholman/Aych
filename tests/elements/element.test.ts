@@ -10,7 +10,7 @@ class MockElement extends Element {
 
 describe('Element', () => {
     it('can be created with just a tag', () => {
-        let element = new MockElement('div');
+        const element = new MockElement('div');
 
         expect(element.getTag()).to.equal('div');
         expect(element.getId()).to.not.exist;
@@ -18,41 +18,41 @@ describe('Element', () => {
     });
 
     it('gets created with an identifier (class only)', () => {
-        let element = new MockElement('div', '.class1.class2.class3');
+        const element = new MockElement('div', '.class1.class2.class3');
 
         expect(element.getId()).to.not.exist;
         expect(element.getClassList()).to.deep.equal(['class1', 'class2', 'class3']);
     });
 
     it('gets created with an identifier (id only)', () => {
-        let element = new MockElement('div', '#id');
+        const element = new MockElement('div', '#id');
 
         expect(element.getId()).to.equal('id');
         expect(element.getClassList()).to.be.empty;
     });
 
     it('gets created with an identifier (both id and class)', () => {
-        let element = new MockElement('div', '#id.class1.class2.class3');
+        const element = new MockElement('div', '#id.class1.class2.class3');
 
         expect(element.getId()).to.equal('id');
         expect(element.getClassList()).to.deep.equal(['class1', 'class2', 'class3']);
     });
 
     it('invalid identifier gets create as string element', () => {
-        let element = new MockElement('div', 'id.class1.class2.class3');
+        const element = new MockElement('div', 'id.class1.class2.class3');
 
         expect(element.getId()).to.not.equal('id');
         expect(element.getClassList()).to.be.empty;
     });
 
     it('has an attribute when in tier1 position', () => {
-        let element = new MockElement('div', {style:"width:100px;"});
+        const element = new MockElement('div', {style:"width:100px;"});
 
         expect(element.getAttributes()).to.deep.equal({style:"width:100px;"});
     });
 
     it('has an attribute when in tier2 position with valid tier1 identifier string', () => {
-        let element = new MockElement('div', '#id.class1.class2.class3', {style:"width:100px;"});
+        const element = new MockElement('div', '#id.class1.class2.class3', {style:"width:100px;"});
 
         expect(element.getId()).to.equal('id');
         expect(element.getClassList()).to.deep.equal(['class1', 'class2', 'class3']);
@@ -66,7 +66,7 @@ describe('Element', () => {
     });
 
     it('can be set via setters', () => {
-        let element = new MockElement('div');
+        const element = new MockElement('div');
 
         element.setId("id");
         expect(element.getId()).to.equal("id");

@@ -1,15 +1,16 @@
+type PipeFunc = (...args: any[]) => string;
 /**
  * Piper is the piping engine. Template pipes are defined and executed here.
  */
 export class Piper {
-    private static pipes = new Map<string, Function>();
+    private static pipes = new Map<string, PipeFunc>();
 
     /**
      * Adds to a list of pipes in piper.
      * @param pipeName
      * @param func
      */
-    static install(pipeName: string, func: Function) {
+    static install(pipeName: string, func: PipeFunc): void {
         pipeName = pipeName.trim();
         if (pipeName.match(/^[a-zA-Z]+$/g)) {
             if (Piper.pipes.has(pipeName)) {
@@ -27,13 +28,13 @@ export class Piper {
      * @param pipeName
      * @param parameters
      */
-    static pipe(value: string, pipeName: string, parameters?: string) {
+    static pipe(value: string, pipeName: string, parameters?: string): string {
         if (pipeName !== undefined) {
-            let params = parameters !== undefined ? parameters.split(/\s*,\s*/) : [];
+            const params = parameters !== undefined ? parameters.split(/\s*,\s*/) : [];
 
             if (Piper.pipes.has(pipeName)) {
                 // convert the string parameters to their proper types (number/boolean/string)
-                let transformedParams = params.map((el) => {
+                const transformedParams = params.map((el) => {
                     if (!isNaN(parseFloat(el))) return parseFloat(el);
                     if (el === 'true') return true;
                     if (el === 'false') return false;

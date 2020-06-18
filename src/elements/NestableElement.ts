@@ -10,7 +10,7 @@ export class NestableElement extends Element {
     private children: Renderable[] = [];
 
     /**
-     * Constructs an nested element
+     * Constructs an nested element.
      * @param tag tag name of the element
      * @param tier1 The first level of parameters. If this parameter is a string, but it is not an identifier string,
      * then it will be treated a string child and nothing should follow it. If this parameter is a string, and is an identifier string, then it
@@ -58,23 +58,23 @@ export class NestableElement extends Element {
         }
     }
 
-    /** Get children. */
+    /** Gets the children. */
     getChildren(): Renderable[] {
         return this.children;
     }
 
     /**
-     * Set children.
+     * Sets the children.
      * @param children one or more children
      */
     setChildren(...children: (Renderable | string)[]): void {
-        for (let child of children) {
+        for (const child of children) {
             this.addChild(child);
         }
     }
 
     /**
-     * Append a child.
+     * Appends a child.
      * @param child either a string or renderable
      */
     addChild(child: Renderable | string): void {
@@ -99,7 +99,7 @@ export class NestableElement extends Element {
 
     /**
      * Renders all of the children.
-     * @param templates
+     * @param templates Key-value pairs that map to a template rendered in StringLiteral's
      */
     private renderChildren(templates?: SimpleObject): string {
         return this.getChildren().reduce((current, next) => {

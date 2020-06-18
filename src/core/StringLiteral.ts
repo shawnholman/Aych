@@ -10,7 +10,8 @@ const TEMPLATE_BUFFERED_END_TAG = '\\s*' + TEMPLATE_END_TAG;
 const TEMPLATE_BUFFERED_FILTER_PIPE = '\\s*\\' + TEMPLATE_FILTER_PIPE + '\\s*';
 const FULL_IDENTIFIER = '(([\\w-_][\\w\\d-_]*(\\[-?\\d+\\])?\\??)(\\.[\\w-_][\\w\\d-_]*(\\[-?\\d+\\])?\\??)*)';
 const FILTER = '(' + TEMPLATE_BUFFERED_FILTER_PIPE + '(([\\w-_][\\w\\d-_]*)(\\((([\\w\\d]+)(,\\s*[\\w\\d]+)*)?\\))?))?';
-const TEMPLATE_TAG = new RegExp(TEMPLATE_BUFFERED_START_TAG + FULL_IDENTIFIER + FILTER + TEMPLATE_BUFFERED_END_TAG, 'g');
+const TEMPLATE_TAG =
+    new RegExp(TEMPLATE_BUFFERED_START_TAG + FULL_IDENTIFIER + FILTER + TEMPLATE_BUFFERED_END_TAG, 'g');
 
 const PIPE_KEY_INDEX = 1;
 const PIPE_FUNC_NAME_INDEX = 8;
@@ -51,15 +52,15 @@ export class StringLiteral extends Renderable {
     /**
      * A quick check to see if a string has templates. This check does not
      * validate that the potential template is usable.
-     * @param string
+     * @param string The string to check if it has templates.
      */
     private static probablyHasTemplates(string: string) {
         return string.includes(TEMPLATE_START_TAG) && string.includes(TEMPLATE_END_TAG);
     }
 
     /**
-     * Escape HTML inside of a string
-     * @param unsafe the string to escape
+     * Escapes HTML inside of a string.
+     * @param unsafe The string to escape.
      */
     private static escapeHtml(unsafe:string): string {
         return unsafe
@@ -71,15 +72,15 @@ export class StringLiteral extends Renderable {
     }
 
     /**
-     * Get the value of a key from an object.
-     * @param object the object to search
+     * Gets the value of a key from an object.
+     * @param object The object to search.
      * @param key A string representing the key of the value in the object that you are looking for. These follow
      * standard javascript syntax. For example:
      *     getFromObject({ array: [1, 2, 3, 4] }, 'array[2]') ===> 2
      *     getFromObject({ array: [{}, { key: 'value' }]}, 'array[1].key') ===> 'value'
      */
     private static getValueFromObject(object: SimpleObject, key: string): string {
-        let keys = key.trim().split(".");
+        const keys = key.trim().split(".");
         let track: any = object;
         let prevKey: string | undefined = undefined;
 
@@ -95,20 +96,20 @@ export class StringLiteral extends Renderable {
 
             // Checks to see if the key is an array. It should match: key[1] for example
             // the match would return ['key[1]', 'key', '1']
-            let keyIsArray = key.match(/^([\w-_][\w\d-_]*)\[([-]?\d+)]$/);
+            const keyIsArray = key.match(/^([\w-_][\w\d-_]*)\[([-]?\d+)]$/);
             if (keyIsArray) {
                 key = keyIsArray[1];
             }
 
-            if (track.hasOwnProperty(key)) {
+            if (Object.prototype.hasOwnProperty.call(track, key)) {
                 if (keyIsArray) {
-                    let index = parseInt(keyIsArray[2]);
+                    const index = parseInt(keyIsArray[2]);
 
                     if (index < 0) {
                         throw new Error(`Index out of bounds: ${key}[${index}].`);
                     }
 
-                    let child = track[key];
+                    const child = track[key];
                     if (Array.isArray(child)) {
                         if (index >= child.length) {
                             if (isOptional) {

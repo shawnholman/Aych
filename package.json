@@ -1,12 +1,13 @@
 {
-  "name": "Aych",
+  "name": "aych",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "cross-env TS_NODE_FILES=true mocha --recursive --exit --require ts-node/register --colors \"tests/**/*.ts\"",
     "coverage": "nyc npm run test",
-    "build": "webpack-cli"
+    "build": "webpack-cli",
+    "lint": "npx eslint src"
   },
   "keywords": [],
   "author": "",

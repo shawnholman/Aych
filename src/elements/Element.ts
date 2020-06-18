@@ -17,9 +17,9 @@ export abstract class Element extends Renderable {
 
     /**
      * Constructs an element
-     * @param tag tag name of the element
+     * @param tag The tag name of the element.
      * @param tier1 Either a string representing the identifier string or a list of attributes.
-     * @param tier2 A list of attributes, accepted IF tier1 is not an attribute.
+     * @param tier2 A list of attributes, accepted ONLY IF tier1 is not an attribute.
      */
     constructor(tag: string, tier1?: string | Attributes, tier2?: Attributes) {
         super();
@@ -63,21 +63,30 @@ export abstract class Element extends Renderable {
         return this.attributes;
     }
 
-    /** Get element id */
+    /**
+     * Set the ID.
+     * @param id The new id.
+     */
     setId(id: string): void {
         this.id = id;
     }
 
-    /** Set element class list */
+    /**
+     * Sets the elements class list.
+     * @param classes The new set of classes that the element will get.
+     */
     setClassList(classes: Array<string>): void {
         this.classes = classes;
     }
 
-    /** Set the identifiers */
+    /**
+     * Set the identifiers.
+     * @param identifier An identifier string. See isIdentifierString for more information.
+     */
     setIdentifiers(identifier: string): void {
         if (Element.isIdentifierString(identifier)) {
             this.setIdentifierString(identifier);
-        } else {
+        } else { // We are going to excuse a non-valid identifier string for now.
             console.warn('Identifier string was not valid. Setter had no effect.');
         }
     }
@@ -108,9 +117,7 @@ export abstract class Element extends Renderable {
 
     /**
      * Set's the id and classes of the element given an identifier string.
-     * @param identifier An identifier string either starts with "#" or "." and specifies
-     * a list of identifiers for an element. An example is "#book.col.col-xs-5". There can only be a single id and it
-     * must be specified at the beginning. For example: ".col.col-xs-5#book" is not a valid identifier string.
+     * @param identifier An identifier string. See isIdentifierString for more information.
      */
     protected setIdentifierString(identifier: string): void {
         const identifiers = identifier.trim().split(CLASS_IDENTIFIER);
