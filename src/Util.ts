@@ -2,8 +2,6 @@
 import {Attributes, SimpleObject} from "./interfaces";
 import {Renderable} from './core';
 
-/** TODO: [p2] add tests
-
 /**
  * Determines if parameter is a Renderable
  * @param param
@@ -21,7 +19,8 @@ export function isString(param?: any): param is string {
 }
 
 /**s
- * Determines if parameter is a Attributes
+ * Determines if parameter is a Attributes based on the historic assumption that anything
+ * not a string or renderable is an Attributes.
  * @param param
  */
 export function isAttributes(param?: any): param is Attributes {
