@@ -1,11 +1,14 @@
-import {Attributes, SimpleObject} from '../interfaces';
+import {Attributes,} from '../interfaces';
 import {Renderable} from "../core";
-import {isAttributes, isRenderable, isString, merge} from "../Util";
-import {Each, If} from "../structural";
+import {isAttributes, isString} from "../Util";
 
 const CLASS_IDENTIFIER = '.';
 const ID_IDENTIFIER = '#';
 
+/**
+ * The Element class is the base class for all elements. This class defines properties and attributes
+ * that a fundamental for the creation of elements.
+ */
 export abstract class Element extends Renderable {
     private readonly tag: string;
     private id: string;
@@ -39,8 +42,6 @@ export abstract class Element extends Renderable {
             this.attributes = tier2;
         }
     }
-
-    // ---------------------- PUBLIC API ----------------------
 
     /** Get element tag */
     getTag(): string {
@@ -88,8 +89,6 @@ export abstract class Element extends Renderable {
     setAttributes(attributes: Attributes): void {
         this.attributes = attributes;
     }
-
-    // ---------------------- INTERNAL API ----------------------
 
     /**
      * Determines if a string is an identifier string. An identifier string either starts with "#" or "." and specifies

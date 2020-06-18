@@ -1,7 +1,7 @@
 import {Piper} from "./Piper";
 
 /**
- * TODO: [P2] Add comments to all class names and constructors.
+ * The Aych class exposes all of the libraries features in an encapsulated package.
  */
 export class Aych {
 

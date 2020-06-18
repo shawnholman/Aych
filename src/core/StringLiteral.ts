@@ -16,10 +16,17 @@ const PIPE_KEY_INDEX = 1;
 const PIPE_FUNC_NAME_INDEX = 8;
 const PIPE_PARAMETERS_INDEX = 10;
 
-
+/**
+ * The StringLiteral class is the most basic building block of Aych that extends Renderable.
+ * The StringLiteral holds a string that when rendered can parse templates.
+ */
 export class StringLiteral extends Renderable {
     private readonly string: string;
 
+    /**
+     * Constructor
+     * @param str The underlying string
+     */
     constructor(str: string) {
         super();
         this.string = StringLiteral.escapeHtml(str);

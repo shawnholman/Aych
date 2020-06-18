@@ -1,3 +1,6 @@
+/**
+ * Piper is the piping engine. Template pipes are defined and executed here.
+ */
 export class Piper {
     private static pipes = new Map<string, Function>();
 

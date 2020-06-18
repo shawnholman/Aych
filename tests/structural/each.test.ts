@@ -25,13 +25,13 @@ describe('Each', () => {
 
     it ('renders a list of strings utilizing built in templates (using a modified index string)', () => {
         const element = new Each(TEST_ARRAY,'{{j}}:{{item}};');
-        const rendered = element.setIndexString('j').render();
+        const rendered = element.setIndexName('j').render();
         expect(rendered).to.equal('0:dog;1:cat;2:rat;');
     });
 
     it ('renders a list of strings utilizing built in templates (using a modified item string)', () => {
         const element = new Each(TEST_ARRAY,'{{i}}:{{thing}};');
-        const rendered = element.setItemString('thing').render();
+        const rendered = element.setItemName('thing').render();
         expect(rendered).to.equal('0:dog;1:cat;2:rat;');
     });
 

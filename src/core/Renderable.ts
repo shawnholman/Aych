@@ -1,6 +1,12 @@
 import {RenderOptions, SimpleObject} from "../interfaces";
 import {merge} from "../Util";
 
+/**
+ * The Renderable class is part of the most basic unit of Aych. This abstract class provides
+ * foundational logic for renderable child class to inherit and use. A renderable, conceptually,
+ * is a class that has a render method that can be called to get a string representation of that
+ * class.
+ */
 export abstract class Renderable {
     protected templates: SimpleObject = {};
 

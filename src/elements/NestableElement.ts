@@ -3,11 +3,14 @@ import {Element} from "./Element";
 import {isAttributes, isRenderable, isString} from "../Util";
 import {Renderable, StringLiteral} from "../core";
 
+/**
+ * The NestableElement class represents elements that have an opening and closing tag.
+ */
 export class NestableElement extends Element {
     private children: Renderable[] = [];
 
     /**
-     * Constructs an element
+     * Constructs an nested element
      * @param tag tag name of the element
      * @param tier1 The first level of parameters. If this parameter is a string, but it is not an identifier string,
      * then it will be treated a string child and nothing should follow it. If this parameter is a string, and is an identifier string, then it
@@ -55,8 +58,6 @@ export class NestableElement extends Element {
         }
     }
 
-    // ---------------------- PUBLIC API ----------------------
-
     /** Get children. */
     getChildren(): Renderable[] {
         return this.children;
@@ -96,7 +97,10 @@ export class NestableElement extends Element {
         return `<${tag}${attributes}>${children}</${tag}>`;
     }
 
-    /** Builds the inside of the element */
+    /**
+     * Renders all of the children.
+     * @param templates
+     */
     private renderChildren(templates?: SimpleObject): string {
         return this.getChildren().reduce((current, next) => {
             return current + next.render(templates);
