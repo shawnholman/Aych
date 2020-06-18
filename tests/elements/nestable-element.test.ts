@@ -32,6 +32,18 @@ describe('NestableElement', () => {
         expect(rendered).to.equal('<div style="width: 100px;"></div>');
     });
 
+    it('throws an error when trying to use attributes in tier1 and tier2', () => {
+        expect(function () {
+            new NestableElement('div', { style: "width: 100px;" }, { style: "width: 100px;" });
+        }).to.throw('Attributes field has been declared twice.');
+    });
+
+    it('throws an error when using a child before the attribute', () => {
+        expect(function () {
+            new NestableElement('div', 'I\'m a child', { style: "width: 100px;" });
+        }).to.throw('Attributes must come before children.');
+    });
+
     it('renders an empty div element with attributes and id', () => {
         const element = new NestableElement('div', '#image', { style: "width: 100px;" });
         const rendered = element.render();
@@ -56,10 +68,20 @@ describe('NestableElement', () => {
         expect(rendered).to.equal('<div></div>');
     });
 
+    it('renders an empty element without attributes ignoring empty string', () => {
+        // The tier1 is an empty string which should be ignored by NestableElement but still considered
+        // a child. When addChild is called with this empty string, no child actually gets added.
+        const element = new NestableElement('div', '');
+        const rendered = element.render();
+        expect(rendered).to.equal('<div></div>');
+        expect(element.getChildren()).to.have.lengthOf(0);
+    });
+
     it('renders an empty div nested inside of an empty div', () => {
         const element = new NestableElement('div', new NestableElement('div'));
         const rendered = element.render();
         expect(rendered).to.equal('<div><div></div></div>');
+        expect(element.getChildren()).to.have.lengthOf(1);
     });
 
     it('renders a div with 5 empty div children', () => {

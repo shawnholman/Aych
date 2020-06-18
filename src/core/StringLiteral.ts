@@ -26,7 +26,7 @@ export class StringLiteral extends Renderable {
     }
 
     /** @inheritdoc */
-    internalRender(templates?: SimpleObject): string {
+    internalRender(templates: SimpleObject): string {
         if (!StringLiteral.probablyHasTemplates(this.string)) {
             return this.string;
         }
@@ -35,7 +35,7 @@ export class StringLiteral extends Renderable {
             const key = groups[PIPE_KEY_INDEX];
             const pipeFunctionName = groups[PIPE_FUNC_NAME_INDEX];
             const pipeParameters = groups[PIPE_PARAMETERS_INDEX];
-            const value = StringLiteral.getValueFromObject(templates || {}, key);
+            const value = StringLiteral.getValueFromObject(templates, key);
 
             return Piper.pipe(value, pipeFunctionName, pipeParameters);
         });

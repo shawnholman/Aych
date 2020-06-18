@@ -49,5 +49,5 @@ export abstract class Renderable {
      * the particular element is rendered.
      * @param templates
      */
-    protected abstract internalRender(templates?: SimpleObject): string;
+    protected abstract internalRender(templates: SimpleObject): string;
 }

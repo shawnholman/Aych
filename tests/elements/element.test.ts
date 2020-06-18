@@ -8,12 +8,6 @@ class MockElement extends Element {
     }
 }
 
-class MockElement2 extends Element {
-    internalRender(templates?: SimpleObject): string {
-        return JSON.stringify(templates);
-    }
-}
-
 describe('Element', () => {
     it('can be created with just a tag', () => {
         let element = new MockElement('div');
@@ -94,29 +88,6 @@ describe('Element', () => {
 
         expect(element.getId()).to.equal("hello");
         expect(element.getClassList()).to.deep.equal(['col', 'col-xs']);
-    });
-
-    it('renders element with templates set using the \'with\' tag', () => {
-        let element = new MockElement2('test').with({'test':'test'});
-        let element2 = new MockElement2('test').render({'test':'test'});
-
-        expect(element.render()).to.equal(element2);
-    });
-
-    it('does not prioritize templates from the render methods by default', () => {
-        let element = new MockElement2('test');
-        let render = element.with({'test':'test', 'test2': 'test2'}).render({'test':'false'});
-
-        expect(render).to.equal(JSON.stringify({'test':'test','test2':'test2'}));
-    });
-
-    it('prioritizes templates from the render methods when prioritizeRenderTemplates option is true', () => {
-        let element = new MockElement2('test');
-        let render = element.with({'test':'test', 'test2': 'test2'}).render({'test':'false'}, {
-            prioritizeRenderTemplates: true,
-        });
-
-        expect(render).to.equal(JSON.stringify({'test':'false','test2':'test2'}));
     });
 
     /*it('renders element using the each method', () => {

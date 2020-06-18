@@ -18,7 +18,7 @@ export class If extends Renderable {
     }
 
     /** @inheritdoc */
-    protected internalRender(templates?: SimpleObject): string {
+    protected internalRender(templates: SimpleObject): string {
         return this.condition ? this.element.render(templates) : '';
     }
 }

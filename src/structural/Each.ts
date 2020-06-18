@@ -33,7 +33,7 @@ export class Each extends Renderable {
     }
 
     /** @inheritdoc */
-    protected internalRender(templates?: SimpleObject): string {
+    protected internalRender(templates: SimpleObject): string {
         if (this.element === undefined) {
             return this.renderByFunction(templates);
         } else {

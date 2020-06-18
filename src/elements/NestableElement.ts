@@ -89,7 +89,7 @@ export class NestableElement extends Element {
     }
 
     /** @inheritdoc */
-    protected internalRender(templates?: SimpleObject): string {
+    protected internalRender(templates: SimpleObject): string {
         const tag = this.getTag();
         const attributes = this.getHtmlAttributeList();
         const children = this.renderChildren(templates);
@@ -97,7 +97,7 @@ export class NestableElement extends Element {
     }
 
     /** Builds the inside of the element */
-    private renderChildren(templates: SimpleObject = {}): string {
+    private renderChildren(templates?: SimpleObject): string {
         return this.getChildren().reduce((current, next) => {
             return current + next.render(templates);
         }, '');
