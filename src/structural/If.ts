@@ -7,26 +7,41 @@ import {Renderable, StringLiteral} from "../core";
  */
 export class If extends Renderable {
     private readonly condition: boolean;
-    private readonly element: Renderable;
+    private readonly ifElement: Renderable;
+    private elseElement?: Renderable;
 
     /**
      * Constructor
      * @param condition THe condition that determines if the element gets rendered.
-     * @param element The element to render.
+     * @param ifElement The element to render if the condition is true.
+     * @param elseElement The element to render if the condition is false.
      */
-    constructor(condition: boolean, element: Renderable | string) {
+    constructor(condition: boolean, ifElement: Renderable | string, elseElement?: Renderable | string) {
         super();
         this.condition = condition;
 
-        if (isString(element)) {
-            this.element = new StringLiteral(element);
-        } else {
-            this.element = element;
+        this.ifElement = isString(ifElement) ? new StringLiteral(ifElement) : ifElement;
+
+        if (elseElement) {
+            this.else(elseElement);
         }
+    }
+
+    /**
+     * Sets the else element.
+     * @param elseElement The element to render if the condition is false.
+     */
+    else(elseElement: Renderable | string): Renderable {
+        this.elseElement = isString(elseElement) ? new StringLiteral(elseElement) : elseElement;
+        return this;
     }
 
     /** @inheritdoc */
     protected internalRender(templates: SimpleObject): string {
-        return this.condition ? this.element.render(templates) : '';
+        if (this.condition) {
+            return this.ifElement.render(templates);
+        } else {
+            return this.elseElement ? this.elseElement.render(templates) : '';
+        }
     }
 }

@@ -3,22 +3,70 @@ import {NestableElement} from "../../src/elements";
 import {If} from "../../src/structural";
 
 describe('If', () => {
-    it('renders an empty div if true', () => {
+    it('renders the renderable if true', () => {
         const element = new If(true, new NestableElement('div'));
         const rendered = element.render();
         expect(rendered).to.equal('<div></div>');
     });
 
-    it('does not render an empty div if false', () => {
+    it('does not render the renderable if false', () => {
         const element = new If(false, new NestableElement('div'));
         const rendered = element.render();
         expect(rendered).to.equal('');
     });
 
-    it('renders string literals', () => {
+    it('renders the else renderable if false', () => {
+        const element = new If(false, new NestableElement('div'), new NestableElement('span'));
+        const rendered = element.render();
+        expect(rendered).to.equal('<span></span>');
+    });
+
+    it('renders string literal if true', () => {
         const element = new If(true, 'hey');
         const rendered = element.render();
         expect(rendered).to.equal('hey');
+    });
+
+    it('does not render string literal if false', () => {
+        const element = new If(false, 'hey');
+        const rendered = element.render();
+        expect(rendered).to.equal('');
+    });
+
+    it('renders the else string literal if false', () => {
+        const element = new If(false, 'hey', 'bye');
+        const rendered = element.render();
+        expect(rendered).to.equal('bye');
+    });
+
+    it('supports nested if statements', () => {
+        const element =
+            new If(false, 'hey',
+                new If(false, 'bye', 'lie')
+            );
+        const rendered = element.render();
+        expect(rendered).to.equal('lie');
+    });
+
+    it('uses the else method to set an else renderable', () => {
+        const element = new If(false, new NestableElement('div')).else(new NestableElement('span'));
+        const rendered = element.render();
+        expect(rendered).to.equal('<span></span>');
+    });
+
+    it('uses the else method to set an else string literal', () => {
+        const element = new If(false, 'hey').else('bye');
+        const rendered = element.render();
+        expect(rendered).to.equal('bye');
+    });
+
+    it('supports nested if statements using the else method', () => {
+        const element =
+            new If(false, 'hey').else(
+                new If(false, 'bye').else('lie')
+            );
+        const rendered = element.render();
+        expect(rendered).to.equal('lie');
     });
 
     /*it('renders element using the each method', () => {
