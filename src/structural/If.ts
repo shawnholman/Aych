@@ -7,41 +7,41 @@ import {Renderable, StringLiteral} from "../core";
  */
 export class If extends Renderable {
     private readonly condition: boolean;
-    private readonly ifElement: Renderable;
-    private elseElement?: Renderable;
+    private readonly ifRenderable: Renderable;
+    private elseRenderable?: Renderable;
 
     /**
      * Constructor
-     * @param condition THe condition that determines if the element gets rendered.
-     * @param ifElement The element to render if the condition is true.
-     * @param elseElement The element to render if the condition is false.
+     * @param condition THe condition that determines if the renderable gets rendered.
+     * @param ifRenderable The renderable to render if the condition is true.
+     * @param elseRenderable The renderable to render if the condition is false.
      */
-    constructor(condition: boolean, ifElement: Renderable | string, elseElement?: Renderable | string) {
+    constructor(condition: boolean, ifRenderable: Renderable | string, elseRenderable?: Renderable | string) {
         super();
         this.condition = condition;
 
-        this.ifElement = isString(ifElement) ? new StringLiteral(ifElement) : ifElement;
+        this.ifRenderable = isString(ifRenderable) ? new StringLiteral(ifRenderable) : ifRenderable;
 
-        if (elseElement) {
-            this.else(elseElement);
+        if (elseRenderable) {
+            this.else(elseRenderable);
         }
     }
 
     /**
-     * Sets the else element.
-     * @param elseElement The element to render if the condition is false.
+     * Sets the else renderable.
+     * @param elseRenderable The renderable to render if the condition is false.
      */
-    else(elseElement: Renderable | string): Renderable {
-        this.elseElement = isString(elseElement) ? new StringLiteral(elseElement) : elseElement;
+    else(elseRenderable: Renderable | string): Renderable {
+        this.elseRenderable = isString(elseRenderable) ? new StringLiteral(elseRenderable) : elseRenderable;
         return this;
     }
 
     /** @inheritdoc */
     protected internalRender(templates: SimpleObject): string {
         if (this.condition) {
-            return this.ifElement.render(templates);
+            return this.ifRenderable.render(templates);
         } else {
-            return this.elseElement ? this.elseElement.render(templates) : '';
+            return this.elseRenderable ? this.elseRenderable.render(templates) : '';
         }
     }
 }

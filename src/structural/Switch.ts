@@ -9,7 +9,7 @@ type Switchable = string | number;
 export class Switch<T extends Switchable> extends Renderable {
     private readonly value: T;
     private readonly cases: Switch.Case<T>[] = [];
-    private defaultElement: Renderable;
+    private defaultRenderable: Renderable;
 
     /**
      * Constructor
@@ -23,11 +23,11 @@ export class Switch<T extends Switchable> extends Renderable {
     }
 
     /**
-     * Sets the default element when no case is found.
-     * @param element The element to set to.
+     * Sets the default renderable when no case is found.
+     * @param renderable The renderable to set to.
      */
-    default(element: Renderable | string): Renderable {
-        this.defaultElement = isString(element) ? new StringLiteral(element) : element;
+    default(renderable: Renderable | string): Renderable {
+        this.defaultRenderable = isString(renderable) ? new StringLiteral(renderable) : renderable;
         return this;
     }
 
@@ -36,9 +36,9 @@ export class Switch<T extends Switchable> extends Renderable {
         const foundCase = this.cases.find((c) => c.hasValue(this.value));
 
         if (foundCase) {
-            return foundCase.getElement().render(templates);
+            return foundCase.getRenderable().render(templates);
         } else {
-            return this.defaultElement ? this.defaultElement.render(templates) : '';
+            return this.defaultRenderable ? this.defaultRenderable.render(templates) : '';
         }
     }
 }
@@ -54,21 +54,21 @@ export namespace Switch {
      */
     export class Case<T extends Switchable> {
         private readonly value: T;
-        private readonly element: Renderable;
+        private readonly renderable: Renderable;
 
         /**
          * Constructor
          * @param value The value determines which cases is chosen and rendered.
-         * @param element The element associated with this case.
+         * @param renderable The renderable associated with this case.
          */
-        constructor(value: T, element: Renderable | string) {
+        constructor(value: T, renderable: Renderable | string) {
             this.value = value;
-            this.element = isString(element) ? new StringLiteral(element) : element;
+            this.renderable = isString(renderable) ? new StringLiteral(renderable) : renderable;
         }
 
-        /** Gets the element */
-        getElement(): Renderable {
-            return this.element;
+        /** Gets the renderable */
+        getRenderable(): Renderable {
+            return this.renderable;
         }
 
         /**

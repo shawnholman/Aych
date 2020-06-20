@@ -9,12 +9,12 @@ type EachRenderFunction = (item: string, index: number, items: Iterable<any>) =>
  */
 
 /**
- * The Each class creates rendered elements based on an Iterable.
+ * The Each class creates rendered renderables based on an Iterable.
  */
 export class Each extends Renderable {
     private readonly items: Iterable<any>;
-    private readonly element: Renderable;
-    private ifEmptyElement: Renderable;
+    private readonly renderable: Renderable;
+    private ifEmptyRenderable: Renderable;
     private readonly renderFunction: EachRenderFunction;
 
     private indexName: string;
@@ -23,31 +23,31 @@ export class Each extends Renderable {
     /**
      * Construct the each statement
      * @param items The items used to iterate through.
-     * @param element The renderable to create for each item in items.
+     * @param renderable The renderable to create for each item in items.
      * @param indexName The index name used for the template string for each renderable.
      * @param itemName The item name used for the template string for each renderable.
      */
-    constructor(items: Iterable<any>, element: EachRenderFunction | Renderable | string, indexName = 'i', itemName = 'item') {
+    constructor(items: Iterable<any>, renderable: EachRenderFunction | Renderable | string, indexName = 'i', itemName = 'item') {
         super();
         this.items = items;
         this.indexName = indexName;
         this.itemName = itemName;
 
-        if (isString(element)) {
-            this.element = new StringLiteral(element);
-        } else if (isRenderable(element)) {
-            this.element = element;
+        if (isString(renderable)) {
+            this.renderable = new StringLiteral(renderable);
+        } else if (isRenderable(renderable)) {
+            this.renderable = renderable;
         } else {
-            this.renderFunction = element;
+            this.renderFunction = renderable;
         }
     }
 
     /**
-     * Sets the empty element which gets used if the list is empty.
-     * @param element The element that gets used if the list is empty.
+     * Sets the empty renderable which gets used if the list is empty.
+     * @param renderable The renderable that gets used if the list is empty.
      */
-    empty(element: Renderable | string): Renderable {
-        this.ifEmptyElement = isString(element) ? new StringLiteral(element) : element;
+    empty(renderable: Renderable | string): Renderable {
+        this.ifEmptyRenderable = isString(renderable) ? new StringLiteral(renderable) : renderable;
         return this;
     }
 
@@ -71,23 +71,23 @@ export class Each extends Renderable {
 
     /** @inheritdoc */
     protected internalRender(templates: SimpleObject): string {
-        // If no items are present we should check the ifEmptyElement.
+        // If no items are present we should check the ifEmptyRenderable.
         if (this.isEmpty()) {
-            return this.ifEmptyElement ? this.ifEmptyElement.render() : '';
+            return this.ifEmptyRenderable ? this.ifEmptyRenderable.render() : '';
         }
 
-        if (this.element === undefined) {
+        if (this.renderable === undefined) {
             return this.renderByFunction(templates);
         } else {
-            return this.renderByElement(templates);
+            return this.renderByRenderable(templates);
         }
     }
 
     /**
-     * Renders elements directly using a Renderable
+     * Renders renderables directly using a Renderable
      * @param templates Key-value pairs that map to a template rendered in StringLiteral's
      */
-    private renderByElement(templates?: SimpleObject): string {
+    private renderByRenderable(templates?: SimpleObject): string {
         let render = '';
         let i = 0;
         for (const item of this.items) {
@@ -95,31 +95,31 @@ export class Each extends Renderable {
                 [this.itemName]: item,
                 [this.indexName]: i,
             };
-            render += this.element.render({ ...iteration, ...templates });
+            render += this.renderable.render({ ...iteration, ...templates });
             i++;
         }
         return render;
     }
 
     /**
-     * Renders elements using a function that generates the element.
+     * Renders renderables using a function that generates the renderable.
      * @param templates Key-value pairs that map to a template rendered in StringLiteral's
      */
     private renderByFunction(templates?: SimpleObject): string {
         let render = '';
         let i = 0;
         for (const item of this.items) {
-            let element = this.renderFunction(item, i, this.items);
+            let renderable = this.renderFunction(item, i, this.items);
             const iteration = {
                 [this.itemName]: item,
                 [this.indexName]: i,
             };
 
-            if (isString(element)) {
-                element = new StringLiteral(element);
+            if (isString(renderable)) {
+                renderable = new StringLiteral(renderable);
             }
 
-            render += element.render({ ...iteration, ...templates });
+            render += renderable.render({ ...iteration, ...templates });
             i++;
         }
         return render;
