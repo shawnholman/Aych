@@ -67,26 +67,28 @@ export class NestableElement extends Element {
      * Sets the children.
      * @param children one or more children
      */
-    setChildren(...children: (Renderable | string)[]): void {
+    setChildren(...children: (Renderable | string)[]): Renderable {
         for (const child of children) {
             this.addChild(child);
         }
+        return this;
     }
 
     /**
      * Appends a child.
      * @param child either a string or renderable
      */
-    addChild(child: Renderable | string): void {
+    addChild(child: Renderable | string): Renderable {
         if (isString(child)) {
             // empty strings do not require an object made
             if (child.trim().length === 0) {
-                return;
+                return this;
             } else {
                 child = new StringLiteral(child);
             }
         }
         this.children.push(child);
+        return this;
     }
 
     /** @inheritdoc */
