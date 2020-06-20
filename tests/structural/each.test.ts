@@ -46,4 +46,19 @@ describe('Each', () => {
         const rendered = element.render();
         expect(rendered).to.equal('0:dog;1:cat;2:rat;');
     });
+
+    it('renders the empty element when the list is empty', () => {
+        const element = new Each([],'{{i}}:{{thing}};').empty('empty');
+        const element2 = new Each([],'{{i}}:{{thing}};').empty(new NestableElement('div'));
+        const rendered = element.render();
+        const rendered2 = element2.render();
+        expect(rendered).to.equal('empty');
+        expect(rendered2).to.equal('<div></div>');
+    });
+
+    it('renders an empty string if the list is empty and no empty element is set', () => {
+        const element = new Each([],'{{i}}:{{thing}};');
+        const rendered = element.render();
+        expect(rendered).to.equal('');
+    });
 });

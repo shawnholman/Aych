@@ -14,6 +14,7 @@ type EachRenderFunction = (item: string, index: number, items: Iterable<any>) =>
 export class Each extends Renderable {
     private readonly items: Iterable<any>;
     private readonly element: Renderable;
+    private ifEmptyElement: Renderable;
     private readonly renderFunction: EachRenderFunction;
 
     private indexName: string;
@@ -41,13 +42,13 @@ export class Each extends Renderable {
         }
     }
 
-    /** @inheritdoc */
-    protected internalRender(templates: SimpleObject): string {
-        if (this.element === undefined) {
-            return this.renderByFunction(templates);
-        } else {
-            return this.renderByElement(templates);
-        }
+    /**
+     * Sets the empty element which gets used if the list is empty.
+     * @param element The element that gets used if the list is empty.
+     */
+    empty(element: Renderable | string): Renderable {
+        this.ifEmptyElement = isString(element) ? new StringLiteral(element) : element;
+        return this;
     }
 
     /**
@@ -66,6 +67,20 @@ export class Each extends Renderable {
     setItemName(itemName: string): Renderable {
         this.itemName = itemName;
         return this;
+    }
+
+    /** @inheritdoc */
+    protected internalRender(templates: SimpleObject): string {
+        // If no items are present we should check the ifEmptyElement.
+        if (this.isEmpty()) {
+            return this.ifEmptyElement ? this.ifEmptyElement.render() : '';
+        }
+
+        if (this.element === undefined) {
+            return this.renderByFunction(templates);
+        } else {
+            return this.renderByElement(templates);
+        }
     }
 
     /**
@@ -108,6 +123,17 @@ export class Each extends Renderable {
             i++;
         }
         return render;
+    }
+
+    /**
+     * Check if the list of items is empty or not.
+     */
+    private isEmpty() {
+        for (const _ of this.items) { // eslint-disable-line no-unused-vars
+            return false;
+        }
+
+        return true;
     }
 }
 
