@@ -16,6 +16,23 @@ describe('Renderable', () => {
        expect(render).to.equal('{}');
     });
 
+    it('does not render basic element if "when" is false', () => {
+        const element = new MockRenderable().when(false);
+        const render = element.render();
+        const render2 = element.render(undefined, {
+            prioritizeRenderTemplates: true,
+        });
+        expect(render).to.equal('');
+        expect(render2).to.equal('');
+    });
+
+    it('does not render basic element if "when" is false', () => {
+        const element = new MockRenderable().when(false);
+        const render = element.render();
+
+        expect(render).to.equal('');
+    });
+
     it ('renders element with templates set using the \'append\' method', () => {
         const element = new MockRenderable().append({'test': 'test'}).append({'test2': 'test2'});
         // Non-prioritized, the append method adds to the front of the current templates as not to override

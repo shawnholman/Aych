@@ -9,6 +9,7 @@ import {merge} from "../Util";
  */
 export abstract class Renderable {
     protected templates: SimpleObject = {};
+    private canRender = true;
 
     /**
      * Sets the templates.
@@ -16,6 +17,15 @@ export abstract class Renderable {
      */
     with(templates: SimpleObject): Renderable {
         this.templates = templates;
+        return this;
+    }
+
+    /**
+     * Turn on and off the ability for this element to render
+     * @param condition The condition that determines whether or not the element can render.
+     */
+    when(condition: boolean): Renderable {
+        this.canRender = condition;
         return this;
     }
 
@@ -32,9 +42,9 @@ export abstract class Renderable {
     /** @inheritdoc */
     render(templates?: SimpleObject, options?: RenderOptions): string {
         if (options?.prioritizeRenderTemplates) {
-            return this.internalRender(merge(templates, this.templates));
+            return this.canRender ? this.internalRender(merge(templates, this.templates)) : '';
         }
-        return this.internalRender(merge(this.templates, templates));
+        return this.canRender ? this.internalRender(merge(this.templates, templates)) : '';
     }
 
     /** @inheritdoc */
