@@ -1,13 +1,14 @@
 import {Attributes, SimpleObject} from "../interfaces";
 import {Element} from "./Element";
 import {isAttributes, isRenderable, isString} from "../Util";
-import {Renderable, StringLiteral} from "../core";
+import {Renderable} from "../core";
+import {Group} from "../structural";
 
 /**
  * The NestableElement class represents elements that have an opening and closing tag.
  */
 export class NestableElement extends Element {
-    private children: Renderable[] = [];
+    private children = new Group();
 
     /**
      * Constructs an nested element.
@@ -60,7 +61,7 @@ export class NestableElement extends Element {
 
     /** Gets the children. */
     getChildren(): Renderable[] {
-        return this.children;
+        return this.children.getMembers();
     }
 
     /**
@@ -68,9 +69,7 @@ export class NestableElement extends Element {
      * @param children one or more children
      */
     setChildren(...children: (Renderable | string)[]): Renderable {
-        for (const child of children) {
-            this.addChild(child);
-        }
+        this.children.setMembers(...children);
         return this;
     }
 
@@ -79,15 +78,7 @@ export class NestableElement extends Element {
      * @param child either a string or renderable
      */
     addChild(child: Renderable | string): Renderable {
-        if (isString(child)) {
-            // empty strings do not require an object made
-            if (child.trim().length === 0) {
-                return this;
-            } else {
-                child = new StringLiteral(child);
-            }
-        }
-        this.children.push(child);
+        this.children.addMember(child);
         return this;
     }
 
@@ -95,17 +86,7 @@ export class NestableElement extends Element {
     protected internalRender(templates: SimpleObject): string {
         const tag = this.getTag();
         const attributes = this.getHtmlAttributeList();
-        const children = this.renderChildren(templates);
+        const children = this.children.render(templates);
         return `<${tag}${attributes}>${children}</${tag}>`;
-    }
-
-    /**
-     * Renders all of the children.
-     * @param templates Key-value pairs that map to a template rendered in StringLiteral's
-     */
-    private renderChildren(templates?: SimpleObject): string {
-        return this.getChildren().reduce((current, next) => {
-            return current + next.render(templates);
-        }, '');
     }
 }
