@@ -1,5 +1,4 @@
-import {Attributes} from "./interfaces/Attributes";
-import {SimpleObject} from "./interfaces/simple-object";
+import {Attributes, SimpleObject} from "./interfaces";
 import {Renderable} from './core/Renderable';
 
 /**

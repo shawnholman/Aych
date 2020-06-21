@@ -1,4 +1,4 @@
-import {SimpleObject} from "../interfaces/simple-object";
+import {SimpleObject} from "../interfaces";
 import {isString} from "../Util";
 import {Renderable} from "../core/Renderable";
 import {StringLiteral} from "../core/StringLiteral";

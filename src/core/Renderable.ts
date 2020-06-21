@@ -1,5 +1,5 @@
-import {RenderOptions} from "../interfaces/render-options";
-import {SimpleObject} from "../interfaces/simple-object";
+import {RenderOptions} from "../interfaces";
+import {SimpleObject} from "../interfaces";
 import {merge} from "../Util";
 
 /**
