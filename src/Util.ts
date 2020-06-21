@@ -1,5 +1,6 @@
-import {Attributes, SimpleObject} from "./interfaces";
-import {Renderable} from './core';
+import {Attributes} from "./interfaces/Attributes";
+import {SimpleObject} from "./interfaces/simple-object";
+import {Renderable} from './core/Renderable';
 
 /**
  * Determines if parameter is a Renderable

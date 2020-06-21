@@ -1,8 +1,8 @@
 import {expect} from 'chai';
-import {NestableElement} from "../../src/elements";
-import {Group} from "../../src/structural";
+import {NestableElement} from "../../src/elements/NestableElement";
+import {Group} from "../../src/structural/Group";
 
-describe('If', () => {
+describe('Group', () => {
     it('renders an empty group', () => {
         const element = new Group();
         const rendered = element.render();

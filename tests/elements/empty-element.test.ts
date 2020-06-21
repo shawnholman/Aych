@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {EmptyElement} from "../../src/elements";
+import {EmptyElement} from "../../src/elements/EmptyElement";
 
 describe('EmptyElement', () => {
     it('renders img element without attributes', () => {

@@ -1,6 +1,6 @@
 import {expect} from "chai";
-import {SimpleObject} from "../../src/interfaces";
-import {Renderable} from "../../src/core";
+import {SimpleObject} from "../../src/interfaces/simple-object";
+import {Renderable} from "../../src/core/Renderable";
 
 class MockRenderable extends Renderable {
     internalRender(templates?: SimpleObject): string {

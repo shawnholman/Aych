@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {NestableElement} from "../../src/elements";
+import {NestableElement} from "../../src/elements/NestableElement";
 
 describe('NestableElement', () => {
     it('renders an empty div element without attributes', () => {

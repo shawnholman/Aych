@@ -1,6 +1,6 @@
 import {expect} from 'chai';
-import {NestableElement} from "../../src/elements";
-import {If} from "../../src/structural";
+import {NestableElement} from "../../src/elements/NestableElement";
+import {If} from "../../src/structural/If";
 
 describe('If', () => {
     it('renders the renderable if true', () => {

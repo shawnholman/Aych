@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {Piper} from '../../src/core';
+import {Piper} from '../../src/core/Piper';
 
 describe('Piper', () => {
     it('adds a new pipe to piper', () => {

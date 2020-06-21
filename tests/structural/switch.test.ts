@@ -1,6 +1,6 @@
 import {expect} from 'chai';
-import {NestableElement} from "../../src/elements";
-import {Switch} from "../../src/structural";
+import {NestableElement} from "../../src/elements/NestableElement";
+import {Switch} from "../../src/structural/Switch";
 
 const Case = Switch.Case;
 describe('Switch', () => {

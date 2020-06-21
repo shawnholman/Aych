@@ -1,7 +1,8 @@
 import {expect} from 'chai';
 import {isAttributes, isRenderable, isString, merge} from "../src/Util";
-import {Attributes, SimpleObject} from "../src/interfaces";
-import {Renderable} from "../src/core";
+import {Attributes} from "../src/interfaces/Attributes";
+import {SimpleObject} from "../src/interfaces/simple-object";
+import {Renderable} from "../src/core/Renderable";
 
 describe('Util', () => {
     it ('can tell if the data type is a string', () => {

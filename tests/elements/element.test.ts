@@ -1,6 +1,6 @@
 import {expect} from 'chai';
-import {Element} from '../../src/elements';
-import {SimpleObject} from "../../src/interfaces";
+import {Element} from '../../src/elements/Element';
+import {SimpleObject} from "../../src/interfaces/simple-object";
 
 class MockElement extends Element {
     internalRender(templates?: SimpleObject): string {

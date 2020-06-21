@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {StringLiteral} from '../../src/core';
+import {StringLiteral} from '../../src/core/StringLiteral';
 
 const THIS_IS = {
     "this": {

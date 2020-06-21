@@ -1,6 +1,7 @@
-import {SimpleObject} from "../interfaces";
+import {SimpleObject} from "../interfaces/simple-object";
 import {isString} from "../Util";
-import {Renderable, StringLiteral} from "../core";
+import {Renderable} from "../core/Renderable";
+import {StringLiteral} from "../core/StringLiteral";
 
 /**
  * The If class renders a Renderable based on a condition.

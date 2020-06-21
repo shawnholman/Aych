@@ -1,4 +1,4 @@
-import {SimpleObject} from "../interfaces";
+import {SimpleObject} from "../interfaces/simple-object";
 import {Element} from "./Element";
 
 /**

@@ -1,8 +1,9 @@
-import {Attributes, SimpleObject} from "../interfaces";
+import {Attributes} from "../interfaces/Attributes";
+import {SimpleObject} from "../interfaces/simple-object";
 import {Element} from "./Element";
 import {isAttributes, isRenderable, isString} from "../Util";
-import {Renderable} from "../core";
-import {Group} from "../structural";
+import {Renderable} from "../core/Renderable";
+import {Group} from "../structural/Group";
 
 /**
  * The NestableElement class represents elements that have an opening and closing tag.
