@@ -142,7 +142,11 @@ export abstract class Element extends Renderable {
         if (this.getId()) {
             attributesEntries.unshift(['id', this.getId()]);
         }
+
         return attributesEntries.reduce((str, [name, value]) => {
+            if (value === null) {
+                return str + ' ' + name;
+            }
             return str + ` ${name}="${value}"`;
         }, '');
     }

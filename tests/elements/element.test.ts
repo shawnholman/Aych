@@ -6,6 +6,10 @@ class MockElement extends Element {
     internalRender(templates?: SimpleObject): string {
         return '';
     }
+
+    getAttributeRender() {
+        return this.getHtmlAttributeList().trim();
+    }
 }
 
 describe('Element', () => {
@@ -15,6 +19,7 @@ describe('Element', () => {
         expect(element.getTag()).to.equal('div');
         expect(element.getId()).to.not.exist;
         expect(element.getClassList()).to.be.empty;
+        expect(element.getAttributeRender()).to.equal('');
     });
 
     it('gets created with an identifier (class only)', () => {
@@ -22,6 +27,7 @@ describe('Element', () => {
 
         expect(element.getId()).to.not.exist;
         expect(element.getClassList()).to.deep.equal(['class1', 'class2', 'class3']);
+        expect(element.getAttributeRender()).to.equal('class="class1 class2 class3"');
     });
 
     it('gets created with an identifier (id only)', () => {
@@ -52,11 +58,11 @@ describe('Element', () => {
     });
 
     it('has an attribute when in tier2 position with valid tier1 identifier string', () => {
-        const element = new MockElement('div', '#id.class1.class2.class3', {style:"width:100px;"});
+        const element = new MockElement('div', '#id.class1.class2.class3', {style:"width:100px;",hidden:null});
 
         expect(element.getId()).to.equal('id');
         expect(element.getClassList()).to.deep.equal(['class1', 'class2', 'class3']);
-        expect(element.getAttributes()).to.deep.equal({style:"width:100px;"});
+        expect(element.getAttributes()).to.deep.equal({style:"width:100px;",hidden:null});
     });
 
     it('throws an error when multiple attributes are set', () => {
@@ -70,16 +76,22 @@ describe('Element', () => {
 
         element.setId("id");
         expect(element.getId()).to.equal("id");
+        expect(element.getAttributeRender()).to.equal('id="id"');
 
         element.setClassList(['class1', 'class2', 'class3']);
         expect(element.getClassList()).to.deep.equal(['class1', 'class2', 'class3']);
+        expect(element.getAttributeRender()).to.equal('id="id" class="class1 class2 class3"');
 
-        element.setAttributes({style:"width:100px;"});
-        expect(element.getAttributes()).to.deep.equal({style:"width:100px;"});
+        element.setAttributes({style:"width:100px;",hidden:null,lang:"en"});
+        expect(element.getAttributes()).to.deep.equal({style:"width:100px;",hidden:null,lang:"en"});
+        expect(element.getAttributeRender()).to.equal('id="id" class="class1 class2 class3" style="width:100px;" hidden lang="en"');
+
 
         element.setIdentifiers('#hello.col.col-xs');
         expect(element.getId()).to.equal("hello");
         expect(element.getClassList()).to.deep.equal(['col', 'col-xs']);
+        expect(element.getAttributeRender()).to.equal('id="hello" class="col col-xs" style="width:100px;" hidden lang="en"');
+
 
         // these setters should have no affect on the identifiers
         element.setIdentifiers('hello.col.col-xs');
@@ -88,6 +100,7 @@ describe('Element', () => {
 
         expect(element.getId()).to.equal("hello");
         expect(element.getClassList()).to.deep.equal(['col', 'col-xs']);
+        expect(element.getAttributeRender()).to.equal('id="hello" class="col col-xs" style="width:100px;" hidden lang="en"');
     });
 
     /*it('renders element using the each method', () => {
