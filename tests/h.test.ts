@@ -3,19 +3,23 @@ import {expect} from 'chai';
 import {Aych} from "../src/core/Aych";
 
 describe('H', () => {
+    before(() => {
+        Aych.create(Aych.ElementType.NESTED, 'rand');
+        Aych.create(Aych.ElementType.EMPTY, 'empty');
+    });
     it('creates a custom element', () => {
-       Aych.create(Aych.ElementType.Nested, 'rand');
-       Aych.create(Aych.ElementType.Empty, 'empty');
+        Aych.create(Aych.ElementType.NESTED, 'rand');
+        Aych.create(Aych.ElementType.EMPTY, 'empty');
 
-       const element = H.rand().render();
-       const element2 = H.empty().render();
-       expect(element).to.equal("<rand></rand>");
-       expect(element2).to.equal("<empty>");
+        const element = H.rand().render();
+        const element2 = H.empty().render();
+        expect(element).to.equal("<rand></rand>");
+        expect(element2).to.equal("<empty>");
     });
 
     it('fails to create custom element if ElementType is not valid', () => {
         expect(function () {
-            Aych.create(3, 'rand');
+            Aych.create(3, 'tag');
         }).to.throw();
     });
 
@@ -37,8 +41,6 @@ describe('H', () => {
         const element = H.divWidth(100);
         const render = element.render({ name: "Tester" });
         expect(render).to.equal('<div width="100">Tester</div>');
-
-        delete Aych.prototype.divWidth;
     });
 
     it('creates a StringLiteral and renders it with templates', () => {

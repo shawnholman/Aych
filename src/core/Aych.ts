@@ -17,12 +17,12 @@ export class Aych {
      * @param tagName The name of the tag that is used.
      */
     static create(elType: Aych.ElementType, tagName: string): void {
-        if (elType == Aych.ElementType.Nested) {
+        if (elType == Aych.ElementType.NESTED) {
             const element = function (tier1?: string | Renderable | Attributes, tier2?: string | Renderable | Attributes,  ...children: (Renderable|string)[]) {
                 return new NestableElement(tagName, tier1, tier2, ...children);
             }
             Aych.define(tagName, element);
-        } else if (elType == Aych.ElementType.Empty) {
+        } else if (elType == Aych.ElementType.EMPTY) {
             const element = function (tier1?: string | Attributes, tier2?: Attributes) {
                 return new EmptyElement(tagName, tier1, tier2);
             }
@@ -68,17 +68,9 @@ export class Aych {
 
 export namespace Aych {
     export enum ElementType {
-        Nested,
-        Empty,
+        NESTED,
+        EMPTY,
     }
 }
 
-Aych.create(Aych.ElementType.Nested, 'div');
-/**
-
-static renderer(name: string, renderer: (...args: any[]) => string) {
-    Object.defineProperty(Renderable.prototype, name, {
-        value: renderer,
-        configurable: true
-    });
-}*/
+Aych.create(Aych.ElementType.NESTED, 'div');
