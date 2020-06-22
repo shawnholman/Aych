@@ -3,7 +3,7 @@ import {isString} from "../Util";
 import {Renderable} from "../core/Renderable";
 import {StringLiteral} from "../core/StringLiteral";
 
-type Switchable = string | number;
+export type Switchable = string | number;
 /**
  * The Switch class renders one out of one or more renderable based on the value of the switch.
  */
