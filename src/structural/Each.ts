@@ -1,9 +1,9 @@
 import {SimpleObject} from "../interfaces";
-import {isRenderable, isString} from "../Util";
+import {isRenderable, isString, merge} from "../Util";
 import {Renderable} from "../core/Renderable";
 import {StringLiteral} from "../core/StringLiteral";
 
-type EachRenderFunction = (item: string, index: number, items: Iterable<any>) => (Renderable | string);
+export type EachRenderFunction = (item: string, index: number, items: Iterable<any>) => (Renderable | string);
 
 /**
  * TODO: [P2] Add support for object literals (SimpleObject) for iterating through.
@@ -96,7 +96,7 @@ export class Each extends Renderable {
                 [this.itemName]: item,
                 [this.indexName]: i,
             };
-            render += this.renderable.render({ ...iteration, ...templates });
+            render += this.renderable.render(merge(iteration, templates));
             i++;
         }
         return render;
@@ -120,7 +120,7 @@ export class Each extends Renderable {
                 renderable = new StringLiteral(renderable);
             }
 
-            render += renderable.render({ ...iteration, ...templates });
+            render += renderable.render(merge(iteration, templates));
             i++;
         }
         return render;

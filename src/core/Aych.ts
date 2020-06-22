@@ -4,6 +4,8 @@ import {Piper} from "./Piper";
 import {Renderable} from "./Renderable";
 import {Attributes} from "../interfaces";
 import {StringLiteral} from "./StringLiteral";
+import {Each, EachRenderFunction} from "../structural/Each";
+import {Group} from "../structural/Group";
 
 /**
  * The Aych class exposes all of the libraries features in an encapsulated package.
@@ -12,17 +14,19 @@ export class Aych {
     [dynamicProperty: string]: (...args: any[]) => Renderable;
 
     /**
-     * Defines a method on Aych that represents an element.
+     * Factory for creating element factories.
      * @param elType The type of element to create.
      * @param tagName The name of the tag that is used.
      */
     static create(elType: Aych.ElementType, tagName: string): void {
         if (elType == Aych.ElementType.NESTED) {
+            // Create a nestable element factory on Aych
             const element = function (tier1?: string | Renderable | Attributes, tier2?: string | Renderable | Attributes,  ...children: (Renderable|string)[]) {
                 return new NestableElement(tagName, tier1, tier2, ...children);
             }
             Aych.define(tagName, element);
         } else if (elType == Aych.ElementType.EMPTY) {
+            // Create am empty element factory on Aych
             const element = function (tier1?: string | Attributes, tier2?: Attributes) {
                 return new EmptyElement(tagName, tier1, tier2);
             }
@@ -49,6 +53,16 @@ export class Aych {
      */
     string(str: string): Renderable {
         return new StringLiteral(str);
+    }
+
+    /** @inheritDoc from Constructor of Each */
+    each(items: Iterable<any>, renderable: EachRenderFunction | Renderable | string, indexName?: string, itemName?: string): Renderable {
+        return new Each(items, renderable, indexName, itemName);
+    }
+
+    /** @inheritDoc from Constructor of Group */
+    group (...members: (Renderable|string)[]) {
+        return new Group(...members);
     }
 
     /**
