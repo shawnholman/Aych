@@ -14,7 +14,15 @@ import {isString} from "../Util";
  * The Aych class exposes all of the libraries features in an encapsulated package.
  */
 export class Aych {
-    [dynamicProperty: string]: (...args: any[]) => Renderable;
+    private static strictMode = true;
+
+    static setStrictMode(mode: boolean) {
+        Aych.strictMode = mode;
+    }
+
+    static isStrictMode() {
+        return this.strictMode;
+    }
 
     /**
      * Factory for creating element factories.
@@ -25,15 +33,30 @@ export class Aych {
         if (elType == Aych.ElementType.NESTED) {
             // Create a nestable element factory on Aych
             const element = function (tier1?: string | Renderable | Attributes, tier2?: string | Renderable | Attributes,  ...children: (Renderable|string)[]) {
-                return new NestableElement(tagName, tier1, tier2, ...children);
+                let element = new NestableElement(tagName, tier1, tier2, ...children);
+
+                /* TODO: [p2] Add the requiredAttrs
+                if (Aych.isStrictMode()) {
+                    let attrs = element.getAttributes();
+                    requiredAttrs.forEach((item) => {
+                        let missing = [];
+                        if (!Object.prototype.hasOwnProperty.call(attrs, item)) {
+                            missing.push(item);
+                        }
+                        if (missing.length) {
+                            throw new Error(`Element (${tagName}) requires the following attributes: ${requiredAttrs}; But, could not find: ` + missing);
+                        }
+                    });
+                }*/
+                return element;
             };
-            Aych.define(tagName, element);
+            Aych.define(tagName, element, false);
         } else if (elType == Aych.ElementType.EMPTY) {
             // Create am empty element factory on Aych
             const element = function (tier1?: string | Attributes, tier2?: Attributes) {
                 return new EmptyElement(tagName, tier1, tier2);
             };
-            Aych.define(tagName, element);
+            Aych.define(tagName, element, false);
         } else {
             throw new Error('ElementType does not exist: ' + elType);
         }
@@ -59,38 +82,38 @@ export class Aych {
     }
 
     /** @inheritDoc from Constructor of Each */
-    each(items: Iterable<any>, renderable: EachRenderFunction | Renderable | string, indexName?: string, itemName?: string): Renderable {
+    each(items: Iterable<any>, renderable: EachRenderFunction | Renderable | string, indexName?: string, itemName?: string): Each {
         return new Each(items, renderable, indexName, itemName);
     }
-    Each(items: Iterable<any>, renderable: EachRenderFunction | Renderable | string, indexName?: string, itemName?: string): Renderable {
+    Each(items: Iterable<any>, renderable: EachRenderFunction | Renderable | string, indexName?: string, itemName?: string): Each {
         return new Each(items, renderable, indexName, itemName);
     }
 
     /** @inheritDoc from Constructor of Group */
-    group (...members: (Renderable|string)[]): Renderable {
+    group (...members: (Renderable|string)[]): Group {
         return new Group(...members);
     }
-    Group (...members: (Renderable|string)[]): Renderable {
+    Group (...members: (Renderable|string)[]): Group {
         return new Group(...members);
     }
 
     /** @inheritDoc from Constructor of If */
-    if (condition: boolean, ifRenderable: Renderable | string, elseRenderable?: Renderable | string): Renderable {
+    if (condition: boolean, ifRenderable: Renderable | string, elseRenderable?: Renderable | string): If {
         return new If(condition, ifRenderable, elseRenderable);
     }
-    If (condition: boolean, ifRenderable: Renderable | string, elseRenderable?: Renderable | string): Renderable {
+    If (condition: boolean, ifRenderable: Renderable | string, elseRenderable?: Renderable | string): If {
         return new If(condition, ifRenderable, elseRenderable);
     }
 
     /** @inheritDoc from Constructor of Switch */
-    switch (value: Switchable, ...cases: Switch.Case<Switchable>[]): Renderable {
+    switch (value: Switchable, ...cases: Switch.Case<Switchable>[]): Switch<Switchable> {
         if (isString(value)) {
             return new Switch(value as string, ...cases as Switch.Case<string>[]);
         } else {
             return new Switch(value as number, ...cases as Switch.Case<number>[]);
         }
     }
-    Switch (value: Switchable, ...cases: Switch.Case<Switchable>[]): Renderable {
+    Switch (value: Switchable, ...cases: Switch.Case<Switchable>[]): Switch<Switchable> {
         if (isString(value)) {
             return new Switch(value as string, ...cases as Switch.Case<string>[]);
         } else {
@@ -126,9 +149,11 @@ export class Aych {
      * @param name Name of the property.
      * @param value Value of the property.
      */
-    private static define(name: string, value: any): void {
-        Object.defineProperty(Aych.prototype, name, { value, configurable: true });
+    private static define(name: string, value: any, configurable = true): void {
+        Object.defineProperty(Aych.prototype, name, { value, configurable });
     }
+
+    [dynamicProperty: string]: (...args: any[]) => Renderable;
 }
 
 export namespace Aych {
