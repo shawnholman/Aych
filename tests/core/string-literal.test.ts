@@ -29,6 +29,12 @@ describe('StringLiteral', () => {
         expect(render).to.equal('&lt;div&gt;&lt;/div&gt;');
     });
 
+    it('renders string literal without escaping html characters if "escape"=false', () => {
+        const string = new StringLiteral('<div></div>', false);
+        const render = string.render();
+        expect(render).to.equal('<div></div>');
+    });
+
     it('renders string literal after template pipes (no arguments)', () => {
         const string = new StringLiteral('{{this|uppercase}} is a {{string}}');
         const render = string.render({

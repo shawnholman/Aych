@@ -30,9 +30,9 @@ export class StringLiteral extends Renderable {
      * Constructor
      * @param str The underlying string
      */
-    constructor(str: string) {
+    constructor(str: string, escape = true) {
         super();
-        this.string = StringLiteral.escapeHtml(str);
+        this.string = escape ? StringLiteral.escapeHtml(str) : str;
     }
 
     /** @inheritdoc */
