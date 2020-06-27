@@ -15,11 +15,14 @@ class MockElement extends Element {
 describe('Element', () => {
     it('can be created with just a tag', () => {
         const element = new MockElement('div');
-
         expect(element.getTag()).to.equal('div');
         expect(element.getId()).to.not.exist;
         expect(element.getClassList()).to.be.empty;
         expect(element.getAttributeRender()).to.equal('');
+
+        // Makes sure that tags are being lower cased
+        const element2 = new MockElement('DIV');
+        expect(element2.getTag()).to.equal('div');
     });
 
     it('gets created with an identifier (class only)', () => {

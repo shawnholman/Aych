@@ -23,7 +23,9 @@ export abstract class Element extends Renderable {
      */
     constructor(tag: string, tier1?: string | Attributes, tier2?: Attributes) {
         super();
-        this.tag = tag;
+
+        // Assign the tag name. Make it lower case because HTML tags are typically lower cased.
+        this.tag = tag.toLowerCase();
 
         if (isString(tier1)) {
             if (isString(tier1) && Element.isIdentifierString(tier1)) {
