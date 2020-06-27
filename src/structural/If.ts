@@ -10,6 +10,8 @@ export class If extends Renderable {
     private readonly condition: boolean;
     private readonly ifRenderable: Renderable;
     private elseRenderable?: Renderable;
+    // TODO: [p1] Add else if
+   //private elifRenderables?: Group;
 
     /**
      * Constructor

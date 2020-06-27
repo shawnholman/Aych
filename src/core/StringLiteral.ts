@@ -21,7 +21,6 @@ const PIPE_PARAMETERS_INDEX = 10;
 /**
  * The StringLiteral class is the most basic building block of Aych that extends Renderable.
  * The StringLiteral holds a string that when rendered can parse templates.
- * TODO: [p3] Provide a way to leave the HTML unescaped.
  */
 export class StringLiteral extends Renderable {
     private readonly string: string;
