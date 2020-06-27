@@ -8,12 +8,21 @@ import {Each, EachRenderFunction} from "../structural/Each";
 import {Group} from "../structural/Group";
 import {If} from "../structural/If";
 import {Switch, Switchable} from "../structural/Switch";
-import {isString} from "../Util";
+import {hyphenToCamelCase, isRenderable, isString} from "../Util";
 
+/** Matches a valid HTML tag name */
+const VALID_HTML_TAG_NAME = /^[a-zA-Z][a-zA-Z0-9]*(-[a-zA-Z]+)*$/g;
+
+/** Matches a valid name for a composition */
+const VALID_COMPOSITION_NAME = /^[a-zA-Z]+$/g;
 /**
  * The Aych class exposes all of the libraries features in an encapsulated package.
  */
 export class Aych {
+    private static scoped: Array<string> = [];
+    private static isScoped = false;
+    /**
+     * TODO: [p2] Find a use case or remove for now.
     private static strictMode = true;
 
     static setStrictMode(mode: boolean) {
@@ -23,13 +32,21 @@ export class Aych {
     static isStrictMode() {
         return this.strictMode;
     }
+     */
 
     /**
      * Factory for creating element factories.
      * @param elType The type of element to create.
      * @param tagName The name of the tag that is used.
      */
-    static create(elType: Aych.ElementType, tagName: string): void {
+    static create(elType: Aych.ElementType, tagName: string): string {
+        tagName = tagName.trim();
+        if (!tagName.match(VALID_HTML_TAG_NAME)) {
+            throw new Error('Tag names should start with a letter and only contain letters, numbers, and dashes between two characters (yes: the-tag-name, no: the---tag---name).');
+        }
+
+        // The name to use for the actual define
+        const tagDefinitionName = hyphenToCamelCase(tagName);
         if (elType == Aych.ElementType.NESTED) {
             // Create a nestable element factory on Aych
             const element = function (tier1?: string | Renderable | Attributes, tier2?: string | Renderable | Attributes,  ...children: (Renderable|string)[]) {
@@ -50,15 +67,27 @@ export class Aych {
                 }*/
                 return element;
             };
-            Aych.define(tagName, element, false);
+            Aych.define(tagDefinitionName, element);
         } else if (elType == Aych.ElementType.EMPTY) {
             // Create am empty element factory on Aych
             const element = function (tier1?: string | Attributes, tier2?: Attributes) {
                 return new EmptyElement(tagName, tier1, tier2);
             };
-            Aych.define(tagName, element, false);
+            Aych.define(tagDefinitionName, element);
         } else {
             throw new Error('ElementType does not exist: ' + elType);
+        }
+        return tagName;
+    }
+
+    /**
+     * Remove a created tag or composition.
+     * @param name Name of the tag or composition.
+     */
+    static destroy(name: string) {
+        name = hyphenToCamelCase(name.trim());
+        if (Object.prototype.hasOwnProperty.call(Aych.prototype, name)) {
+            delete Aych.prototype[name];
         }
     }
 
@@ -69,7 +98,11 @@ export class Aych {
      * @param composition The method that the defines what arguments the composable takes
      * and which renderable it returns.
      */
-    static compose(name: string, composition: (...args: any[]) => Renderable) {
+    static compose(name: string, composition: (...args: any[]) => Renderable): void {
+        name = name.trim();
+        if (!name.match(VALID_COMPOSITION_NAME)) {
+            throw new Error('Composition names should start with a letter or underscore and only contain letters, numbers, dashed, and underscores throughout.');
+        }
         Aych.define(name, composition);
     }
 
@@ -77,43 +110,51 @@ export class Aych {
      * Converts a javascript string literal into an Aych StringLiteral.
      * @param str The string literal to convert.
      */
-    string(str: string): Renderable {
+    string(str: string): StringLiteral {
         return new StringLiteral(str);
     }
 
-    /** @inheritDoc from Constructor of Each */
-    each(items: Iterable<any>, renderable: EachRenderFunction | Renderable | string, indexName?: string, itemName?: string): Each {
-        return new Each(items, renderable, indexName, itemName);
+    /**
+     * Converts a javascript string literal into an unescaped StringLiteral.
+     * @param str The string literal to convert.
+     */
+    unescaped(str: string): StringLiteral {
+        return new StringLiteral(str, false);
     }
-    Each(items: Iterable<any>, renderable: EachRenderFunction | Renderable | string, indexName?: string, itemName?: string): Each {
+
+    // ---------- Statements prefixed by $ ----------
+
+    // @ts-ignore
+    $(scope: (self: Aych) => void | string | Renderable): void | string {
+        Aych.isScoped = true;
+        const callerResult = scope.call(null, this);
+        Aych.isScoped = false;
+        Aych.scoped.forEach(Aych.destroy);
+
+        if (isRenderable(callerResult)) {
+            return callerResult.render();
+        } else if (isString(callerResult)) {
+            return callerResult;
+        }
+    }
+
+    /** @inheritDoc from Constructor of Each */
+    $each(items: Iterable<any>, renderable: EachRenderFunction | Renderable | string, indexName?: string, itemName?: string): Each {
         return new Each(items, renderable, indexName, itemName);
     }
 
     /** @inheritDoc from Constructor of Group */
-    group (...members: (Renderable|string)[]): Group {
-        return new Group(...members);
-    }
-    Group (...members: (Renderable|string)[]): Group {
+    $group (...members: (Renderable|string)[]): Group {
         return new Group(...members);
     }
 
     /** @inheritDoc from Constructor of If */
-    if (condition: boolean, ifRenderable: Renderable | string, elseRenderable?: Renderable | string): If {
-        return new If(condition, ifRenderable, elseRenderable);
-    }
-    If (condition: boolean, ifRenderable: Renderable | string, elseRenderable?: Renderable | string): If {
+    $if (condition: boolean, ifRenderable: Renderable | string, elseRenderable?: Renderable | string): If {
         return new If(condition, ifRenderable, elseRenderable);
     }
 
     /** @inheritDoc from Constructor of Switch */
-    switch (value: Switchable, ...cases: Switch.Case<Switchable>[]): Switch<Switchable> {
-        if (isString(value)) {
-            return new Switch(value as string, ...cases as Switch.Case<string>[]);
-        } else {
-            return new Switch(value as number, ...cases as Switch.Case<number>[]);
-        }
-    }
-    Switch (value: Switchable, ...cases: Switch.Case<Switchable>[]): Switch<Switchable> {
+    $switch (value: Switchable, ...cases: Switch.Case<Switchable>[]): Switch<Switchable> {
         if (isString(value)) {
             return new Switch(value as string, ...cases as Switch.Case<string>[]);
         } else {
@@ -123,15 +164,7 @@ export class Aych {
 
     /** @inheritDoc from Constructor of Switch.Case */
     // @ts-ignore that the return type is not a renderable (an exception)
-    case (value: Switchable, renderable: Renderable | string): Switch.Case<Switchable> {
-        if (isString(value)) {
-            return new Switch.Case(value as string, renderable);
-        } else {
-            return new Switch.Case(value as number, renderable);
-        }
-    }
-    // @ts-ignore that the return type is not a renderable (an exception)
-    Case (value: Switchable, renderable: Renderable | string): Switch.Case<Switchable> {
+    $case (value: Switchable, renderable: Renderable | string): Switch.Case<Switchable> {
         if (isString(value)) {
             return new Switch.Case(value as string, renderable);
         } else {
@@ -148,9 +181,20 @@ export class Aych {
      * Defines a property on Aych's prototype.
      * @param name Name of the property.
      * @param value Value of the property.
+     * @param configurable If the property can be configured.
+     * @param writable If the property can be written.
      */
-    private static define(name: string, value: any, configurable = true): void {
-        Object.defineProperty(Aych.prototype, name, { value, configurable });
+    private static define(name: string, value: any, configurable = true, writable = false): void {
+        let propertyName = name.trim();
+
+        if (Object.prototype.hasOwnProperty.call(Aych.prototype, propertyName)) {
+            throw new Error(`You cannot define ${propertyName} on Aych because it already exists. Please call Aych.destroy("${propertyName}") before redefining.`);
+        }
+        // Pushed scoped variables for deletion.
+        if (Aych.isScoped) {
+            Aych.scoped.push(propertyName);
+        }
+        Object.defineProperty(Aych.prototype, propertyName, { value, configurable, writable });
     }
 
     [dynamicProperty: string]: (...args: any[]) => Renderable;
