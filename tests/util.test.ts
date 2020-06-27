@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {isAttributes, isRenderable, isString, merge} from "../src/Util";
+import {isAttributes, isRenderable, isString, merge, hyphenToCamelCase} from "../src/Util";
 import {Attributes} from "../src/interfaces/Attributes";
 import {SimpleObject} from "../src/interfaces/simple-object";
 import {Renderable} from "../src/core/Renderable";
@@ -60,5 +60,10 @@ describe('Util', () => {
             4: 8,
             5: 10,
         });
+    });
+
+    it('converts hyphen case into camelCase', () => {
+        expect(hyphenToCamelCase('some-hyphened-text')).to.equal('someHyphenedText');
+        expect(hyphenToCamelCase('some')).to.equal('some');
     });
 });

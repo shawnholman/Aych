@@ -34,3 +34,11 @@ export function isAttributes(param?: any): param is Attributes {
 export function merge(priority?: SimpleObject, object?: SimpleObject) {
     return { ...object, ...priority };
 }
+
+/**
+ * Converts hyphen case into camel case.
+ * @param str String to convert.
+ */
+export function hyphenToCamelCase(str: string): string {
+    return str.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+}
