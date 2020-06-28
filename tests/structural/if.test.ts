@@ -21,6 +21,16 @@ describe('If', () => {
         expect(rendered).to.equal('<span></span>');
     });
 
+    it('renders the elif renderable if false', () => {
+        const element =
+            new If(false, new NestableElement('div'))
+                .elif(false, new NestableElement('span'))
+                .elif(true, new NestableElement('a'))
+                .else(new NestableElement('img'));
+        const rendered = element.render();
+        expect(rendered).to.equal('<a></a>');
+    });
+
     it('renders string literal if true', () => {
         const element = new If(true, 'hey');
         const rendered = element.render();
@@ -37,6 +47,16 @@ describe('If', () => {
         const element = new If(false, 'hey', 'bye');
         const rendered = element.render();
         expect(rendered).to.equal('bye');
+    });
+
+    it('renders the elif string if false', () => {
+        const element =
+            new If(false, 'div')
+                .elif(false, 'span')
+                .elif(true, 'a')
+                .else('img');
+        const rendered = element.render();
+        expect(rendered).to.equal('a');
     });
 
     it('supports nested if statements', () => {

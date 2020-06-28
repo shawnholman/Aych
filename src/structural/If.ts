@@ -10,8 +10,7 @@ export class If extends Renderable {
     private readonly condition: boolean;
     private readonly ifRenderable: Renderable;
     private elseRenderable?: Renderable;
-    // TODO: [p1] Add else if
-   //private elifRenderables?: Group;
+    private elifRenderable?: Renderable;
 
     /**
      * Constructor
@@ -39,10 +38,25 @@ export class If extends Renderable {
         return this;
     }
 
+    /**
+     * Add a new elif block.
+     * @param elifRenderable The renderable to try and render when the if block does not run.
+     */
+    elif(condition: boolean, elifRenderable: Renderable | string): If {
+        // Only given that the original if condition is false, and the elif condition is true,
+        // and no other elif has been found already then we can set elif.
+        if (!this.condition && condition && this.elifRenderable === undefined) {
+            this.elifRenderable = isString(elifRenderable) ? new StringLiteral(elifRenderable) : elifRenderable;
+        }
+        return this;
+    }
+
     /** @inheritdoc */
     protected internalRender(templates: SimpleObject): string {
         if (this.condition) {
             return this.ifRenderable.render(templates);
+        } else if (this.elifRenderable !== undefined) {
+            return this.elifRenderable.render(templates);
         } else {
             return this.elseRenderable ? this.elseRenderable.render(templates) : '';
         }
