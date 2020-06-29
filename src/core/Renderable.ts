@@ -40,12 +40,31 @@ export abstract class Renderable {
         return this;
     }
 
-    /** @inheritdoc */
+    /**
+     * Renders the internalRender function.
+     * @param templates Templates to pass in
+     * @param options Render options
+     */
     render(templates?: SimpleObject, options?: RenderOptions): string {
         if (options?.prioritizeRenderTemplates) {
             return this.canRender ? this.internalRender(merge(templates, this.templates)) : '';
         }
         return this.canRender ? this.internalRender(merge(this.templates, templates)) : '';
+    }
+
+    /**
+     * Getting for the HTML returned by the render function.
+     */
+    get r(): string {
+        return this.render();
+    }
+
+    /**
+     * Overrides the toString method called by JavaScript when
+     * string concatenate occurs
+     */
+    public toString = () : string => {
+        return this.render();
     }
 
     /** @inheritdoc */

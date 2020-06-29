@@ -14,16 +14,26 @@ describe('Renderable', () => {
        const render = element.render();
 
        expect(render).to.equal('{}');
+       // Make sure that the r accessor gives us the same thing.
+       expect(element.r).to.equal(render);
+    });
+
+    it('renders a basic element with toString', () => {
+        const element = new MockRenderable();
+        const render = element + "";
+        expect(render).to.equal('{}');
     });
 
     it('does not render basic element if "when" is false', () => {
         const element = new MockRenderable().when(false);
         const render = element.render();
+        // No matter if you prioritize the render templates this should work as expected
         const render2 = element.render(undefined, {
             prioritizeRenderTemplates: true,
         });
         expect(render).to.equal('');
         expect(render2).to.equal('');
+        expect(element.r).to.equal(render);
     });
 
     it('does not render basic element if "when" is false', () => {
