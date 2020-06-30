@@ -110,7 +110,10 @@ export class Aych {
      * Converts a javascript string literal into an Aych StringLiteral.
      * @param str The string literal to convert.
      */
-    string(str: string): StringLiteral {
+    string(str: any): StringLiteral {
+        if (!isString(str)) {
+            str = str.toString();
+        }
         return new StringLiteral(str);
     }
 
@@ -118,7 +121,7 @@ export class Aych {
      * Converts a javascript string literal into an unescaped StringLiteral.
      * @param str The string literal to convert.
      */
-    unescaped(str: string): StringLiteral {
+    unescaped(str: any): StringLiteral {
         return new StringLiteral(str, false);
     }
 
