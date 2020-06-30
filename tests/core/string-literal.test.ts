@@ -23,6 +23,15 @@ describe('StringLiteral', () => {
         expect(render).to.equal('this is a string');
     });
 
+    it('converts anything to a string', () => {
+        const string = new StringLiteral(10).render();
+        const string2 = new StringLiteral(true).render();
+        const string3 = new StringLiteral([1,2,3]).render();
+        expect(string).to.equal('10');
+        expect(string2).to.equal('true');
+        expect(string3).to.equal('1,2,3');
+    });
+
     it('renders string literal with escaped html characters', () => {
         const string = new StringLiteral('<div></div>');
         const render = string.render();

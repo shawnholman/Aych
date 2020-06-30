@@ -1,6 +1,7 @@
 import {SimpleObject} from "../interfaces";
 import {Piper} from "./Piper";
 import {Renderable} from "./Renderable";
+import {isString} from "../Util";
 
 const TEMPLATE_START_TAG = '{{';
 const TEMPLATE_END_TAG = '}}';
@@ -29,8 +30,13 @@ export class StringLiteral extends Renderable {
      * Constructor
      * @param str The underlying string
      */
-    constructor(str: string, escape = true) {
+    constructor(str: any, escape = true) {
         super();
+
+        // if you try to pass anything that isn't a string in then convert it
+        if (!isString(str)) {
+            str = str.toString();
+        }
         this.string = escape ? StringLiteral.escapeHtml(str) : str;
     }
 
