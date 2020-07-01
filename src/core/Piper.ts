@@ -1,4 +1,5 @@
-type PipeFunc = (...args: any[]) => string;
+type PipeFunc = (str: string, ...args: any[]) => string;
+type PipeUpdateFunc = (original: PipeFunc, str: string, ...args:any[]) => string;
 /**
  * Piper is the piping engine. Template pipes are defined and executed here.
  */
@@ -6,11 +7,26 @@ export class Piper {
     private static pipes = new Map<string, PipeFunc>();
 
     /**
-     * Adds to a list of pipes in piper.
+     * Updates an existing pipe.
+     * @param pipeName The name of the pipe to update.
+     * @param func The update pipe function to build the update.
+     */
+    static update(pipeName: string, func: PipeUpdateFunc): void {
+        pipeName = pipeName.trim();
+        if (Piper.pipes.has(pipeName)) {
+            let pipeFunc: PipeFunc = func.bind(this, Piper.pipes.get(pipeName));
+            Piper.pipes.set(pipeName, pipeFunc);
+        } else {
+            throw new Error(`Cannot update non-existing pipe: ${pipeName}.`);
+        }
+    }
+
+    /**
+     * Register a new pipe with piper.
      * @param pipeName
      * @param func
      */
-    static install(pipeName: string, func: PipeFunc): void {
+    static register(pipeName: string, func: PipeFunc): void {
         pipeName = pipeName.trim();
         if (pipeName.match(/^[a-zA-Z]+$/g)) {
             if (Piper.pipes.has(pipeName)) {
@@ -20,6 +36,15 @@ export class Piper {
         } else {
             throw new Error('Pipe names must only contain letters. Whitespaces are trimmed.');
         }
+    }
+
+    /**
+     * Remove an existing pipe.
+     * @param pipeName The pipe to remove.
+     * @return Whether or not the uninstall was a success.
+     */
+    static deregister(pipeName: string): boolean {
+        return Piper.pipes.delete(pipeName);
     }
 
     /**
@@ -40,7 +65,7 @@ export class Piper {
                     if (el === 'false') return false;
                     return el;
                 });
-                return Piper.pipes.get(pipeName)!.apply('ho', [value, ...transformedParams]);
+                return Piper.pipes.get(pipeName)!.call(this, value, ...transformedParams);
             } else {
                 throw new Error(`Pipe does not exist: ${pipeName}.`);
             }
@@ -49,10 +74,10 @@ export class Piper {
     }
 }
 
-Piper.install('uppercase', (str: string) => {
+Piper.register('uppercase', (str: string) => {
     return str.toUpperCase();
 });
 
-Piper.install('substr', (str: string, from: number, length: number) => {
+Piper.register('substr', (str: string, from: number, length: number) => {
     return str.substr(from, length);
 });
