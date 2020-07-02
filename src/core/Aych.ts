@@ -8,7 +8,8 @@ import {Each, EachRenderFunction} from "../structural/Each";
 import {Group} from "../structural/Group";
 import {If} from "../structural/If";
 import {Switch, Switchable} from "../structural/Switch";
-import {hyphenToCamelCase, isRenderable, isString} from "../Util";
+import {kebabToCamelCase, isRenderable, isString} from "../Util";
+import {Element} from "../elements/Element";
 
 /** Matches a valid HTML tag name */
 const VALID_HTML_TAG_NAME = /^[a-zA-Z][a-zA-Z0-9]*(-[a-zA-Z]+)*$/g;
@@ -46,26 +47,11 @@ export class Aych {
         }
 
         // The name to use for the actual define
-        const tagDefinitionName = hyphenToCamelCase(tagName);
+        const tagDefinitionName = kebabToCamelCase(tagName);
         if (elType == Aych.ElementType.NESTED) {
             // Create a nestable element factory on Aych
             const element = function (tier1?: string | Renderable | Attributes, tier2?: string | Renderable | Attributes,  ...children: (Renderable|string)[]) {
-                let element = new NestableElement(tagName, tier1, tier2, ...children);
-
-                /* TODO: [p2] Add the requiredAttrs
-                if (Aych.isStrictMode()) {
-                    let attrs = element.getAttributes();
-                    requiredAttrs.forEach((item) => {
-                        let missing = [];
-                        if (!Object.prototype.hasOwnProperty.call(attrs, item)) {
-                            missing.push(item);
-                        }
-                        if (missing.length) {
-                            throw new Error(`Element (${tagName}) requires the following attributes: ${requiredAttrs}; But, could not find: ` + missing);
-                        }
-                    });
-                }*/
-                return element;
+                return new NestableElement(tagName, tier1, tier2, ...children);
             };
             Aych.define(tagDefinitionName, element);
         } else if (elType == Aych.ElementType.EMPTY) {
@@ -85,7 +71,7 @@ export class Aych {
      * @param name Name of the tag or composition.
      */
     static destroy(name: string) {
-        name = hyphenToCamelCase(name.trim());
+        name = kebabToCamelCase(name.trim());
         if (Object.prototype.hasOwnProperty.call(Aych.prototype, name)) {
             delete Aych.prototype[name];
         }

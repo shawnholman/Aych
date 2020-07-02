@@ -36,9 +36,9 @@ export function merge(priority?: SimpleObject, object?: SimpleObject) {
 }
 
 /**
- * Converts hyphen case into camel case.
+ * Converts kebab case into camel case.
  * @param str String to convert.
  */
-export function hyphenToCamelCase(str: string): string {
+export function kebabToCamelCase(str: string): string {
     return str.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
 }
