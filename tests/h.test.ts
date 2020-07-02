@@ -134,7 +134,6 @@ describe('H', () => {
                 Aych.destroy(id);
             }
             for(let id of validIdentifiers) {
-                console.dir(Aych.prototype);
                 expect(() => Aych.compose(id, () => H.div())).to.not.throw();
                 Aych.destroy(id);
             }
