@@ -54,6 +54,17 @@ describe('Element', () => {
         expect(element.getClassList()).to.be.empty;
     });
 
+    it('selects attributes based on conditions', () => {
+        const element = new MockElement('div', {
+            id: [false, 'id'],
+            'data-example': [true, 'example'],
+            class: [true, 'class1', 'class2'],
+            style: [false, "width:100px;", "width:150px;"]
+        });
+
+        expect(element.getAttributeRender()).to.equal('data-example="example" class="class1" style="width:150px;"');
+    });
+
     it('has an attribute when in tier1 position', () => {
         const element = new MockElement('div', {style:"width:100px;"});
 

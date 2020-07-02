@@ -32,7 +32,7 @@ export abstract class Element extends Renderable {
                 this.setIdentifierString(tier1);
             }
         } else if (isAttributes(tier1)) {
-            this.attributes = tier1;
+            this.setAttributes(tier1);
         } else { // Tier 1 does not exist so we do not need to check further
             return;
         }
@@ -41,7 +41,7 @@ export abstract class Element extends Renderable {
             if (isAttributes(tier1) && isAttributes(tier2)) {
                 throw new Error('Attributes field has been declared twice.');
             }
-            this.attributes = tier2;
+            this.setAttributes(tier2);
         }
     }
 
@@ -146,6 +146,24 @@ export abstract class Element extends Renderable {
         }
 
         return attributesEntries.reduce((str, [name, value]) => {
+            // If the attribute is an array like: [true, 'trueAttr', 'falseAttr']
+            // Then if true, use: 'trueAttr", else use: 'falseAttr'
+            if (Array.isArray(value)) {
+                // If the boolean element is true
+                if (value[0]) { // We should use the second element
+                    value = value[1] as (string|null);
+                } else if (value.length === 3) {
+                    // If the third element exists (and we already proved the boolean element is false) then
+                    // we should use the else text.
+                    value = value[2] as (string|null);
+                } else {
+                    // If false without an else, then we do not include this attribute at all.
+                    return str;
+                }
+            }
+
+            // A null value indicates that the attribute has no value.
+            // An attribute like multiple on select would do this: <select multiple></select>
             if (value === null) {
                 return str + ' ' + name;
             }

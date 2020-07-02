@@ -4,5 +4,5 @@
  * TODO: [p2] Add the list of possible HTML attributes here
  */
 export interface Attributes {
-    [key: string]: string | null | undefined;
+    [key: string]: string | null | Array<boolean | string | null>;
 }
