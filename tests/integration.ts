@@ -18,7 +18,7 @@ const data = {
             school: 'UGA',
             grade: 'Freshman',
             hometown: 'Hinesville',
-            gradePointAverage: 4.0,
+            gradePointAverage: '4.0',
         },
         is: {
             admin: false,
@@ -187,7 +187,96 @@ describe('Integration Testing', () => {
                     </div>
                     <div class="row">
                         <div class="col">
-                            <strong>Grade Point Average</strong>: 4
+                            <strong>Grade Point Average</strong>: 4.0
+                        </div>
+                    </div>
+                </div>
+                <div class="col col-xs-5 col-sm-5 col-md-5 text-right">
+                    <div class="row">
+                        <div class="col">
+                            <strong>Admin</strong>: <span class="permission-circle denied"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <strong>Volunteer</strong>: <span class="permission-circle granted"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                            <div class="col"><strong>Organizer</strong>: <span class="permission-circle granted"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <strong>Owner</strong>: <span class="permission-circle denied"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `);
+        expect(row).to.equal(resultingHTML);
+    });
+
+    it('it uses composes, custom pipes statements, and templates all together to render a complex HTML block', () => {
+        const row = H.div('.row.view-badge-info',
+            H.$if(!data.badge.isActive,
+                H.div('.row.text-center.inactive-badge', 'Disabled Badge')
+            ),
+            H.div('.col.col-xs-7.col-sm-7.col-md-7.text-left',
+                H.row('Name', '{{user.name}}'),
+                H.row('Email', '{{user.email}}'),
+                H.row('Points', '{{user.points}}'),
+                H.$each(Object.entries(data.user.application),
+                    H.row('{{item[0]|unCamelCase}}', '{{item[1]}}')
+                )
+            ),
+            H.div('.col.col-xs-5.col-sm-5.col-md-5.text-right',
+                H.$each(Object.entries(data.user.is), ([name, value]) =>
+                    H.row(
+                        H.string('{{name|unCamelCase}}').render({name}),
+                        H.span('.permission-circle' + (value ? '.granted' : '.denied'))
+                    )
+                )
+            )
+        ).render(data);
+
+        const resultingHTML = removeSpace(`
+            <div class="row view-badge-info">
+                <div class="row text-center inactive-badge">Disabled Badge</div>
+                <div class="col col-xs-7 col-sm-7 col-md-7 text-left">
+                    <div class="row">
+                        <div class="col">
+                            <strong>Name</strong>: Shawn Holman
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <strong>Email</strong>: the.ikick@gmail.com
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <strong>Points</strong>: 0
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <strong>School</strong>: UGA
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <strong>Grade</strong>: Freshman
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <strong>Hometown</strong>: Hinesville
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <strong>Grade Point Average</strong>: 4.0
                         </div>
                     </div>
                 </div>

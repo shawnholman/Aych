@@ -4,6 +4,7 @@ import {Each} from "../../src/structural/Each";
 
 describe('Each', () => {
     const TEST_ARRAY = ['dog', 'cat', 'rat'];
+    const TEST_SET = new Set(TEST_ARRAY);
 
     it('renders nothing if the list is empty', () => {
         const element = new Each([], new NestableElement('div'));
@@ -19,6 +20,12 @@ describe('Each', () => {
 
     it('renders a list of strings via built in templates', () => {
         const element = new Each(TEST_ARRAY,'{{i}}:{{item}};');
+        const rendered = element.render();
+        expect(rendered).to.equal('0:dog;1:cat;2:rat;');
+    });
+
+    it('renders a list of strings via built in templates using a set', () => {
+        const element = new Each(TEST_SET,'{{i}}:{{item}};');
         const rendered = element.render();
         expect(rendered).to.equal('0:dog;1:cat;2:rat;');
     });
@@ -47,7 +54,7 @@ describe('Each', () => {
         expect(rendered).to.equal('0:dog;1:cat;2:rat;');
     });
 
-    it('renders the empty element when the list is empty', () => {
+    it('renders the empty element when the iterable is empty', () => {
         const element = new Each([],'{{i}}:{{thing}};').empty('empty');
         const element2 = new Each([],'{{i}}:{{thing}};').empty(new NestableElement('div'));
         const rendered = element.render();
@@ -56,7 +63,7 @@ describe('Each', () => {
         expect(rendered2).to.equal('<div></div>');
     });
 
-    it('renders an empty string if the list is empty and no empty element is set', () => {
+    it('renders an empty string if the iterable is empty and no empty element is set', () => {
         const element = new Each([],'{{i}}:{{thing}};');
         const rendered = element.render();
         expect(rendered).to.equal('');
@@ -70,5 +77,29 @@ describe('Each', () => {
         ).setItemName('itemI');
         const render = element.render();
         expect(render).to.equal('<div>i: 0, j: 0; itemI: 1, itemJ: 1</div><div>i: 0, j: 1; itemI: 1, itemJ: 2</div><div>i: 0, j: 2; itemI: 1, itemJ: 3</div><div>i: 1, j: 0; itemI: 2, itemJ: 1</div><div>i: 1, j: 1; itemI: 2, itemJ: 2</div><div>i: 1, j: 2; itemI: 2, itemJ: 3</div><div>i: 2, j: 0; itemI: 3, itemJ: 1</div><div>i: 2, j: 1; itemI: 3, itemJ: 2</div><div>i: 2, j: 2; itemI: 3, itemJ: 3</div>');
+    });
+
+    it('iterates through an object using a render function with the help of Object.entries', () => {
+        const data = {
+            'k1': 'value1',
+            'k2': 'value2',
+            'k3': 'value3',
+        };
+        const element = new Each(Object.entries(data), ([key, value]) => {
+            return key + '-' + value + '|';
+        });
+        const render = element.render();
+        expect(render).to.equal('k1-value1|k2-value2|k3-value3|');
+    });
+
+    it('iterates through an object without a render function with the help of Object.entries', () => {
+        const data = {
+            'k1': 'value1',
+            'k2': 'value2',
+            'k3': 'value3',
+        };
+        const element = new Each(Object.entries(data), '{{item[0]}}-{{item[1]}}|');
+        const render = element.render();
+        expect(render).to.equal('k1-value1|k2-value2|k3-value3|');
     });
 });
