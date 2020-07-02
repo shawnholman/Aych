@@ -6,6 +6,29 @@ function removeSpace(str: string): string {
     return str.split('\n').map((line) => line.trim()).join('');
 }
 
+const data = {
+    badge: {
+        isActive: false,
+    },
+    user: {
+        name: 'Shawn Holman',
+        email: 'the.ikick@gmail.com',
+        points: 0,
+        application: {
+            school: 'UGA',
+            grade: 'Freshman',
+            hometown: 'Hinesville',
+            gradePointAverage: 4.0,
+        },
+        is: {
+            admin: false,
+            volunteer: true,
+            organizer: true,
+            owner: false,
+        },
+    },
+};
+
 describe('Integration Testing', () => {
     it('renders a complex flow of nested elements', () => {
         const popup = H.div('#popup-container',
@@ -87,5 +110,110 @@ describe('Integration Testing', () => {
         `);
 
         expect(animalList).to.equal(resultingHTML);
+    });
+
+    it('it uses composes, custom pipes and statements all together to render a complex HTML block', () => {
+        Aych.compose('row', (...insides) =>
+            H.div('.row',
+                H.div('.col',
+                    H.strong(insides[0]),
+                    H.unescaped(": " + insides[1])
+                )
+            )
+        );
+
+        Aych.Piper.register('unCamelCase', (str) => {
+            return str.replace(/([A-Z])/g, ' $1').replace(/^./, (str: string) => str.toUpperCase());
+        });
+
+        const row = H.div('.row.view-badge-info',
+            H.$if(!data.badge.isActive,
+                H.div('.row.text-center.inactive-badge', 'Disabled Badge')
+            ),
+            H.div('.col.col-xs-7.col-sm-7.col-md-7.text-left',
+                H.row('Name', data.user.name),
+                H.row('Email', data.user.email),
+                H.row('Points', data.user.points || 0),
+                H.$each(Object.entries(data.user.application), ([name, value]) =>
+                    H.row(
+                        H.string('{{name|unCamelCase}}').render({name}),
+                        value || 'None'
+                    )
+                )
+            ),
+            H.div('.col.col-xs-5.col-sm-5.col-md-5.text-right',
+                H.$each(Object.entries(data.user.is), ([name, value]) =>
+                    H.row(
+                        H.string('{{name|unCamelCase}}').render({name}),
+                        H.span('.permission-circle' + (value ? '.granted' : '.denied'))
+                    )
+                )
+            )
+        ).r;
+
+        const resultingHTML = removeSpace(`
+            <div class="row view-badge-info">
+                <div class="row text-center inactive-badge">Disabled Badge</div>
+                <div class="col col-xs-7 col-sm-7 col-md-7 text-left">
+                    <div class="row">
+                        <div class="col">
+                            <strong>Name</strong>: Shawn Holman
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <strong>Email</strong>: the.ikick@gmail.com
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <strong>Points</strong>: 0
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <strong>School</strong>: UGA
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <strong>Grade</strong>: Freshman
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <strong>Hometown</strong>: Hinesville
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <strong>Grade Point Average</strong>: 4
+                        </div>
+                    </div>
+                </div>
+                <div class="col col-xs-5 col-sm-5 col-md-5 text-right">
+                    <div class="row">
+                        <div class="col">
+                            <strong>Admin</strong>: <span class="permission-circle denied"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <strong>Volunteer</strong>: <span class="permission-circle granted"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                            <div class="col"><strong>Organizer</strong>: <span class="permission-circle granted"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <strong>Owner</strong>: <span class="permission-circle denied"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `);
+        expect(row).to.equal(resultingHTML);
     });
 });
