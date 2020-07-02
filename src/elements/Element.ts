@@ -1,4 +1,4 @@
-import {Attributes} from "../interfaces";
+import {Attribute, Attributes} from "../interfaces";
 import {Renderable} from "../core/Renderable";
 import {isAttributes, isString} from "../Util";
 
@@ -11,8 +11,6 @@ const ID_IDENTIFIER = '#';
  */
 export abstract class Element extends Renderable {
     private readonly tag: string;
-    private id: string;
-    private classes: string[] = [];
     private attributes: Attributes = {};
 
     /**
@@ -51,13 +49,19 @@ export abstract class Element extends Renderable {
     }
 
     /** Get element id */
-    getId(): string {
-        return this.id;
+    getId(): string | null {
+        if (!Object.prototype.hasOwnProperty.call(this.attributes, 'id')) {
+            return null;
+        }
+        return this.attributes['id'] as string;
     }
 
     /** Get element class list */
     getClassList(): Array<string> {
-        return this.classes;
+        if (!Object.prototype.hasOwnProperty.call(this.attributes, 'class')) {
+            return [];
+        }
+        return (this.attributes['class'] as string).split(" ");
     }
 
     /** Get attributes */
@@ -69,36 +73,49 @@ export abstract class Element extends Renderable {
      * Set the ID.
      * @param id The new id.
      */
-    setId(id: string): void {
-        this.id = id;
+    setId(id: string): Element {
+        this.setAttribute('id', id);
+        return this;
     }
 
     /**
      * Sets the elements class list.
      * @param classes The new set of classes that the element will get.
      */
-    setClassList(classes: Array<string>): void {
-        this.classes = classes;
+    setClassList(classes: Array<string>): Element {
+        if (classes.length) {
+            this.setAttribute('class', classes.join(" "));
+        }
+        return this;
     }
 
     /**
      * Set the identifiers.
      * @param identifier An identifier string. See isIdentifierString for more information.
      */
-    setIdentifiers(identifier: string): void {
+    setIdentifiers(identifier: string): Element {
         if (Element.isIdentifierString(identifier)) {
             this.setIdentifierString(identifier);
         } else { // We are going to excuse a non-valid identifier string for now.
             console.warn('Identifier string was not valid. Setter had no effect.');
         }
+        return this;
     }
 
     /**
      * Sets the attributes
      * @param attributes
      */
-    setAttributes(attributes: Attributes): void {
-        this.attributes = attributes;
+    setAttributes(attributes: Attributes): Element {
+        for (let attribute in attributes) {
+            this.setAttribute(attribute, attributes[attribute]);
+        }
+        return this;
+    }
+
+    setAttribute(name: string, attribute: Attribute): Element {
+        this.attributes[name] = attribute;
+        return this;
     }
 
     /**
@@ -124,26 +141,18 @@ export abstract class Element extends Renderable {
     protected setIdentifierString(identifier: string): void {
         const identifiers = identifier.trim().split(CLASS_IDENTIFIER);
         if (identifiers[0].startsWith(ID_IDENTIFIER)) {
-            this.id = identifiers!.shift()!.substr(1);
+            this.setId(identifiers!.shift()!.substr(1));
         } else {
             // Else, it starts with a "." which results in a beginning empty string
             // that we need to remove.
             identifiers.shift();
         }
-        this.classes = identifiers;
+        this.setClassList(identifiers);
     }
 
     /** Given an object of attributes, converts attributes into the HTML equivalent list. */
     protected getHtmlAttributeList(): string {
         const attributesEntries = Object.entries(this.getAttributes());
-
-        if (this.getClassList().length > 0) {
-            const classString = this.getClassList().join(" ");
-            attributesEntries.unshift(['class', classString]);
-        }
-        if (this.getId()) {
-            attributesEntries.unshift(['id', this.getId()]);
-        }
 
         return attributesEntries.reduce((str, [name, value]) => {
             // If the attribute is an array like: [true, 'trueAttr', 'falseAttr']

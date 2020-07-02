@@ -76,7 +76,7 @@ describe('Element', () => {
 
         expect(element.getId()).to.equal('id');
         expect(element.getClassList()).to.deep.equal(['class1', 'class2', 'class3']);
-        expect(element.getAttributes()).to.deep.equal({style:"width:100px;",hidden:null});
+        expect(element.getAttributes()).to.deep.equal({class: "class1 class2 class3", id: "id", style:"width:100px;",hidden:null});
     });
 
     it('throws an error when multiple attributes are set', () => {
@@ -97,7 +97,7 @@ describe('Element', () => {
         expect(element.getAttributeRender()).to.equal('id="id" class="class1 class2 class3"');
 
         element.setAttributes({style:"width:100px;",hidden:null,lang:"en"});
-        expect(element.getAttributes()).to.deep.equal({style:"width:100px;",hidden:null,lang:"en"});
+        expect(element.getAttributes()).to.deep.equal({class: "class1 class2 class3", id: "id", style:"width:100px;",hidden:null,lang:"en"});
         expect(element.getAttributeRender()).to.equal('id="id" class="class1 class2 class3" style="width:100px;" hidden lang="en"');
 
 
