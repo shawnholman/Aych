@@ -2,7 +2,7 @@ import {EmptyElement} from "../elements/EmptyElement";
 import {NestableElement} from "../elements/NestableElement";
 import {Piper} from "./Piper";
 import {Renderable} from "./Renderable";
-import {Attributes} from "../interfaces";
+import {Attributes, SimpleObject} from "../interfaces";
 import {StringLiteral} from "./StringLiteral";
 import {Each, EachRenderFunction} from "../structural/Each";
 import {Group} from "../structural/Group";
@@ -130,6 +130,24 @@ export class Aych {
     /** @inheritDoc from Constructor of Each */
     $each(items: Iterable<any>, renderable: EachRenderFunction | Renderable | string, indexName?: string, itemName?: string): Each {
         return new Each(items, renderable, indexName, itemName);
+    }
+
+    /**
+     * Iterate through an object.
+     * @param items An object to iterate through.
+     * @param renderable The renderable to iterate.
+     */
+    $eachIn(items: SimpleObject, renderable: EachRenderFunction | Renderable | string): Each {
+        return new Each(Object.entries(items), renderable);
+    }
+
+    /**
+     * Render an element x number of times.
+     * @param times Number of times to render.
+     * @param renderable The renderable to render.
+     */
+    $repeat(times: number, renderable: EachRenderFunction | Renderable | string) {
+        return new Each([...Array(times).keys()], renderable);
     }
 
     /** @inheritDoc from Constructor of Group */

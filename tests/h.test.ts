@@ -163,6 +163,38 @@ describe('H', () => {
        });
     });
 
+    describe('eachIn', () => {
+        it('renders 4 div tags using renderable directly', () => {
+            const element = H.$eachIn({
+                'k1': 'val1',
+                'k2': 'val2',
+                'k3': 'val3',
+                'k4': 'val4',
+            }, H.div('{{item[0]}}:{{item[1]}}'));
+            const render = element.render();
+            expect(render).to.equal('<div>k1:val1</div><div>k2:val2</div><div>k3:val3</div><div>k4:val4</div>');
+        });
+
+        it('renders 4 div tags using renderable directly using EachFunction', () => {
+            const element = H.$eachIn({
+                'k1': 'val1',
+                'k2': 'val2',
+                'k3': 'val3',
+                'k4': 'val4',
+            }, ([key, value]) => H.div(key + ':' + value));
+            const render = element.render();
+            expect(render).to.equal('<div>k1:val1</div><div>k2:val2</div><div>k3:val3</div><div>k4:val4</div>');
+        });
+    })
+
+    describe('repeat', () => {
+        it('renders 4 div tags', () => {
+            const element = H.$repeat(4, H.div('{{i}}'));
+            const render = element.render();
+            expect(render).to.equal('<div>0</div><div>1</div><div>2</div><div>3</div>');
+        });
+    });
+
     describe('group', () => {
         it('renders a group', () => {
             const element = H.$group('1', '2', '3', '4');
