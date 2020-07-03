@@ -65,6 +65,18 @@ describe('Element', () => {
         expect(element.getAttributeRender()).to.equal('data-example="example" class="class1" style="width:150px;"');
     });
 
+    it('adds a class to the element using the attributes + operator', () => {
+        const element = new MockElement('div', '.class1', { class: '+class2' });
+        const element2 = new MockElement('div', { class: '+class1' });
+        expect(element.getClassList()).to.deep.equal(['class1', 'class2']);
+        expect(element2.getClassList()).to.deep.equal(['class1']);
+    });
+
+    it('throws an error when trying to add an existing class', () => {
+        expect(() => new MockElement('div', '.class1', { class: '+class1' }))
+            .to.throw('Duplicate class name can not be added.');
+    });
+
     it('has an attribute when in tier1 position', () => {
         const element = new MockElement('div', {style:"width:100px;"});
 
@@ -85,7 +97,7 @@ describe('Element', () => {
         }).to.throw('Attributes field has been declared twice.');
     });
 
-    it('can be set via setters', () => {
+    it('can set the element using setters', () => {
         const element = new MockElement('div');
 
         element.setId("id");
@@ -116,37 +128,4 @@ describe('Element', () => {
         expect(element.getClassList()).to.deep.equal(['col', 'col-xs']);
         expect(element.getAttributeRender()).to.equal('id="hello" class="col col-xs" style="width:100px;" hidden lang="en"');
     });
-
-    /*it('renders element using the each method', () => {
-        let element = new MockElement2('');
-
-        expect(element.each([1,2,3]))
-            .to.equal('{"item":1,"i":0}{"item":2,"i":1}{"item":3,"i":2}');
-
-        expect(element.each([1,2,3], {additional: 'true'}))
-            .to.equal('{"item":1,"i":0,"additional":"true"}{"item":2,"i":1,"additional":"true"}{"item":3,"i":2,"additional":"true"}');
-    });
-
-    it('renders element using the repeat method', () => {
-        let element = new MockElement2('');
-
-        expect(element.repeat(3))
-            .to.equal('{"item":0,"i":0}{"item":1,"i":1}{"item":2,"i":2}');
-
-        expect(element.repeat(3, {additional: 'true'}))
-            .to.equal('{"item":0,"i":0,"additional":"true"}{"item":1,"i":1,"additional":"true"}{"item":2,"i":2,"additional":"true"}');
-    });
-
-    it('renders element using the if method', () => {
-        let element = new MockElement2('').with({'test':'test'});
-
-        expect(element.if(true))
-            .to.equal('{"test":"test"}');
-
-        expect(element.if(true, {additional: 'true'}))
-            .to.equal('{"test":"test","additional":"true"}');
-
-        expect(element.if(false))
-            .to.equal('');
-    });*/
 });

@@ -137,6 +137,18 @@ export abstract class Element extends Renderable {
             }
         }
 
+        if (value !== null && name === 'class' && value.startsWith('+')) {
+            if (!Object.prototype.hasOwnProperty.call(this.attributes, 'class')) {
+                this.attributes['class'] = value.substr(1);
+            } else {
+                if ((this.attributes['class'] as string).includes(value.substr(1))) {
+                    throw new Error('Duplicate class name can not be added.');
+                }
+                this.attributes['class'] += " " + value.substr(1);
+            }
+            return this;
+        }
+
         this.attributes[name] = value;
 
         return this;
