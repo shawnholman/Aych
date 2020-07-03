@@ -134,7 +134,7 @@ describe('Integration Testing', () => {
                 H.row('Name', data.user.name),
                 H.row('Email', data.user.email),
                 H.row('Points', data.user.points || 0),
-                H.$each(Object.entries(data.user.application), ([name, value]) =>
+                H.$eachIn(data.user.application, ([name, value]) =>
                     H.row(
                         H.string('{{name|unCamelCase}}').render({name}),
                         value || 'None'
@@ -142,10 +142,10 @@ describe('Integration Testing', () => {
                 )
             ),
             H.div('.col.col-xs-5.col-sm-5.col-md-5.text-right',
-                H.$each(Object.entries(data.user.is), ([name, value]) =>
+                H.$eachIn(data.user.is, ([name, value]) =>
                     H.row(
                         H.string('{{name|unCamelCase}}').render({name}),
-                        H.span('.permission-circle' + (value ? '.granted' : '.denied'))
+                        H.span('.permission-circle', {class: [value, '+granted', '+denied']})
                     )
                 )
             )
@@ -226,15 +226,15 @@ describe('Integration Testing', () => {
                 H.row('Name', '{{user.name}}'),
                 H.row('Email', '{{user.email}}'),
                 H.row('Points', '{{user.points}}'),
-                H.$each(Object.entries(data.user.application),
+                H.$eachIn(data.user.application,
                     H.row('{{item[0]|unCamelCase}}', '{{item[1]}}')
                 )
             ),
             H.div('.col.col-xs-5.col-sm-5.col-md-5.text-right',
-                H.$each(Object.entries(data.user.is), ([name, value]) =>
+                H.$eachIn(data.user.is, ([name, value]) =>
                     H.row(
                         H.string('{{name|unCamelCase}}').render({name}),
-                        H.span('.permission-circle' + (value ? '.granted' : '.denied'))
+                        H.span('.permission-circle', {class: [value, '+granted', '+denied']})
                     )
                 )
             )
