@@ -113,8 +113,25 @@ export abstract class Element extends Renderable {
         return this;
     }
 
-    setAttribute(name: string, attribute: Attribute): Element {
-        this.attributes[name] = attribute;
+    setAttribute(name: string, value: Attribute): Element {
+        // If the attribute is an array like: [true, 'trueAttr', 'falseAttr']
+        // Then if true, use: 'trueAttr", else use: 'falseAttr'
+        if (Array.isArray(value)) {
+            // If the boolean element is true
+            if (value[0]) { // We should use the second element
+                value = value[1] as (string|null);
+            } else if (value.length === 3) {
+                // If the third element exists (and we already proved the boolean element is false) then
+                // we should use the else text.
+                value = value[2] as (string|null);
+            } else {
+                // If false without an else, then we do not include this attribute at all.
+                return this;
+            }
+        }
+
+        this.attributes[name] = value;
+
         return this;
     }
 
@@ -140,6 +157,7 @@ export abstract class Element extends Renderable {
      */
     protected setIdentifierString(identifier: string): void {
         const identifiers = identifier.trim().split(CLASS_IDENTIFIER);
+
         if (identifiers[0].startsWith(ID_IDENTIFIER)) {
             this.setId(identifiers!.shift()!.substr(1));
         } else {
@@ -155,22 +173,6 @@ export abstract class Element extends Renderable {
         const attributesEntries = Object.entries(this.getAttributes());
 
         return attributesEntries.reduce((str, [name, value]) => {
-            // If the attribute is an array like: [true, 'trueAttr', 'falseAttr']
-            // Then if true, use: 'trueAttr", else use: 'falseAttr'
-            if (Array.isArray(value)) {
-                // If the boolean element is true
-                if (value[0]) { // We should use the second element
-                    value = value[1] as (string|null);
-                } else if (value.length === 3) {
-                    // If the third element exists (and we already proved the boolean element is false) then
-                    // we should use the else text.
-                    value = value[2] as (string|null);
-                } else {
-                    // If false without an else, then we do not include this attribute at all.
-                    return str;
-                }
-            }
-
             // A null value indicates that the attribute has no value.
             // An attribute like multiple on select would do this: <select multiple></select>
             if (value === null) {
