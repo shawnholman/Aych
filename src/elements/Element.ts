@@ -113,6 +113,13 @@ export abstract class Element extends Renderable {
         return this;
     }
 
+    /**
+     * Sets an attribute of the element
+     * @param name Name of the attribute.
+     * @param value The attribute value. Alternatively accepts an array with the form: [condition, string1, string2?]
+     * which will use string1 if condition == trye. Otherwise it will use string2 if it exists. If string2 is not
+     * defined and condition == false, then the attribute will be omitted.
+     */
     setAttribute(name: string, value: Attribute): Element {
         // If the attribute is an array like: [true, 'trueAttr', 'falseAttr']
         // Then if true, use: 'trueAttr", else use: 'falseAttr'
