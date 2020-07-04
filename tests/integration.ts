@@ -305,4 +305,57 @@ describe('Integration Testing', () => {
         `);
         expect(row).to.equal(resultingHTML);
     });
+
+    it('scopes Aych and uses switches and groups to render an HTML page', () => {
+        const element = H.$(({ $switch, $case, $group, $repeat, div, input, html, body, title, head }) => {
+            const type = 'password';
+            return html(
+                head(
+                    title('Some Title'),
+                ),
+                body(
+                    // Useless group
+                    $group(
+                        div({ id: [type !== 'password', 'someid'] }, 'Test Div'),
+                        div({ class: [type === 'password', '+password', '+none']}, 'Test Div w/ Class')
+                    ),
+                    $switch(type,
+                        $case('text', input({ type: 'text' })),
+                        $case('password', input({ type: 'password' })),
+                        $case('hidden', input({ type: 'hidden' }))
+                    ),
+                    // Technically we can just write:
+                    input({ type }),
+                    $repeat(10, (i: number) => {
+                        return div('#div' + i, {class:[i >= 5, '+above', '+below']});
+                    })
+                )
+            )
+        });
+
+        const resultingHTML = removeSpace(`
+            <html>
+                <head>
+                    <title>Some Title</title>
+                </head>
+                <body>
+                    <div>Test Div</div>
+                    <div class="password">Test Div w/ Class</div>
+                    <input type="password">
+                    <input type="password">
+                    <div id="div0" class="below"></div>
+                    <div id="div1" class="below"></div>
+                    <div id="div2" class="below"></div>
+                    <div id="div3" class="below"></div>
+                    <div id="div4" class="below"></div>
+                    <div id="div5" class="above"></div>
+                    <div id="div6" class="above"></div>
+                    <div id="div7" class="above"></div>
+                    <div id="div8" class="above"></div>
+                    <div id="div9" class="above"></div>
+                </body>
+            </html>
+        `);
+        expect(element).to.equal(resultingHTML);
+    });
 });
