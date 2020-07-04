@@ -22,18 +22,6 @@ const VALID_COMPOSITION_NAME = /^[a-zA-Z]+$/g;
 export class Aych {
     private static scoped: Array<string> = [];
     private static isScoped = false;
-    /**
-     * TODO: [p2] Find a use case or remove for now.
-    private static strictMode = true;
-
-    static setStrictMode(mode: boolean) {
-        Aych.strictMode = mode;
-    }
-
-    static isStrictMode() {
-        return this.strictMode;
-    }
-     */
 
     /**
      * Factory for creating element factories.

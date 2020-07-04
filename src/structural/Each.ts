@@ -6,10 +6,6 @@ import {StringLiteral} from "../core/StringLiteral";
 export type EachRenderFunction = (item: any, index: number, items: Iterable<any>) => (Renderable | string);
 
 /**
- * TODO: [p2] Add support for object literals (SimpleObject) for iterating through.
- */
-
-/**
  * The Each class creates rendered renderables based on an Iterable.
  */
 export class Each extends Renderable {
