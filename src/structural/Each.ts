@@ -3,7 +3,7 @@ import {isRenderable, isString, merge} from "../Util";
 import {Renderable} from "../core/Renderable";
 import {StringLiteral} from "../core/StringLiteral";
 
-export type EachRenderFunction = (item: any, index: number, items: Iterable<any>) => (Renderable | string);
+export type EachRenderFunction = (item: any, index?: number, items?: Iterable<any>) => (Renderable | string);
 
 /**
  * The Each class creates rendered renderables based on an Iterable.
