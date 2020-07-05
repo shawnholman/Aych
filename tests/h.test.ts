@@ -229,5 +229,5 @@ describe('H', () => {
             const render2 = element2.render();
             expect(render2).to.equal('2');
         });
-    })
+    });
 });

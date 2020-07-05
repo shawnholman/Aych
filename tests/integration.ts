@@ -1,10 +1,7 @@
 import {H} from "../src/H";
 import {expect} from 'chai';
 import {Aych} from "../src/core/Aych";
-
-function removeSpace(str: string): string {
-    return str.split('\n').map((line) => line.trim()).join('');
-}
+import {removeSpaces} from "../src/Util";
 
 const data = {
     badge: {
@@ -51,7 +48,7 @@ describe('Integration Testing', () => {
             )
         ).render({category: 'Baseball', text: 'This is cool' });
 
-        const resultingHTML = removeSpace(`
+        const resultingHTML = removeSpaces(`
             <div id="popup-container">
                 <div class="veil"></div>
                 <div class="scanning-popup-scan">
@@ -86,7 +83,7 @@ describe('Integration Testing', () => {
             )
         ).setItemName('animal').render();
 
-        const resultingHTML = removeSpace(`
+        const resultingHTML = removeSpaces(`
             <div>
                 <span>Animal: Mouse</span>
                 <span>Number of Letters: 5</span>
@@ -151,7 +148,7 @@ describe('Integration Testing', () => {
             )
         ).r;
 
-        const resultingHTML = removeSpace(`
+        const resultingHTML = removeSpaces(`
             <div class="row view-badge-info">
                 <div class="row text-center inactive-badge">Disabled Badge</div>
                 <div class="col col-xs-7 col-sm-7 col-md-7 text-left">
@@ -240,7 +237,7 @@ describe('Integration Testing', () => {
             )
         ).render(data);
 
-        const resultingHTML = removeSpace(`
+        const resultingHTML = removeSpaces(`
             <div class="row view-badge-info">
                 <div class="row text-center inactive-badge">Disabled Badge</div>
                 <div class="col col-xs-7 col-sm-7 col-md-7 text-left">
@@ -333,7 +330,7 @@ describe('Integration Testing', () => {
             )
         });
 
-        const resultingHTML = removeSpace(`
+        const resultingHTML = removeSpaces(`
             <html>
                 <head>
                     <title>Some Title</title>
@@ -358,4 +355,52 @@ describe('Integration Testing', () => {
         `);
         expect(element).to.equal(resultingHTML);
     });
+
+    it('makes a table using a composable', () => {
+        Aych.compose("createTable", (tableData) => {
+            const { table, $each, $if, tr, td, th } = H;
+
+            return table(
+                $each(tableData, (row, rowCount) =>
+                    tr(
+                        $each(row,
+                            $if(rowCount == 0, th('{{item}}')).else(td('{{item}}'))
+                        )
+                    )
+                )
+            );
+        });
+        const table = H.createTable([
+            ['Name', 'Title', 'Hometown'],
+            ['Shawn', 'Director', 'Hinesville, GA'],
+            ['Jim', 'SWE', 'Savannah, GA'],
+            ['Carla', 'SWE', "Atlanta, GA"]
+        ]).r;
+
+        const resultingHTML = removeSpaces(`
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <th>Title</th>
+                        <th>Hometown</th>
+                    </tr>
+                    <tr>
+                        <td>Shawn</td>
+                        <td>Director</td>
+                        <td>Hinesville, GA</td>
+                    </tr>
+                    <tr>
+                        <td>Jim</td>
+                        <td>SWE</td>
+                        <td>Savannah, GA</td>
+                    </tr>
+                    <tr>
+                        <td>Carla</td>
+                        <td>SWE</td>
+                        <td>Atlanta, GA</td>
+                    </tr>
+                </table>
+           `)
+        expect(table).to.equal(resultingHTML);
+    })
 });

@@ -42,3 +42,11 @@ export function merge(priority?: SimpleObject, object?: SimpleObject) {
 export function kebabToCamelCase(str: string): string {
     return str.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
 }
+
+/**
+ * Removes unnecessary spaces and new lines from a string
+ * @param str The string to remove spaces from
+ */
+export function removeSpaces(str: string): string {
+    return str.split('\n').map((line) => line.trim()).join('');
+}
