@@ -25,21 +25,18 @@ export abstract class Element extends Renderable {
         // Assign the tag name. Make it lower case because HTML tags are typically lower cased.
         this.tag = tag.toLowerCase();
 
-        if (isString(tier1)) {
-            if (isString(tier1) && Element.isIdentifierString(tier1)) {
-                this.setIdentifierString(tier1);
-            }
+        if (isString(tier1) && Element.isIdentifierString(tier1)) {
+            this.setIdentifierString(tier1);
         } else if (isAttributes(tier1)) {
             this.setAttributes(tier1);
         } else { // Tier 1 does not exist so we do not need to check further
             return;
         }
 
-        if (isAttributes(tier2)) {
-            if (isAttributes(tier1) && isAttributes(tier2)) {
-                throw new Error('Attributes field has been declared twice.');
-            }
+        if (!isAttributes(tier1) && isAttributes(tier2)) {
             this.setAttributes(tier2);
+        } else {
+            throw new Error('Attributes field has been declared twice.');
         }
     }
 
@@ -199,5 +196,9 @@ export abstract class Element extends Renderable {
             }
             return str + ` ${name}="${value}"`;
         }, '');
+    }
+
+    private setTier1(tier1: string | Attributes) {
+
     }
 }
