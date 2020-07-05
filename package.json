@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "cross-env TS_NODE_FILES=true mocha --recursive --exit --require ts-node/register --colors \"tests/**/*.ts\"",
-    "coverage": "nyc npm run test",
+    "mocha": "cross-env TS_NODE_FILES=true mocha --recursive --exit --require ts-node/register --colors \"tests/**/*.ts\"",
+    "test": "nyc npm run mocha",
     "build": "webpack-cli",
     "lint": "npx eslint src"
   },
