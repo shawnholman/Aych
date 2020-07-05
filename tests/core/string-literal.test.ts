@@ -129,12 +129,17 @@ describe('StringLiteral', () => {
         expect(function () {
             const string = new StringLiteral('{{array[-2]?}}');
             string.render(arrayObj);
-        }).to.throw('Index out of bounds: array[-2].');
+        }).to.not.throw();
 
         expect(function () {
             const string = new StringLiteral('{{array[32]}}');
             string.render(arrayObj);
         }).to.throw('Index out of bounds: array[32].');
+
+        expect(function () {
+            const string = new StringLiteral('{{array[32]?}}');
+            string.render(arrayObj);
+        }).to.not.throw();
     });
 
     /*it('renders element using the each method', () => {

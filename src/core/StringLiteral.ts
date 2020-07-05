@@ -87,63 +87,80 @@ export class StringLiteral extends Renderable {
      *     getFromObject({ array: [{}, { key: 'value' }]}, 'array[1].key') ===> 'value'
      */
     private static getValueFromObject(object: SimpleObject, key: string): string {
-        const keys = key.trim().split(".");
+        const keys = key.split(".").map(this.parseKey);
         let track: any = object;
         let prevKey: string | undefined = undefined;
 
-        while (keys.length > 0) {
-            let key = keys[0].trim();
-            let isOptional = false;
-
-            if (key.endsWith("?")) {
-                isOptional = true;
-                // remove the optional sign
-                key = key.slice(0, -1);
-            }
-
-            // Checks to see if the key is an array. It should match: key[1] for example
-            // the match would return ['key[1]', 'key', '1']
-            const keyIsArray = key.match(/^([\w-_][\w\d-_]*)\[([-]?\d+)]$/);
-            if (keyIsArray) {
-                key = keyIsArray[1];
-            }
-
-            if (Object.prototype.hasOwnProperty.call(track, key)) {
-                if (keyIsArray) {
-                    const index = parseInt(keyIsArray[2]);
-
-                    if (index < 0) {
-                        throw new Error(`Index out of bounds: ${key}[${index}].`);
-                    }
-
-                    const child = track[key];
-                    if (Array.isArray(child)) {
-                        if (index >= child.length) {
-                            if (isOptional) {
-                                return '';
-                            }
-                            throw new Error(`Index out of bounds: ${key}[${index}].`);
-                        }
-                        track = child[index];
-                    } else {
-                        throw new Error(key + ' is not an array.');
-                    }
-                } else {
-                    track = track[key];
-                }
-            } else {
-                if (isOptional) {
+        for (let key of keys) {
+            // Key does not exist on track
+            if (!Object.prototype.hasOwnProperty.call(track, key.value)) {
+                if (key.isOptional) { // Does not matter if optional
                     return '';
                 }
                 if (prevKey === undefined) {
-                    throw new Error(key + " is undefined.");
+                    throw new Error(key.value + " is undefined.");
                 }
-                throw new Error(key + ` is not a property of ${prevKey}.`);
+                throw new Error(key.value + ` is not a property of ${prevKey}.`);
             }
-            prevKey = key;
-            keys.shift();
+
+            if (key.isArray) {
+                const index = key.array!.index;
+                const child = track[key.value];
+
+                if (!Array.isArray(child)) {
+                    throw new Error(key.value + ' is not an array.');
+                }
+
+                if (index < 0 || index >= child.length) {
+                    if (key.isOptional) {
+                        return '';
+                    }
+                    throw new Error(`Index out of bounds: ${key.value}[${index}].`);
+                }
+                track = child[index];
+                prevKey = key.value;
+                continue;
+            }
+
+            track = track[key.value];
+            prevKey = key.value;
         }
 
         return track.toString();
+    }
+
+    /**
+     * Converts a key into a token for template parsing
+     * @param key Key to convert
+     * @return
+     * @private
+     */
+    private static parseKey(key: string) {
+        key = key.trim();
+        let isOptional = false;
+
+        if (key.endsWith("?")) {
+            isOptional = true;
+            // remove the optional sign
+            key = key.slice(0, -1);
+        }
+
+        // Checks to see if the key is an array. It should match: key[1] for example
+        // the match would return ['key[1]', 'key', '1']
+        const keyIsArray = key.match(/^([\w-_][\w\d-_]*)\[([-]?\d+)]$/);
+        let index = -1;
+        if (keyIsArray) {
+            key = keyIsArray[1];
+            index = parseInt(keyIsArray[2]);
+        }
+
+        return {
+            value: key,
+            isOptional: isOptional,
+            isArray: !!keyIsArray,
+            array: keyIsArray ? {
+                index: index
+            } : null,
+        }
     }
 }
