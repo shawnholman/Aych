@@ -4,4 +4,4 @@ node_js:
 env:
   - CODECOV_TOKEN="9b70a2f9-643d-473f-8d31-c65aba087c17"
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
+  - bash <(curl -s https://codecov.io/bash) -v
