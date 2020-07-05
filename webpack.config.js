@@ -4,10 +4,10 @@ var nodeExternals = require('webpack-node-externals');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 
 module.exports = {
-    mode: "development",
+    mode: "production",
     entry: './src/H.ts',
     output: {
-        filename: 'H.js', // <-- Important
+        filename: 'aych.js', // <-- Important
         libraryTarget: 'this' // <-- Important
     },
     target: 'node', // <-- Important
