@@ -7,7 +7,7 @@ module.exports = {
     mode: "production",
     entry: './src/H.ts',
     output: {
-        filename: 'aych.js', // <-- Important
+        filename: 'aych.min.js', // <-- Important
         libraryTarget: 'this' // <-- Important
     },
     target: 'node', // <-- Important
