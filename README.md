@@ -3,7 +3,7 @@ A javascript library for writing eloquent HTML to create dynamic webpages withou
 the bells and whistles of a framework.
 
 ![build](https://travis-ci.com/shawnholman/Aych.svg?token=593S1dXVHUzTznXmMuYA&branch=master&status=created)
-[![coverage](https://codecov.io/gh/shawnholman/Aych/branch/master/graph/badge.svg?token=XLW5V9O2CF)](https://codecov.io/gh/shawnholman/Aych)
+[![coverage](https://img.shields.io/codecov/c/github/shawnholman/aych/master?token=XLW5V9O2CF)](https://codecov.io/gh/shawnholman/Aych)
 [![Maintainability](https://api.codeclimate.com/v1/badges/b154a8ee535354814515/maintainability)](https://codeclimate.com/github/shawnholman/Aych/maintainability)
 ## Overview
 Writing HTML inside of JavaScript has been a pain for many years for myself. With today’s 
