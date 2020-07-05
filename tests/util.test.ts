@@ -1,7 +1,6 @@
 import {expect} from 'chai';
 import {isAttributes, isRenderable, isString, merge, kebabToCamelCase} from "../src/Util";
-import {Attributes} from "../src/interfaces/Attributes";
-import {SimpleObject} from "../src/interfaces/simple-object";
+import {Attributes, SimpleObject} from "../src/interfaces";
 import {Renderable} from "../src/core/Renderable";
 
 describe('Util', () => {
