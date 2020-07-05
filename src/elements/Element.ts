@@ -33,6 +33,10 @@ export abstract class Element extends Renderable {
             return;
         }
 
+        if (!tier2) {
+            return;
+        }
+
         if (!isAttributes(tier1) && isAttributes(tier2)) {
             this.setAttributes(tier2);
         } else {
@@ -196,9 +200,5 @@ export abstract class Element extends Renderable {
             }
             return str + ` ${name}="${value}"`;
         }, '');
-    }
-
-    private setTier1(tier1: string | Attributes) {
-
     }
 }
