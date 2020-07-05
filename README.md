@@ -2,6 +2,8 @@
 A javascript library for writing eloquent HTML to create dynamic webpages without 
 the bells and whistles of a framework.
 
+![](https://travis-ci.com/shawnholman/Aych.svg?token=593S1dXVHUzTznXmMuYA&branch=master&status=created)
+
 ## Overview
 Writing HTML inside of JavaScript has been a pain for many years for myself. With today’s 
 technologies, you are either stuck with a blob of HTML inside of your JavaScript, you rely 
