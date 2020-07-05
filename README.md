@@ -1,8 +1,8 @@
-#Ayc[H]
+# Ayc[H]
 A javascript library for writing eloquent HTML to create dynamic webpages without 
 the bells and whistles of a framework.
 
-##Overview
+## Overview
 Writing HTML inside of JavaScript has been a pain for many years for myself. With today’s 
 technologies, you are either stuck with a blob of HTML inside of your JavaScript, you rely 
 on heavy templating engines that hardly make anything better, or you use a framework. 
@@ -11,9 +11,9 @@ make dynamic HTML independent of large frameworks that do the heavy lifting. Ayc
 a micro-library to facilitate writing eloquent HTML inside of JavaScript. 
 It’s that simple, but very powerful.
 
-##Example Usage
+## Example Usage
 
-####Using Aych:
+#### Using Aych:
 ```javascript
 H.div('#example.row.view-badge-info',
     H.$if(!data.badge.isActive,
@@ -38,7 +38,7 @@ H.div('#example.row.view-badge-info',
 ).render(data);
 ```
 
-####Resulting HTML
+#### Resulting HTML
 ```html
 <div id="example" class="row view-badge-info">
     <div class="row text-center inactive-badge">Disabled Badge</div>
