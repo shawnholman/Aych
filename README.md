@@ -12,6 +12,7 @@ a micro-library to facilitate writing eloquent HTML inside of JavaScript.
 It’s that simple, but very powerful.
 
 ## Example Usage
+The following is an example of one way Aych can be used. See the `tests` folder for a comprehensive set of examples.
 #### Using Aych:
 ```javascript
 H.div('#example.row.view-badge-info',
@@ -101,7 +102,7 @@ H.div('#example.row.view-badge-info',
     </div>
 </div>
 ```
-
+   
 ## Downloading
 In order to use Aych, download `aych.min.js` from the dist folder and load with:
 ```html
