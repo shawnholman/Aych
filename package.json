@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "mocha": "cross-env TS_NODE_FILES=true mocha --recursive --exit --require ts-node/register --colors \"tests/**/*.ts\"",
-    "test": "nyc npm run mocha",
+    "test": "nyc npm run mocha && nyc report --reporter=json > coverage/coverage.json",
     "build": "webpack-cli",
     "lint": "npx eslint src"
   },
