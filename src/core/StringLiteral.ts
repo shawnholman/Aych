@@ -163,13 +163,4 @@ export class StringLiteral extends Renderable {
             } : null,
         }
     }
-
-    /**
-     * Tries to create a string literal if the passed in argument is a string. Otherwise, if already a renderable,
-     * return that renderable.
-     * @param from The item to convert.
-     */
-    static factory (from: string | Renderable): Renderable {
-        return isString(from) ? new StringLiteral(from) : from;
-    }
 }

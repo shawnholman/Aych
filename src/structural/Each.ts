@@ -24,16 +24,18 @@ export class Each extends Renderable {
      * @param indexName The index name used for the template string for each renderable.
      * @param itemName The item name used for the template string for each renderable.
      */
-    constructor(items: Iterable<any>, toRender: EachRenderFunction | Renderable | string, indexName = 'i', itemName = 'item') {
+    constructor(items: Iterable<any>, renderable: EachRenderFunction | Renderable | string, indexName = 'i', itemName = 'item') {
         super();
         this.items = items;
         this.indexName = indexName;
         this.itemName = itemName;
 
-        if (isString(toRender) || isRenderable(toRender)) {
-            this.renderable = StringLiteral.factory(toRender);
+        if (isString(renderable)) {
+            this.renderable = new StringLiteral(renderable);
+        } else if (isRenderable(renderable)) {
+            this.renderable = renderable;
         } else {
-            this.renderFunction = toRender;
+            this.renderFunction = renderable;
         }
     }
 
@@ -42,7 +44,7 @@ export class Each extends Renderable {
      * @param renderable The renderable that gets used if the list is empty.
      */
     empty(renderable: Renderable | string): Each {
-        this.ifEmptyRenderable = StringLiteral.factory(renderable);
+        this.ifEmptyRenderable = isString(renderable) ? new StringLiteral(renderable) : renderable;
         return this;
     }
 
@@ -110,7 +112,9 @@ export class Each extends Renderable {
                 [this.indexName]: i,
             };
 
-            renderable = StringLiteral.factory(renderable);
+            if (isString(renderable)) {
+                renderable = new StringLiteral(renderable);
+            }
 
             render += renderable.render(merge(iteration, templates));
             i++;

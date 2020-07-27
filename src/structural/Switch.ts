@@ -27,8 +27,8 @@ export class Switch<T extends Switchable> extends Renderable {
      * Sets the default renderable when no case is found.
      * @param renderable The renderable to set to.
      */
-    default(toRender: Renderable | string): Renderable {
-        this.defaultRenderable = StringLiteral.factory(toRender);
+    default(renderable: Renderable | string): Renderable {
+        this.defaultRenderable = isString(renderable) ? new StringLiteral(renderable) : renderable;
         return this;
     }
 
@@ -62,9 +62,9 @@ export namespace Switch {
          * @param value The value determines which cases is chosen and rendered.
          * @param renderable The renderable associated with this case.
          */
-        constructor(value: T, toRender: Renderable | string) {
+        constructor(value: T, renderable: Renderable | string) {
             this.value = value;
-            this.renderable = StringLiteral.factory(toRender);
+            this.renderable = isString(renderable) ? new StringLiteral(renderable) : renderable;
         }
 
         /** Gets the renderable */
