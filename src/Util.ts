@@ -2,7 +2,7 @@ import {Attributes, SimpleObject} from "./interfaces";
 import {Renderable} from './core/Renderable';
 
 /**
- * Determines if parameter is a Renderable
+ * Determines if parameter is a Renderable.
  * @param param
  */
 export function isRenderable(param?: any): param is Renderable {
@@ -10,7 +10,7 @@ export function isRenderable(param?: any): param is Renderable {
 }
 
 /**
- * Determines if parameter is a a string
+ * Determines if parameter is a a string.
  * @param param
  */
 export function isString(param?: any): param is string {
@@ -27,9 +27,9 @@ export function isAttributes(param?: any): param is Attributes {
 }
 
 /**
- * Merge two simple objects together
- * @param priority the priority object will not have any of its properties overriden
- * @param object priority will get merged into this object
+ * Merges two simple objects together.
+ * @param priority The priority object will not have any of its properties overriden.
+ * @param object Priority will get merged into this object.
  */
 export function merge(priority?: SimpleObject, object?: SimpleObject) {
     return { ...object, ...priority };
@@ -44,8 +44,8 @@ export function kebabToCamelCase(str: string): string {
 }
 
 /**
- * Removes unnecessary spaces and new lines from a string
- * @param str The string to remove spaces from
+ * Removes unnecessary spaces and new lines from a string.
+ * @param str The string to remove spaces from.
  */
 export function removeSpaces(str: string): string {
     return str.split('\n').map((line) => line.trim()).join('');
