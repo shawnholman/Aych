@@ -20,31 +20,31 @@ export class Each extends Renderable {
     /**
      * Construct the each statement
      * @param items The items used to iterate through.
-     * @param renderable The renderable to create for each item in items.
+     * @param toRender The renderable to create for each item.
      * @param indexName The index name used for the template string for each renderable.
      * @param itemName The item name used for the template string for each renderable.
      */
-    constructor(items: Iterable<any>, renderable: EachRenderFunction | Renderable | string, indexName = 'i', itemName = 'item') {
+    constructor(items: Iterable<any>, toRender: EachRenderFunction | Renderable | string, indexName = 'i', itemName = 'item') {
         super();
         this.items = items;
         this.indexName = indexName;
         this.itemName = itemName;
 
-        if (isString(renderable)) {
-            this.renderable = new StringLiteral(renderable);
-        } else if (isRenderable(renderable)) {
-            this.renderable = renderable;
+        if (isString(toRender)) {
+            this.renderable = new StringLiteral(toRender);
+        } else if (isRenderable(toRender)) {
+            this.renderable = toRender;
         } else {
-            this.renderFunction = renderable;
+            this.renderFunction = toRender;
         }
     }
 
     /**
      * Sets the empty renderable which gets used if the list is empty.
-     * @param renderable The renderable that gets used if the list is empty.
+     * @param toRender The default renderable if the list is empty.
      */
-    empty(renderable: Renderable | string): Each {
-        this.ifEmptyRenderable = isString(renderable) ? new StringLiteral(renderable) : renderable;
+    empty(toRender: Renderable | string): Each {
+        this.ifEmptyRenderable = isString(toRender) ? new StringLiteral(toRender) : toRender;
         return this;
     }
 
@@ -106,17 +106,17 @@ export class Each extends Renderable {
         let render = '';
         let i = 0;
         for (const item of this.items) {
-            let renderable = this.renderFunction(item, i, this.items);
+            let toRender = this.renderFunction(item, i, this.items);
             const iteration = {
                 [this.itemName]: item,
                 [this.indexName]: i,
             };
 
-            if (isString(renderable)) {
-                renderable = new StringLiteral(renderable);
+            if (isString(toRender)) {
+                toRender = new StringLiteral(toRender);
             }
 
-            render += renderable.render(merge(iteration, templates));
+            render += toRender.render(merge(iteration, templates));
             i++;
         }
         return render;

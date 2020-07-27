@@ -14,39 +14,40 @@ export class If extends Renderable {
 
     /**
      * Constructor
-     * @param condition THe condition that determines if the renderable gets rendered.
-     * @param ifRenderable The renderable to render if the condition is true.
-     * @param elseRenderable The renderable to render if the condition is false.
+     * @param condition The condition that determines if the renderable gets rendered.
+     * @param toRenderIf The renderable to render if the condition is true.
+     * @param toRenderElse The renderable to render if the condition is false (and no truthy elif exists).
      */
-    constructor(condition: boolean, ifRenderable: Renderable | string, elseRenderable?: Renderable | string) {
+    constructor(condition: boolean, toRenderIf: Renderable | string, toRenderElse?: Renderable | string) {
         super();
         this.condition = condition;
 
-        this.ifRenderable = isString(ifRenderable) ? new StringLiteral(ifRenderable) : ifRenderable;
+        this.ifRenderable = isString(toRenderIf) ? new StringLiteral(toRenderIf) : toRenderIf;
 
-        if (elseRenderable) {
-            this.else(elseRenderable);
+        if (toRenderElse) {
+            this.else(toRenderElse);
         }
     }
 
     /**
      * Sets the else renderable.
-     * @param elseRenderable The renderable to render if the condition is false.
+     * @param toRender The renderable to render if the condition is false (and no truthy elif exists).
      */
-    else(elseRenderable: Renderable | string): Renderable {
-        this.elseRenderable = isString(elseRenderable) ? new StringLiteral(elseRenderable) : elseRenderable;
+    else(toRender: Renderable | string): If {
+        this.elseRenderable = isString(toRender) ? new StringLiteral(toRender) : toRender;
         return this;
     }
 
     /**
-     * Add a new elif block.
-     * @param elifRenderable The renderable to try and render when the if block does not run.
+     * Adds a new elif block.
+     * @param condition The condition that determines if the renderable gets rendered.
+     * @param toRender The renderable to render if the condition is true (and the if renderable is false).
      */
-    elif(condition: boolean, elifRenderable: Renderable | string): If {
+    elif(condition: boolean, toRender: Renderable | string): If {
         // Only given that the original if condition is false, and the elif condition is true,
         // and no other elif has been found already then we can set elif.
         if (!this.condition && condition && this.elifRenderable === undefined) {
-            this.elifRenderable = isString(elifRenderable) ? new StringLiteral(elifRenderable) : elifRenderable;
+            this.elifRenderable = isString(toRender) ? new StringLiteral(toRender) : toRender;
         }
         return this;
     }
