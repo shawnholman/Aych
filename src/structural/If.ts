@@ -18,14 +18,14 @@ export class If extends Renderable {
      * @param ifRenderable The renderable to render if the condition is true.
      * @param elseRenderable The renderable to render if the condition is false.
      */
-    constructor(condition: boolean, ifRenderable: Renderable | string, elseRenderable?: Renderable | string) {
+    constructor(condition: boolean, toRenderIf: Renderable | string, toRenderElse?: Renderable | string) {
         super();
         this.condition = condition;
 
-        this.ifRenderable = isString(ifRenderable) ? new StringLiteral(ifRenderable) : ifRenderable;
+        this.ifRenderable = StringLiteral.factory(toRenderIf);
 
-        if (elseRenderable) {
-            this.else(elseRenderable);
+        if (toRenderElse) {
+            this.else(toRenderElse);
         }
     }
 
@@ -33,8 +33,8 @@ export class If extends Renderable {
      * Sets the else renderable.
      * @param elseRenderable The renderable to render if the condition is false.
      */
-    else(elseRenderable: Renderable | string): Renderable {
-        this.elseRenderable = isString(elseRenderable) ? new StringLiteral(elseRenderable) : elseRenderable;
+    else(toRenderElse: Renderable | string): Renderable {
+        this.elseRenderable = StringLiteral.factory(toRenderElse);
         return this;
     }
 
@@ -42,11 +42,11 @@ export class If extends Renderable {
      * Add a new elif block.
      * @param elifRenderable The renderable to try and render when the if block does not run.
      */
-    elif(condition: boolean, elifRenderable: Renderable | string): If {
+    elif(condition: boolean, toRenderElif: Renderable | string): If {
         // Only given that the original if condition is false, and the elif condition is true,
         // and no other elif has been found already then we can set elif.
         if (!this.condition && condition && this.elifRenderable === undefined) {
-            this.elifRenderable = isString(elifRenderable) ? new StringLiteral(elifRenderable) : elifRenderable;
+            this.elifRenderable = StringLiteral.factory(toRenderElif);
         }
         return this;
     }
