@@ -1,0 +1,10 @@
+{
+  "inputFiles": ["./src"],
+  "mode": "modules",
+  "out": "./docs",
+  "name": "Aych",
+  "excludePrivate": true,
+  "stripInternal": true,
+  "excludeExternals": true,
+  "excludeNotExported": true
+}

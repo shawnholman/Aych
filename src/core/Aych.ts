@@ -9,12 +9,11 @@ import {Group} from "../structural/Group";
 import {If} from "../structural/If";
 import {Switch, Switchable} from "../structural/Switch";
 import {kebabToCamelCase, isRenderable, isString} from "../Util";
-import {Element} from "../elements/Element";
 
-/** Matches a valid HTML tag name */
+/** @ignore Matches a valid HTML tag name */
 const VALID_HTML_TAG_NAME = /^[a-zA-Z][a-zA-Z0-9]*(-[a-zA-Z]+)*$/g;
 
-/** Matches a valid name for a composition */
+/** @ignore Matches a valid name for a composition */
 const VALID_COMPOSITION_NAME = /^[a-zA-Z]+$/g;
 /**
  * The Aych class exposes all of the libraries features in an encapsulated package.
@@ -101,6 +100,10 @@ export class Aych {
 
     // ---------- Statements prefixed by $ ----------
 
+    /**
+     * Scopes Aych
+     * @param scope
+     */
     // @ts-ignore
     $(scope: (self: Aych) => void | string | Renderable): void | string {
         Aych.isScoped = true;
@@ -115,13 +118,19 @@ export class Aych {
         }
     }
 
-    /** @inheritDoc from Constructor of Each */
+    /**
+     * Renders a renderable for each item in a list.
+     * @param items The items used to iterate through.
+     * @param toRender The renderable to create for each item.
+     * @param indexName The index name used for the template string for each renderable.
+     * @param itemName The item name used for the template string for each renderable.
+     */
     $each(items: Iterable<any>, renderable: EachRenderFunction | Renderable | string, indexName?: string, itemName?: string): Each {
         return new Each(items, renderable, indexName, itemName);
     }
 
     /**
-     * Iterate through an object.
+     * Renders a renderable for each key/value pair in an object.
      * @param items An object to iterate through.
      * @param renderable The renderable to iterate.
      */
@@ -130,7 +139,7 @@ export class Aych {
     }
 
     /**
-     * Render an element x number of times.
+     * Renders a renderable x number of times.
      * @param times Number of times to render.
      * @param renderable The renderable to render.
      */
@@ -138,17 +147,29 @@ export class Aych {
         return new Each([...Array(times).keys()], renderable);
     }
 
-    /** @inheritDoc from Constructor of Group */
+    /**
+     * Renders a set of Renderable one after another.
+     * @param members A set of one or more members to add to the group.
+     */
     $group (...members: (Renderable|string)[]): Group {
         return new Group(...members);
     }
 
-    /** @inheritDoc from Constructor of If */
+    /**
+     * Renders a Renderable based on a condition.
+     * @param condition The condition that determines if the renderable gets rendered.
+     * @param toRenderIf The renderable to render if the condition is true.
+     * @param toRenderElse The renderable to render if the condition is false (and no truthy elif exists).
+     */
     $if (condition: boolean, ifRenderable: Renderable | string, elseRenderable?: Renderable | string): If {
         return new If(condition, ifRenderable, elseRenderable);
     }
 
-    /** @inheritDoc from Constructor of Switch */
+    /**
+     * Renders one out of one or more renderable based on the value of the switch.
+     * @param value The value determines which cases is chosen and rendered.
+     * @param cases A set of cases with a value associated to it.
+     */
     $switch (value: Switchable, ...cases: Switch.Case<Switchable>[]): Switch<Switchable> {
         if (isString(value)) {
             return new Switch(value as string, ...cases as Switch.Case<string>[]);
@@ -157,7 +178,11 @@ export class Aych {
         }
     }
 
-    /** @inheritDoc from Constructor of Switch.Case */
+    /**
+     * A case for the switch statements.
+     * @param value The value determines which cases is chosen and rendered.
+     * @param renderable The renderable associated with this case.
+     */
     // @ts-ignore that the return type is not a renderable (an exception)
     $case (value: Switchable, renderable: Renderable | string): Switch.Case<Switchable> {
         if (isString(value)) {
@@ -202,6 +227,7 @@ export namespace Aych {
     }
 }
 
+/** List of nested elements available through Aych */
 const nestedElements = [
     'a',
     'abbr',
@@ -302,6 +328,7 @@ const nestedElements = [
 ];
 nestedElements.forEach((tag) => Aych.create(Aych.ElementType.NESTED, tag));
 
+/** List of empty elements available through Aych */
 const emptyElements = [
     'area',
     'base',

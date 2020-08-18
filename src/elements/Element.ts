@@ -2,7 +2,10 @@ import {Attribute, Attributes} from "../interfaces";
 import {Renderable} from "../core/Renderable";
 import {isAttributes, isString} from "../Util";
 
+/** @ignore */
 const CLASS_IDENTIFIER = '.';
+
+/** @ignore */
 const ID_IDENTIFIER = '#';
 
 /**
@@ -138,6 +141,7 @@ export abstract class Element extends Renderable {
             }
         }
 
+        // TODO: Add ability to remove class
         if (value !== null && name === 'class' && value.startsWith('+')) {
             if (!Object.prototype.hasOwnProperty.call(this.attributes, 'class')) {
                 this.attributes['class'] = value.substr(1);

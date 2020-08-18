@@ -10,6 +10,10 @@ import {merge} from "../Util";
  */
 export abstract class Renderable {
     protected templates: SimpleObject = {};
+
+    /**
+     * Whether or not the Renderable can render itself.
+     */
     private canRender = true;
 
     /**
@@ -66,21 +70,6 @@ export abstract class Renderable {
     public toString = () : string => {
         return this.render();
     }
-
-    /** @inheritdoc */
-    /*each(items: Iterable<any>, templates?: SimpleObject): string {
-        return new Each(items, this).render(templates);
-    }*/
-
-    /** @inheritdoc */
-    /*repeat(x: number, templates?: SimpleObject): string {
-        return new Each([...Array(x).keys()], this).render(templates);
-    }*/
-
-    /** @inheritdoc */
-    /*if(condition: boolean, templates?: SimpleObject): string {
-        return new If(condition, this).render(templates);
-    }*/
 
     /**
      * The internal render functions is used to define how a subclass renders itself.

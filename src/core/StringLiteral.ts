@@ -3,21 +3,36 @@ import {Piper} from "./Piper";
 import {Renderable} from "./Renderable";
 import {isString} from "../Util";
 
-const TEMPLATE_START_TAG = '{{';
-const TEMPLATE_END_TAG = '}}';
-const TEMPLATE_FILTER_PIPE = '|';
+/** @internal */
+const templatingTags = {
+    start: '{{',
+    end: '{{',
+    pipe: '|',
+};
 
-const TEMPLATE_BUFFERED_START_TAG = TEMPLATE_START_TAG + '\\s*';
-const TEMPLATE_BUFFERED_END_TAG = '\\s*' + TEMPLATE_END_TAG;
-const TEMPLATE_BUFFERED_FILTER_PIPE = '\\s*\\' + TEMPLATE_FILTER_PIPE + '\\s*';
+/** @internal */
+const bufferedTemplatingTags = {
+    start: templatingTags.start + '\\s*',
+    end: '\\s*' + templatingTags.end,
+    pipe: '\\s*' + templatingTags.pipe + '\\s*',
+};
+
+/** @internal */
 const FULL_IDENTIFIER = '(([\\w-_][\\w\\d-_]*(\\[-?\\d+\\])?\\??)(\\.[\\w-_][\\w\\d-_]*(\\[-?\\d+\\])?\\??)*)';
-const FILTER = '(' + TEMPLATE_BUFFERED_FILTER_PIPE + '(([\\w-_][\\w\\d-_]*)(\\((([\\w\\d]+)(,\\s*[\\w\\d]+)*)?\\))?))?';
-const TEMPLATE_TAG =
-    new RegExp(TEMPLATE_BUFFERED_START_TAG + FULL_IDENTIFIER + FILTER + TEMPLATE_BUFFERED_END_TAG, 'g');
 
-const PIPE_KEY_INDEX = 1;
-const PIPE_FUNC_NAME_INDEX = 8;
-const PIPE_PARAMETERS_INDEX = 10;
+/** @internal */
+const FILTER = '(' + (bufferedTemplatingTags.pipe) + '(([\\w-_][\\w\\d-_]*)(\\((([\\w\\d]+)(,\\s*[\\w\\d]+)*)?\\))?))?';
+
+/** @internal */
+const TEMPLATE_TAG =
+    new RegExp(bufferedTemplatingTags.start + FULL_IDENTIFIER + FILTER + bufferedTemplatingTags.end, 'g');
+
+/** @internal */
+const templateIndex = {
+    key: 1,
+    pipeFuncName: 8,
+    pipeParams: 10,
+}
 
 /**
  * The StringLiteral class is the most basic building block of Aych that extends Renderable.
@@ -47,9 +62,9 @@ export class StringLiteral extends Renderable {
         }
 
         return this.string.replace(TEMPLATE_TAG, (...groups) => {
-            const key = groups[PIPE_KEY_INDEX];
-            const pipeFunctionName = groups[PIPE_FUNC_NAME_INDEX];
-            const pipeParameters = groups[PIPE_PARAMETERS_INDEX];
+            const key = groups[templateIndex.key];
+            const pipeFunctionName = groups[templateIndex.pipeFuncName];
+            const pipeParameters = groups[templateIndex.pipeParams];
             const value = StringLiteral.getValueFromObject(templates, key);
 
             return Piper.pipe(value, pipeFunctionName, pipeParameters);
@@ -62,7 +77,7 @@ export class StringLiteral extends Renderable {
      * @param string The string to check if it has templates.
      */
     private static probablyHasTemplates(string: string) {
-        return string.includes(TEMPLATE_START_TAG) && string.includes(TEMPLATE_END_TAG);
+        return string.includes(templatingTags.start) && string.includes(templatingTags.end);
     }
 
     /**
@@ -82,9 +97,11 @@ export class StringLiteral extends Renderable {
      * Gets the value of a key from an object.
      * @param object The object to search.
      * @param key A string representing the key of the value in the object that you are looking for. These follow
-     * standard javascript syntax. For example:
-     *     getFromObject({ array: [1, 2, 3, 4] }, 'array[2]') ===> 2
-     *     getFromObject({ array: [{}, { key: 'value' }]}, 'array[1].key') ===> 'value'
+     * standard javascript syntax.
+     *
+     * @example
+     * getFromObject({ array: [1, 2, 3, 4] }, 'array[2]') ===> 2
+     * getFromObject({ array: [{}, { key: 'value' }]}, 'array[1].key') ===> 'value'
      */
     private static getValueFromObject(object: SimpleObject, key: string): string {
         const keys = key.split(".").map(this.parseKey);
@@ -132,8 +149,7 @@ export class StringLiteral extends Renderable {
     /**
      * Converts a key into a token for template parsing
      * @param key Key to convert
-     * @return
-     * @private
+     * @return An object
      */
     private static parseKey(key: string) {
         key = key.trim();

@@ -4,7 +4,7 @@ import {Renderable} from "../core/Renderable";
 import {StringLiteral} from "../core/StringLiteral";
 
 /**
- * The Group class renders a set of Renderable one after the other.
+ * The Group class renders a set of Renderable one after another.
  */
 export class Group extends Renderable {
     private members: Renderable[] = [];
