@@ -166,6 +166,7 @@ Aych.
     - [$repeat](#repeat)
     - [$group](#group)
     - [$switch / $case](#switch--case)
+* [More Examples](@more-examples)
 	    
 
 ## Globals
@@ -746,3 +747,8 @@ H.$switch(value,
     H.$case("mouse", H.h1()),
 ).default(H.h2()).r; // output: <h2></h2>
 ```
+
+## More examples
+The tests/ folder in the github is a great place to explore test cases and uses. You will likely find
+`intergration.ts` and `h.test.ts` the most interesting as they use the library directly. The subfolders 
+will contain more internal testing but also serve as valuable example.
