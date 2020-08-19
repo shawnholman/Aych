@@ -6,7 +6,7 @@ import {isString} from "../Util";
 /** @internal */
 const templatingTags = {
     start: '{{',
-    end: '{{',
+    end: '}}',
     pipe: '|',
 };
 
@@ -14,7 +14,7 @@ const templatingTags = {
 const bufferedTemplatingTags = {
     start: templatingTags.start + '\\s*',
     end: '\\s*' + templatingTags.end,
-    pipe: '\\s*' + templatingTags.pipe + '\\s*',
+    pipe: '\\s*\\' + templatingTags.pipe + '\\s*',
 };
 
 /** @internal */
@@ -32,7 +32,7 @@ const templateIndex = {
     key: 1,
     pipeFuncName: 8,
     pipeParams: 10,
-}
+};
 
 /**
  * The StringLiteral class is the most basic building block of Aych that extends Renderable.
@@ -97,11 +97,9 @@ export class StringLiteral extends Renderable {
      * Gets the value of a key from an object.
      * @param object The object to search.
      * @param key A string representing the key of the value in the object that you are looking for. These follow
-     * standard javascript syntax.
-     *
-     * @example
-     * getFromObject({ array: [1, 2, 3, 4] }, 'array[2]') ===> 2
-     * getFromObject({ array: [{}, { key: 'value' }]}, 'array[1].key') ===> 'value'
+     * standard javascript syntax. For example:
+     *     getFromObject({ array: [1, 2, 3, 4] }, 'array[2]') ===> 2
+     *     getFromObject({ array: [{}, { key: 'value' }]}, 'array[1].key') ===> 'value'
      */
     private static getValueFromObject(object: SimpleObject, key: string): string {
         const keys = key.split(".").map(this.parseKey);
@@ -149,7 +147,8 @@ export class StringLiteral extends Renderable {
     /**
      * Converts a key into a token for template parsing
      * @param key Key to convert
-     * @return An object
+     * @return
+     * @private
      */
     private static parseKey(key: string) {
         key = key.trim();

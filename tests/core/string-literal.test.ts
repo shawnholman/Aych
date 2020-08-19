@@ -46,11 +46,17 @@ describe('StringLiteral', () => {
 
     it('renders string literal after template pipes (no arguments)', () => {
         const string = new StringLiteral('{{this|uppercase}} is a {{string}}');
+        const string2 = new StringLiteral('{{this|uppercase()}} is a {{string}}');
         const render = string.render({
             'this': 'this',
             'string': 'string',
         });
+        const render2 = string2.render({
+            'this': 'this',
+            'string': 'string',
+        });
         expect(render).to.equal('THIS is a string');
+        expect(render2).to.equal('THIS is a string');
     });
 
     it('renders string literal after template pipes (with arguments)', () => {
