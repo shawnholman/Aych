@@ -321,7 +321,7 @@ describe('Integration Testing', () => {
                         $case('password', input({ type: 'password' })),
                         $case('hidden', input({ type: 'hidden' }))
                     ),
-                    // Technically we can just write:
+                    // No grouping needed:
                     input({ type }),
                     $repeat(10, (i: number) => {
                         return div('#div' + i, {class:[i >= 5, '+above', '+below']});

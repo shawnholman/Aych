@@ -142,13 +142,30 @@ Aych is a library that is meant to stay slim and simple. This documentation shou
 Aych.
 
 * [Globals](#globals)
-    - [Conflict](#conflcit)
+    - [Conflict](#conflict)
+* [Renderable](#renderable)
 * [Tags](#tags)
-	- [Nestable](#nestable)
-	- [Empty](#empty)
 	- [Attributes](#attributes)
 	    - [Identifier String](#identifier-string)
-	    - [Other Attributes](#other-attributes)
+	    - [Other Attributes](#other-attributes)  
+	- [Empty Elements](#empty-elements)
+	- [Nestable Elements](#nestable-elements)
+	- [String Literals](#string-literals)
+* [Rendering](#rendering)
+    - [.render(templates, options)](#rendertemplates-options)
+        - [Templating](#templating)
+        - [Options](#options)
+    - [.r](#r)
+    - [.toString()](#tostring)
+* [Piper](#piper)
+* [Statements](#statements)
+    - [$](#-scope)
+    - [$if](#if)
+    - [$each](#each)
+    - [$eachIn](#eachin)
+    - [$repeat](#repeat)
+    - [$group](#group)
+    - [$switch / $case](#switch--case)
 	    
 
 ## Globals
@@ -156,8 +173,8 @@ To start off, Aych has two exposed globals: `Aych` and `H`. These are homonyms. 
 while `H` is an instantiation of `Aych`. Their purposes are different, though.
 
 `Aych` is used to:
-1. Add/Remove Tag Definitions
-2. Add/Remove Custom Declarations 
+1. Add/Remove Tags
+2. Add/Remove Compositions
 2. Access Piper
 
 `H` is used to:
@@ -404,11 +421,91 @@ H.div() + ""; // output: "<div></div>"
 H.div().toString();
 ```
 
+## Custom Tags/Compositions
+Aych wants to remain flexible which means allowing developers to extend the library. Aych makes this possible through
+the `Aych.create()` and `Aych.compose()`.
+
+### Aych.create()
+`Aych.create()` allows you to define custom HTML tags to be used within H. You create a tag by specifying whether it's
+nestable or empty and then naming it. These tags can be used just like any other renderable in Aych.
+
+```javascript
+// TODO: Reverse this order, name should come first to be consistent with compose.
+Aych.create(Aych.ElementType.NESTED, 'custom');
+Aych.create(Aych.ElementType.EMPTY, 'custom-element');
+
+H.custom("#id").r; // output: <custom id="id"></custom>
+H.customElement().r // output: <custom-element></custom-element>
+```
+
+**Note: The name of the tag should be a valid HTML tag name.**
+
+### Aych.compose()
+In Aych, a composition is a reusable set of HTML elements. A composition is created using the `compose` method under
+`Aych`. The first parameter is the name of the composition while the second parameter is an anonymous function that 
+should return the renderable that represents the composition. The arguments injected into the anonymous function
+will correspond to the arguments used in the composition call.
+
+```javascript
+Aych.compose('row', (title, value) =>
+    H.div('.row',
+        H.div('.col',
+            H.strong(title),
+            H.unescaped(': ' + value)
+            // If 'value' is a renderable then the concatination between ': ' and 'value' will cause 
+            // 'value' to automatically render resulting in HTML (see the .toString() section). 
+            // Without unescaped, the parent div would escape these HTML characters giving unexpected results.
+        )
+    )
+);
+
+H.row("Name", H.span("John Doe")).r;
+```
+Produces:
+```html
+<div class="row">
+    <div class="col">
+        <strong>Name</strong>: <span>John Doe</span>
+    </div>
+</div>
+```
+
+
+### Aych.destroy()
+You can remove tags or compositions using the `destroy` method under Aych.
+
+```javascript
+Aych.destroy('div');
+// H.div().r // no longer is valid because it was removed.
+```
+
 ## Piper
 Piper is the piping engine for Aych. Piper lives used `Aych.Piper` and allows you to register, deregister, or update
 the pipes that you can use inside of string literals during templating. Pipes can take optional arguments which can 
 either be a string, number or boolean.
 
+### Usage
+Pipes are used within string literals to modify the data pass in. 
+
+```javascript
+H.string("{{text|uppercase()}}").render({ text: 'hello' });
+// OR
+H.string("{{text|uppercase}}").render({ text: 'hello' });
+// output: HELLO
+```
+
+In the above example, the uppercase pipe takes in some text and turns it to uppercase. Using parentheses are optional
+unless you want to specify parameters:
+
+```javascript
+H.string("{{text|substr(1, 3))}}").render({ text: 'hello' });
+// output: ell
+```
+
+Piper does not require arguments even if you create a pipe with arguments. If you want these arguments to be required,
+you will have to manually error handle the undefined arguments. See the `addLetter` example below.
+
+### Register / Deregister Pipe
 The way that you register a pipe is like this:
 ```javascript
 Aych.Piper.register('PIPE NAME HERE', (str, optionalArg1, optionalArg2, ...) => {
@@ -431,12 +528,15 @@ Aych.Piper.update('PIPE NAME HERE', (original, str, optionalArg1, optionalArg2, 
 An example with all these concepts:
 ```javascript
 Aych.Piper.register('addLetter', (str, letter) => {
+    if (letter === undefined) letter = 'a';
     return str + letter;
 });
 
 H.div('{{text|addLetter(!)}}').render({text: "Hello"}); // output: "Hello!"
+H.div('{{text|addLetter}}').render({text: "Hello"}); // output: "Helloa" (missing argument uses letter 'a')
 
 Aych.Piper.update('addLetter', (original, str, letter) => {
+    if (letter === undefined) letter = 'a';
     return letter + original(str, letter);
 });
 
@@ -451,6 +551,56 @@ Statements are special renderable's that modify the way other renderables get re
 Aych provides to write shorter code. Statements are all under the `H` variable and are all preceeded by a dollar sign
 (`$`). Again, statements are renderable so they have  `.render()` and `.r` methods and thus can be used as children just
 like regular tags.
+
+### $ (scope)
+The `$` statement is called the scope statement. This statement is used to improved the readability of your Aych code
+by scoping H within an anonymous function and restricting new pipes, new tags, and new creations within this anonymous 
+function. 
+
+```javascript
+H.$((H) => {
+   // Use H here. Any new pipes, tags, or creations that are added will be removed 
+   // after this anonymous function runs.
+   return H.div();
+}); // output: <div></div>
+```
+
+You may notice that the anonymous function injects `H` as the first parameter. While this is not required, it is 
+recommended to use destructuring to pull out the necessary tags or statements. You will also see that with this 
+statement you `return` the final element construction. `.r` is optional here as the scope statement will call it
+automatically. However, if you want to include templates you need to explicitly call '.render()'
+
+Full example:
+```javascript
+H.$(({ $switch, $case, input, html, body, title, head }) => {
+    const type = 'password';
+    return html(
+        head(
+            title('Some Title'),
+        ),
+        body(
+            $switch(type,
+                $case('text', input({ type: 'text' })),
+                $case('password', input({ type: 'password' })),
+                $case('hidden', input({ type: 'hidden' }))
+            ),
+        )
+    )
+});
+```
+Produces:
+```html
+<html>
+    <head>
+       <title>Some Title</title> 
+    </head>
+    <body>
+        <input type="password">
+    </body>
+</html>
+```
+
+Again, note that no explicit render method is required. 
 
 ### $if
 Rendering HTML conditionally can prove to be extremely useful. The `$if` statement accomplishes just that.
@@ -544,4 +694,55 @@ H.$repeat(3, (i) => {
 }).r;
 
 // output: <div>I'm div number: 0</div><div>I'm div number: 1</div><div>I'm div number: 2</div>
+```
+
+### $group
+The `$group` statement groups elements together for rendering.
+
+By using a group statement, we are able to logically group a set of renderable elements. In the example below, we 
+compare how to use a group statement.
+
+```javascript
+const type = 'password';
+$group(
+    H.div({ id: [type !== 'password', 'someid'] }, '{{age}}'),
+    H.div({ class: [type === 'password', '+password', '+none']}, '{{name}}'),
+    H.div("{{school}}")
+).render({ age: 19, name: 'John', school: 'UGA' });
+// output: <div>19</div><div class="password">John></div><div>UGA</div>
+
+// Equivalent to:
+const type = 'password';
+H.div({ id: [type !== 'password', 'someid'] }, '{{age}}').render({ age:19 }) +
+H.div({ class: [type === 'password', '+password', '+none']}, '{{name}}').render({ name:'John' }) +
+H.div("{{school}}").render({ school: 'UGA' });
+```
+
+As you can see, in the alternative, when not using a group statement, you have repeated render calls and you have to
+concat the strings together.
+
+### $switch / $case
+The `$switch` statement allows you to toggle between a set of elements based on some input. This statement is used with
+the `$case` statement.
+
+```javascript
+const value = 3;
+H.$switch(value,
+    H.$case(0, H.div()),
+    H.$case(1, H.span()),
+    H.$case(2, H.strong()),
+    H.$case(3, H.h1()),
+).r; // output: <h1></h1>
+```
+
+Just like switch statements in JavaScript, our `$switch` statements also support a default in case when none of the 
+cases are met:
+```javascript
+const value = "dog";
+H.$switch(value,
+    H.$case("cat", H.div()),
+    H.$case("tiger", H.span()),
+    H.$case("bear", H.strong()),
+    H.$case("mouse", H.h1()),
+).default(H.h2()).r; // output: <h2></h2>
 ```

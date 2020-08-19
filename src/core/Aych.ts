@@ -71,7 +71,7 @@ export class Aych {
      * @param composition The method that the defines what arguments the composable takes
      * and which renderable it returns.
      */
-    static compose(name: string, composition: (...args: any[]) => Renderable): void {
+    static compose(name: string, composition: (...args: any[]) => string | Renderable): void {
         name = name.trim();
         if (!name.match(VALID_COMPOSITION_NAME)) {
             throw new Error('Composition names should start with a letter or underscore and only contain letters, numbers, dashed, and underscores throughout.');
@@ -103,6 +103,7 @@ export class Aych {
     /**
      * Scopes Aych
      * @param scope
+     * TODO: Do not automatically render always. Give option to return the renderable for reuse!
      */
     // @ts-ignore
     $(scope: (self: Aych) => void | string | Renderable): void | string {
@@ -112,7 +113,7 @@ export class Aych {
         Aych.scoped.forEach(Aych.destroy);
 
         if (isRenderable(callerResult)) {
-            return callerResult.render();
+            return callerResult.r;
         } else if (isString(callerResult)) {
             return callerResult;
         }
@@ -172,9 +173,9 @@ export class Aych {
      */
     $switch (value: Switchable, ...cases: Switch.Case<Switchable>[]): Switch<Switchable> {
         if (isString(value)) {
-            return new Switch(value as string, ...cases as Switch.Case<string>[]);
+            return new Switch<string>(value as string, ...cases as Switch.Case<string>[]);
         } else {
-            return new Switch(value as number, ...cases as Switch.Case<number>[]);
+            return new Switch<number>(value as number, ...cases as Switch.Case<number>[]);
         }
     }
 

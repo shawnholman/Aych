@@ -2,6 +2,7 @@ type PipeFunc = (str: string, ...args: any[]) => string;
 type PipeUpdateFunc = (original: PipeFunc, str: string, ...args:any[]) => string;
 /**
  * Piper is the piping engine. Template pipes are defined and executed here.
+ * TODO: Scope piper.
  */
 export class Piper {
     private static pipes = new Map<string, PipeFunc>();
