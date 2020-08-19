@@ -10,6 +10,7 @@ export class Piper {
      * Updates an existing pipe.
      * @param pipeName The name of the pipe to update.
      * @param func The update pipe function to build the update.
+     * TODO: Create a copy method which is like update but would not remove the old pipe.
      */
     static update(pipeName: string, func: PipeUpdateFunc): void {
         pipeName = pipeName.trim();
@@ -73,6 +74,10 @@ export class Piper {
         return value;
     }
 }
+
+Piper.register('lowercase', (str: string) => {
+    return str.toLowerCase();
+});
 
 Piper.register('uppercase', (str: string) => {
     return str.toUpperCase();

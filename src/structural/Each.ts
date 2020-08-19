@@ -6,7 +6,7 @@ import {StringLiteral} from "../core/StringLiteral";
 export type EachRenderFunction = (item: any, index: number, items: Iterable<any>) => (Renderable | string);
 
 /**
- * The Each class creates renders a renderable for each item in a list.
+ * The Each class renders a renderable for each item in a list.
  */
 export class Each extends Renderable {
     private readonly items: Iterable<any>;

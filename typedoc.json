@@ -3,6 +3,7 @@
   "mode": "modules",
   "out": "./docs",
   "name": "Aych",
+  "theme": "minimal",
   "excludePrivate": true,
   "stripInternal": true,
   "excludeExternals": true,
