@@ -8,7 +8,7 @@
   "plugin": "typedoc-neo-theme",
   "outline": [{
     "Library": {
-      "H": "_H_",
+      "H": "_h_",
       "Aych": "classes/_core_aych_.aych"
     },
     "Core": {
