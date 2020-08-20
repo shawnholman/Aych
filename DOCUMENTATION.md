@@ -18,27 +18,30 @@ It’s that simple, but very powerful.
 The following is an example of one way Aych can be used. See the `tests` ([github/Aych/tests](https://github.com/shawnholman/Aych/tree/master/tests)) folder for a comprehensive set of examples.
 #### Using Aych:
 ```javascript
-H.div('#example.row.view-badge-info',
-    H.$if(!data.badge.isActive,
-        H.div('.row.text-center.inactive-badge', 'Disabled Badge')
-    ),
-    H.div('.col.col-xs-7.col-sm-7.col-md-7.text-left',
-        H.row('Name', '{{user.name}}'),
-        H.row('Email', '{{user.email}}'),
-        H.row('Points', '{{user.points}}'),
-        H.$eachIn(data.user.application,
-            H.row('{{item[0]|unCamelCase}}', '{{item[1]}}')
-        )
-    ),
-    H.div('.col.col-xs-5.col-sm-5.col-md-5.text-right',
-        H.$eachIn(data.user.is, ([name, value]) =>
-            H.row(
-                H.string('{{name|unCamelCase}}').render({name}),
-                H.span('.permission-circle', {class: [value, '+granted', '+denied']})
+H.$(({ div, row, $if, $eachIn, span }) => {
+    return div('#example.row.view-badge-info',
+        $if(!data.badge.isActive,
+            div('.row.text-center.inactive-badge', 'Disabled Badge')
+        ),
+        div('.col.col-xs-7.col-sm-7.col-md-7.text-left',
+            row('Name', '{{user.name}}'),
+            row('Email', '{{user.email}}'),
+            row('Points', '{{user.points}}'),
+            $eachIn(data.user.application,
+                row('{{item[0]|unCamelCase}}', '{{item[1]}}')
+            )
+        ),
+        div('.col.col-xs-5.col-sm-5.col-md-5.text-right',
+            $eachIn(data.user.is, ([name, value]) =>
+                row(
+                    H.string('{{name|unCamelCase}}').render({name}),
+                    span('.permission-circle', {class: [value, '+granted', '+denied']})
+                )
             )
         )
-    )
-).render(data);
+    // TODO: Remove this render once scope change has been made to add data.
+    ).render(data);
+});
 ```
 #### where the data are:
 ```javascript
@@ -53,7 +56,7 @@ const data = {
         application: {
             school: 'UGA',
             grade: 'Freshman',
-            hometown: 'City',
+            hometown: 'Atlanta',
             gradePointAverage: '4.0',
         },
         is: {
