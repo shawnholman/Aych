@@ -3,6 +3,7 @@
   "mode": "modules",
   "out": "./docs",
   "name": "Aych",
+  "readme": "DOCUMENTATION.md",
   "theme": "node_modules/typedoc-neo-theme/bin/default",
   "plugin": "typedoc-neo-theme",
   "outline": [{
