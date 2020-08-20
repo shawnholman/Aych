@@ -104,6 +104,7 @@ export class Aych {
      * Scopes Aych
      * @param scope
      * TODO: Do not automatically render always. Give option to return the renderable for reuse!
+     * TODO: Allow data to be passed in as second param to prevent the need for .render entirely
      */
     // @ts-ignore
     $(scope: (self: Aych) => void | string | Renderable): void | string {
