@@ -131,11 +131,10 @@ const data = {
 ```
    
 ## Downloading
-In order to use Aych, download `aych.min.js` from the dist folder and load with:
+In order to use Aych, download [aych.min.js](https://github.com/shawnholman/Aych/tree/master/dist) from the dist folder and load with:
 ```html
 <script type="text/javascript" src="aych.min.js"></script>
 ```
-
 
 # Documentation
 Aych is a library that is meant to stay slim and simple. This documentation should give you a good understanding of 
