@@ -15,7 +15,7 @@ a micro-library to facilitate writing eloquent HTML inside of JavaScript.
 It’s that simple, but very powerful.
 
 ## Example Usage
-The following is an example of one way Aych can be used. See the `tests` folder for a comprehensive set of examples.
+The following is an example of one way Aych can be used. See the `tests` ([github/Aych/tests](https://github.com/shawnholman/Aych/tree/master/tests)) folder for a comprehensive set of examples.
 #### Using Aych:
 ```javascript
 H.div('#example.row.view-badge-info',
