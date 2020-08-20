@@ -3,7 +3,35 @@
   "mode": "modules",
   "out": "./docs",
   "name": "Aych",
-  "theme": "minimal",
+  "theme": "node_modules/typedoc-neo-theme/bin/default",
+  "plugin": "typedoc-neo-theme",
+  "outline": [{
+    "Library": {
+      "H": "_H_",
+      "Aych": "classes/_core_aych_.aych"
+    },
+    "Core": {
+      "Piper": "classes/_core_piper_.piper",
+      "Renderable": "classes/_core_renderable_.renderable",
+      "StringLiteral": "classes/_core_stringliteral_.stringliteral"
+    },
+    "Elements": {
+      "Element": "classes/_elements_element_.element",
+      "EmptyElement": "classes/_elements_emptyelement_.emptyelement",
+      "NestableElement": "classes/_elements_nestableelement_.nestableelement"
+    },
+    "Interfaces": {
+      "Attributes": "interfaces/_interfaces_attributes_.attributes",
+      "RenderOptions": "interfaces/_interfaces_render_options_.renderoptions",
+      "SimpleObject": "interfaces/_interfaces_simple_object_.simpleobject"
+    },
+    "Structural": {
+      "Each": "classes/_structural_each_.each",
+      "If": "classes/_structural_if_.if",
+      "Switch": "classes/_structural_switch_.switch",
+      "Group": "classes/_structural_group_.group"
+    }
+  }],
   "excludePrivate": true,
   "stripInternal": true,
   "excludeExternals": true,
