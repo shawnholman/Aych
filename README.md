@@ -136,5 +136,5 @@ In order to use Aych, download [aych.min.js](https://github.com/shawnholman/Aych
 <script type="text/javascript" src="aych.min.js"></script>
 ```
 
-##Documentation
+## Documentation
 See [https://shawnholman.github.io/Aych/](https://shawnholman.github.io/Aych/) for the full documentation and API.
