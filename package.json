@@ -8,7 +8,7 @@
     "test": "nyc npm run mocha && nyc report --reporter=json > coverage/coverage.json",
     "build": "webpack-cli",
     "lint": "npx eslint src",
-    "docs": "typedoc --options typedoc.json"
+    "docs": "typedoc --options typedoc.json && cd docs && touch .nojekyll && git add .nojekyll && cd .."
   },
   "keywords": [],
   "author": "",
