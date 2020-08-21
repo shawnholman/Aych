@@ -1,22 +1,67 @@
 import {H} from "../src/H";
 import {expect} from 'chai';
 import {Aych} from "../src/core/Aych";
+import {Renderable} from "../src/core/Renderable";
 
 describe('H', () => {
+    describe('scopes', () => {
+        it('scopes H without return statement', () => {
+            H.$(({div}) => {
+                expect(div().render()).to.equal('<div></div>');
+            });
+        });
+
+        it ('scopes H with return statement and no render', () => {
+            const render = H.$(({div}) => {
+                return div();
+            });
+            expect(render).to.equal('<div></div>');
+        });
+
+        it ('scopes H with return statement and render (w/ render=true)', () => {
+            const render = H.$(({div}) => {
+                return div().render();
+            });
+            expect(render).to.equal('<div></div>');
+        });
+
+        it ('scopes H with return statement and external data', () => {
+            const render = H.$(({div}) => {
+                return div("{{text}}");
+            }, {text:"Hey"});
+            expect(render).to.equal('<div>Hey</div>');
+        });
+
+        it ('scopes H with return statement (w/ render=false)', () => {
+            const renderer = H.$(({div}) => {
+                return div("{{text}}");
+            }, {}, false) as Renderable;
+            const render = renderer.render({text:"Hey"});
+            expect(render).to.equal('<div>Hey</div>');
+        });
+
+        it ('scopes H with return statement and render (w/ render=false)', () => {
+            const renderer = H.$(({div}) => {
+                return div("{{text}}").render({text:"Hey"});
+            }, {}, false) as Renderable;
+            const render = renderer.render();
+            expect(render).to.equal('<div>Hey</div>');
+        });
+
+        it('scopes creates', () => {
+            const render3 = H.$(() => {
+                Aych.create(Aych.ElementType.EMPTY, 'example');
+                return H.example();
+            });
+            expect(render3).to.equal('<example>');
+
+            expect(() => {
+                Aych.create(Aych.ElementType.EMPTY, 'example');
+                Aych.destroy('example');
+            }).to.not.throw();
+        });
+    });
     it('scopes Aych', () => {
-        H.$(({div}) => {
-            expect(div().render()).to.equal('<div></div>');
-        });
-
-        const render = H.$(({div}) => {
-            return div();
-        });
-        expect(render).to.equal('<div></div>');
-
-        const render2 = H.$(({div}) => {
-            return div().render();
-        });
-        expect(render2).to.equal('<div></div>');
 
         const render3 = H.$(() => {
             Aych.create(Aych.ElementType.EMPTY, 'example');

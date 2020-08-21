@@ -103,20 +103,18 @@ export class Aych {
     /**
      * Scopes Aych
      * @param scope
-     * TODO: Do not automatically render always. Give option to return the renderable for reuse!
-     * TODO: Allow data to be passed in as second param to prevent the need for .render entirely
      */
     // @ts-ignore
-    $(scope: (self: Aych) => void | string | Renderable): void | string {
+    $(scope: (self: Aych) => void | string | Renderable, data: SimpleObject = {}, render = true): void | string | Renderable {
         Aych.isScoped = true;
         const callerResult = scope.call(null, this);
         Aych.isScoped = false;
         Aych.scoped.forEach(Aych.destroy);
 
-        if (isRenderable(callerResult)) {
-            return callerResult.r;
-        } else if (isString(callerResult)) {
-            return callerResult;
+        if (isString(callerResult)) {
+            return render ? callerResult : new StringLiteral(callerResult, false);
+        } else if (isRenderable(callerResult)) {
+            return render ? callerResult.render(data) : callerResult;
         }
     }
 
