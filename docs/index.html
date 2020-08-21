@@ -113,9 +113,8 @@
                 )
             )
         )
-    <span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> Remove this render once scope change has been made to add data.</span>
-    ).render(data);
-});</code></pre>
+    )
+}, data);</code></pre>
 				<a href="#where-the-data-are" id="where-the-data-are" style="color: inherit; text-decoration: none;">
 					<h4>where the data are:</h4>
 				</a>
@@ -472,9 +471,8 @@ H.div().toString();</code></pre>
 				</a>
 				<p><code>Aych.create()</code> allows you to define custom HTML tags to be used within H. You create a tag by specifying whether it&#39;s
 				nestable or empty and then naming it. These tags can be used just like any other renderable in Aych.</p>
-				<pre><code class="language-javascript"><span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> Reverse this order, name should come first to be consistent with compose.</span>
-Aych.create(Aych.ElementType.NESTED, <span class="hljs-string">&#x27;custom&#x27;</span>);
-Aych.create(Aych.ElementType.EMPTY, <span class="hljs-string">&#x27;custom-element&#x27;</span>);
+				<pre><code class="language-javascript">Aych.create(<span class="hljs-string">&#x27;custom&#x27;</span>, Aych.ElementType.NESTED);
+Aych.create(<span class="hljs-string">&#x27;custom-element&#x27;</span>, Aych.ElementType.EMPTY);
 
 H.custom(<span class="hljs-string">&quot;#id&quot;</span>).r; <span class="hljs-comment">// output: &lt;custom id=&quot;id&quot;&gt;&lt;/custom&gt;</span>
 H.customElement().r <span class="hljs-comment">// output: &lt;custom-element&gt;&lt;/custom-element&gt;</span></code></pre>

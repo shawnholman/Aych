@@ -39,9 +39,8 @@ H.$(({ div, row, $if, $eachIn, span }) => {
                 )
             )
         )
-    // TODO: Remove this render once scope change has been made to add data.
-    ).render(data);
-});
+    )
+}, data);
 ```
 #### where the data are:
 ```javascript

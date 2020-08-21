@@ -39,9 +39,8 @@ H.$(({ div, row, $if, $eachIn, span }) => {
                 )
             )
         )
-    // TODO: Remove this render once scope change has been made to add data.
-    ).render(data);
-});
+    )
+}, data);
 ```
 #### where the data are:
 ```javascript
@@ -433,9 +432,8 @@ the `Aych.create()` and `Aych.compose()`.
 nestable or empty and then naming it. These tags can be used just like any other renderable in Aych.
 
 ```javascript
-// TODO: Reverse this order, name should come first to be consistent with compose.
-Aych.create(Aych.ElementType.NESTED, 'custom');
-Aych.create(Aych.ElementType.EMPTY, 'custom-element');
+Aych.create('custom', Aych.ElementType.NESTED);
+Aych.create('custom-element', Aych.ElementType.EMPTY);
 
 H.custom("#id").r; // output: <custom id="id"></custom>
 H.customElement().r // output: <custom-element></custom-element>
