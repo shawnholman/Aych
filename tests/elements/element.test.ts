@@ -67,14 +67,18 @@ describe('Element', () => {
 
     it('adds a class to the element using the attributes + operator', () => {
         const element = new MockElement('div', '.class1', { class: '+class2' });
-        const element2 = new MockElement('div', { class: '+class1' });
+        const element2 = new MockElement('div', '.class1.class2', { class: '+class2' });
+        const element3 = new MockElement('div', { class: '+class1' });
         expect(element.getClassList()).to.deep.equal(['class1', 'class2']);
-        expect(element2.getClassList()).to.deep.equal(['class1']);
+        expect(element2.getClassList()).to.deep.equal(['class1', 'class2']);
+        expect(element3.getClassList()).to.deep.equal(['class1']);
     });
 
-    it('throws an error when trying to add an existing class', () => {
-        expect(() => new MockElement('div', '.class1', { class: '+class1' }))
-            .to.throw('Duplicate class name can not be added.');
+    it('removes a class to the element using the attributes + operator', () => {
+        const element = new MockElement('div', '.class1.class2', { class: '-class2' });
+        const element2 = new MockElement('div', { class: '-class1' });
+        expect(element.getClassList()).to.deep.equal(['class1']);
+        expect(element2.getClassList()).to.deep.equal([]);
     });
 
     it('has an attribute when in tier1 position', () => {

@@ -142,16 +142,23 @@ export abstract class Element extends Renderable {
         }
 
         // TODO: Add ability to remove class
-        if (value !== null && name === 'class' && value.startsWith('+')) {
-            if (!Object.prototype.hasOwnProperty.call(this.attributes, 'class')) {
-                this.attributes['class'] = value.substr(1);
-            } else {
-                if ((this.attributes['class'] as string).includes(value.substr(1))) {
-                    throw new Error('Duplicate class name can not be added.');
+        if (value !== null && name === 'class') {
+            const hasClassAttribute = Object.prototype.hasOwnProperty.call(this.attributes, 'class');
+            if (value.startsWith('+')) {
+                if (!hasClassAttribute) {
+                    this.attributes['class'] = value.substr(1);
+                } else if (!(this.attributes['class'] as string).includes(value.substr(1))) {
+                    this.attributes['class'] += " " + value.substr(1);
                 }
-                this.attributes['class'] += " " + value.substr(1);
+                return this;
+            } else if (value.startsWith('-')) {
+                if (!hasClassAttribute) {
+                    return this;
+                }
+                const replacer = new RegExp(" ?" + value.substr(1));
+                this.attributes['class'] = (this.attributes['class'] as string)!.replace(replacer, "");
+                return this;
             }
-            return this;
         }
 
         this.attributes[name] = value;
