@@ -2,6 +2,7 @@ import {H} from "../src/H";
 import {expect} from 'chai';
 import {Aych} from "../src/core/Aych";
 import {removeSpaces} from "../src/Util";
+import {Renderable} from "../src/core/Renderable";
 
 const data = {
     badge: {
@@ -357,19 +358,19 @@ describe('Integration Testing', () => {
     });
 
     it('makes a table using a composable', () => {
-        Aych.compose("createTable", (tableData) => {
-            const { table, $each, $if, tr, td, th } = H;
-
-            return table(
-                $each(tableData, (row, rowCount) =>
-                    tr(
-                        $each(row,
-                            $if(rowCount == 0, th('{{item}}')).else(td('{{item}}'))
+        Aych.compose("createTable", (tableData) =>
+            H.$(({ table, $each, $if, tr, td, th }) => {
+                return table(
+                    $each(tableData, (row, rowCount) =>
+                        tr(
+                            $each(row,
+                                $if(rowCount == 0, th('{{item}}')).else(td('{{item}}'))
+                            )
                         )
                     )
                 )
-            );
-        });
+            }, tableData, false) as Renderable
+        );
         const table = H.createTable([
             ['Name', 'Title', 'Hometown'],
             ['Shawn', 'Director', 'Hinesville, GA'],

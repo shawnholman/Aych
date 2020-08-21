@@ -27,7 +27,7 @@ export class Aych {
      * @param elType The type of element to create.
      * @param tagName The name of the tag that is used.
      */
-    static create(elType: Aych.ElementType, tagName: string): string {
+    static create(tagName: string, elType: Aych.ElementType): string {
         tagName = tagName.trim();
         if (!tagName.match(VALID_HTML_TAG_NAME)) {
             throw new Error('Tag names should start with a letter and only contain letters, numbers, and dashes between two characters (yes: the-tag-name, no: the---tag---name).');
@@ -326,7 +326,7 @@ const nestedElements = [
     'var',
     'video'
 ];
-nestedElements.forEach((tag) => Aych.create(Aych.ElementType.NESTED, tag));
+nestedElements.forEach((tag) => Aych.create(tag, Aych.ElementType.NESTED));
 
 /** List of empty elements available through Aych */
 const emptyElements = [
@@ -346,4 +346,4 @@ const emptyElements = [
     'track',
     'wbr',
 ];
-emptyElements.forEach((tag) => Aych.create(Aych.ElementType.EMPTY, tag));
+emptyElements.forEach((tag) => Aych.create(tag, Aych.ElementType.EMPTY));

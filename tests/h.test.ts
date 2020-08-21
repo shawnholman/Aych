@@ -50,13 +50,13 @@ describe('H', () => {
 
         it('scopes creates', () => {
             const render3 = H.$(() => {
-                Aych.create(Aych.ElementType.EMPTY, 'example');
+                Aych.create('example', Aych.ElementType.EMPTY);
                 return H.example();
             });
             expect(render3).to.equal('<example>');
 
             expect(() => {
-                Aych.create(Aych.ElementType.EMPTY, 'example');
+                Aych.create('example', Aych.ElementType.EMPTY);
                 Aych.destroy('example');
             }).to.not.throw();
         });
@@ -64,21 +64,21 @@ describe('H', () => {
     it('scopes Aych', () => {
 
         const render3 = H.$(() => {
-            Aych.create(Aych.ElementType.EMPTY, 'example');
+            Aych.create('example', Aych.ElementType.EMPTY);
             return H.example();
         });
         expect(render3).to.equal('<example>');
 
         expect(() => {
-            Aych.create(Aych.ElementType.EMPTY, 'example');
+            Aych.create('example', Aych.ElementType.EMPTY);
             Aych.destroy('example');
         }).to.not.throw();
     });
 
     describe('create', () => {
         it('creates a custom element', () => {
-            Aych.create(Aych.ElementType.NESTED, 'rand');
-            Aych.create(Aych.ElementType.EMPTY, 'empty');
+            Aych.create('rand', Aych.ElementType.NESTED);
+            Aych.create('empty', Aych.ElementType.EMPTY);
 
             const element = H.rand().render();
             const element2 = H.empty().render();
@@ -90,24 +90,24 @@ describe('H', () => {
         });
 
         it('returns the created tag name', () => {
-            expect(Aych.create(Aych.ElementType.EMPTY, 'empty')).to.equal('empty');
+            expect(Aych.create('empty', Aych.ElementType.EMPTY)).to.equal('empty');
             Aych.destroy('empty');
         });
 ``
         it('fails to create custom element if ElementType is not valid', () => {
-            expect(() => Aych.create(3, 'tag')).to.throw('ElementType does not exist');
+            expect(() => Aych.create('tag', 3)).to.throw('ElementType does not exist');
         });
 
         it('fails to create a custom element if the identifier is invalid', () => {
             let invalidIdentifiers = ['', '   ', '___', '  __dsafs', 'aaAdSasd_sadasd', 'a-'];
             let validIdentifiers = ['a', '   imgg', 'c-wiz', 'SPAN', 'B   ', 'this-is-valid'];
             for(let id of invalidIdentifiers) {
-                expect(() => Aych.create(Aych.ElementType.NESTED, id))
+                expect(() => Aych.create(id, Aych.ElementType.NESTED))
                     .to.throw('Tag names should start with a letter and only contain letters, numbers, and dashes between two characters (yes: the-tag-name, no: the---tag---name).');
                 Aych.destroy(id);
             }
             for(let id of validIdentifiers) {
-                expect(() => Aych.create(Aych.ElementType.NESTED, id)).to.not.throw('Tag names should start with a letter and only contain letters, numbers, and dashes between two characters (yes: the-tag-name, no: the---tag---name).');
+                expect(() => Aych.create(id, Aych.ElementType.NESTED)).to.not.throw('Tag names should start with a letter and only contain letters, numbers, and dashes between two characters (yes: the-tag-name, no: the---tag---name).');
                 Aych.destroy(id);
             }
         });
@@ -116,7 +116,7 @@ describe('H', () => {
     describe('destroy', () => {
        it('removes an element definition', () => {
            expect(Aych.prototype).to.not.have.property('tagName');
-           Aych.create(Aych.ElementType.NESTED, 'tag-name');
+           Aych.create('tag-name', Aych.ElementType.NESTED);
 
            expect(Aych.prototype).to.have.property('tagName');
            // Also test that it gets trimmed
