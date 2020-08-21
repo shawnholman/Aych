@@ -141,7 +141,6 @@ export abstract class Element extends Renderable {
             }
         }
 
-        // TODO: Add ability to remove class
         if (value !== null && name === 'class') {
             const hasClassAttribute = Object.prototype.hasOwnProperty.call(this.attributes, 'class');
             if (value.startsWith('+')) {
