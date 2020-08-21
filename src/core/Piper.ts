@@ -1,27 +1,11 @@
 type PipeFunc = (str: string, ...args: any[]) => string;
-type PipeUpdateFunc = (original: PipeFunc, str: string, ...args:any[]) => string;
+type PipeCopyFunc = (original: PipeFunc, str: string, ...args:any[]) => string;
 /**
  * Piper is the piping engine. Template pipes are defined and executed here.
  * TODO: Scope piper.
  */
 export class Piper {
     private static pipes = new Map<string, PipeFunc>();
-
-    /**
-     * Updates an existing pipe.
-     * @param pipeName The name of the pipe to update.
-     * @param func The update pipe function to build the update.
-     * TODO: Create a copy method which is like update but would not remove the old pipe.
-     */
-    static update(pipeName: string, func: PipeUpdateFunc): void {
-        pipeName = pipeName.trim();
-        if (Piper.pipes.has(pipeName)) {
-            let pipeFunc: PipeFunc = func.bind(this, Piper.pipes.get(pipeName));
-            Piper.pipes.set(pipeName, pipeFunc);
-        } else {
-            throw new Error(`Cannot update non-existing pipe: ${pipeName}.`);
-        }
-    }
 
     /**
      * Register a new pipe with piper.
@@ -47,6 +31,31 @@ export class Piper {
      */
     static deregister(pipeName: string): boolean {
         return Piper.pipes.delete(pipeName);
+    }
+
+    /**
+     * Updates an existing pipe.
+     * @param pipeName The name of the pipe to update.
+     * @param func The update pipe function to build the update.
+     */
+    static update(pipeName: string, func: PipeCopyFunc): void {
+        this.copy(pipeName, pipeName, func);
+    }
+
+    /**
+     * Copies an existing pipe over to a new name.
+     * @param pipeName The name of the pipe to copy.
+     * @param newPipeName The name of the new pipe to make from the copy.
+     * @param func The update pipe function to build the update.
+     */
+    static copy(pipeName: string, newPipeName: string, func: PipeCopyFunc): void {
+        pipeName = pipeName.trim();
+        if (Piper.pipes.has(pipeName)) {
+            let pipeFunc: PipeFunc = func.bind(this, Piper.pipes.get(pipeName));
+            Piper.pipes.set(newPipeName, pipeFunc);
+        } else {
+            throw new Error(`Cannot use non-existing pipe: ${pipeName}.`);
+        }
     }
 
     /**

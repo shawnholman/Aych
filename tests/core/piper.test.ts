@@ -2,6 +2,23 @@ import {expect} from 'chai';
 import {Piper} from '../../src/core/Piper';
 
 describe('Piper', () => {
+    describe('built-in pipes', () => {
+        it('uppercase', () => {
+            expect(Piper.pipe('testword', 'uppercase')).to.equal('TESTWORD');
+        });
+        it('lowercase',() => {
+            expect(Piper.pipe('TESTWORD', 'lowercase')).to.equal('testword');
+        });
+        it('substr',() => {
+            expect(Piper.pipe('testword', 'substr', '')).to.equal('testword');
+            expect(Piper.pipe('testword', 'substr', '0')).to.equal('testword');
+            expect(Piper.pipe('testword', 'substr', '2')).to.equal('stword');
+            expect(Piper.pipe('testword', 'substr', '0, 3')).to.equal('tes');
+            expect(Piper.pipe('testword', 'substr', '2, 4')).to.equal('stwo');
+            expect(Piper.pipe('testword', 'substr', '2, 40')).to.equal('stword');
+        });
+    });
+
     it('registers a new pipe', () => {
        Piper.register('test', () => 'test');
 
@@ -31,6 +48,16 @@ describe('Piper', () => {
         expect(pipe).to.equal('MyValue1truehellofalse');
     });
 
+    it ('copies a pipe', () => {
+        // This takes the testArgument from the previous test and update it.
+        Piper.copy('testArgument', 'testArgument2', (original, value, arg1: number, arg2: boolean, arg3: string, arg4: boolean) => {
+            return original(value, arg1, arg2, arg3, arg4) + "-updated";
+        });
+
+        const pipe = Piper.pipe('MyValue', 'testArgument2', '1, true, hello, false');
+        expect(pipe).to.equal('MyValue1truehellofalse-updated');
+    });
+
     it ('updates a pipe', () => {
         // This takes the testArgument from the previous test and update it.
         Piper.update('testArgument', (original, value, arg1: number, arg2: boolean, arg3: string, arg4: boolean) => {
@@ -41,10 +68,16 @@ describe('Piper', () => {
         expect(pipe).to.equal('MyValue1truehellofalse-updated');
     });
 
+    it('throws an error when trying to copy a non-existing pipe', () => {
+        expect(() => {
+            Piper.copy('undefinedTest', ' ', (original, str) => str);
+        }).to.throw('Cannot use non-existing pipe: undefinedTest.');
+    });
+
     it('throws an error when trying to update a non-existing pipe', () => {
         expect(() => {
             Piper.update('undefinedTest', (original, str) => str);
-        }).to.throw('Cannot update non-existing pipe: undefinedTest.');
+        }).to.throw('Cannot use non-existing pipe: undefinedTest.');
     });
 
     it('throws an error when trying to call a non-existing pipe', () => {
@@ -60,6 +93,8 @@ describe('Piper', () => {
     });
 
     it('throws an error when trying to create a pipe with an improper pipe name', () => {
+        expect(() => Piper.register('', () => 'test'))
+            .to.throw('Pipe names must only contain letters. Whitespaces are trimmed.');
         expect(() => Piper.register('     ', () => 'test'))
             .to.throw('Pipe names must only contain letters. Whitespaces are trimmed.');
         expect(() => Piper.register('123', () => 'test'))
