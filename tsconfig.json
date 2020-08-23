@@ -3,6 +3,8 @@
     "target": "es2015",
     "module": "commonjs",
     "outDir": "./",
+    // To create a d.ts file for npm
+    "declaration": true,
     "sourceMap": true,
     "noImplicitAny": true,
     "strictNullChecks": true
