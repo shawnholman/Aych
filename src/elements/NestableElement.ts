@@ -85,7 +85,7 @@ export class NestableElement extends Element {
     /** @inheritdoc */
     protected internalRender(templates: SimpleObject): string {
         const tag = this.getTag();
-        const attributes = this.getHtmlAttributeList();
+        const attributes = this.getHtmlAttributeList(templates);
         const children = this.children.render(templates);
         return `<${tag}${attributes}>${children}</${tag}>`;
     }

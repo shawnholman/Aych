@@ -8,7 +8,7 @@ export class EmptyElement extends Element {
     /** @inheritdoc */
     protected internalRender(templates: SimpleObject): string {
         const tag = this.getTag();
-        const attributeList = this.getHtmlAttributeList();
+        const attributeList = this.getHtmlAttributeList(templates);
         return `<${tag}${attributeList}>`;
     }
 }

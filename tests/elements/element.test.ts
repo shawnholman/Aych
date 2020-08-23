@@ -7,8 +7,8 @@ class MockElement extends Element {
         return '';
     }
 
-    getAttributeRender() {
-        return this.getHtmlAttributeList().trim();
+    getAttributeRender(templates?: SimpleObject) {
+        return this.getHtmlAttributeList(templates).trim();
     }
 }
 
@@ -63,6 +63,20 @@ describe('Element', () => {
         });
 
         expect(element.getAttributeRender()).to.equal('data-example="example" class="class1" style="width:150px;"');
+    });
+
+    it('renders attributes with templates', () => {
+        const element = new MockElement('div', {
+            id: '{{id}}',
+            class: '{{class|uppercase}}',
+            'data-example': [true, '{{text}}'],
+        });
+
+        expect(element.getAttributeRender({
+            id: 'test',
+            class: 'class1',
+            text: 'text',
+        })).to.equal('id="test" class="CLASS1" data-example="text"');
     });
 
     it('adds a class to the element using the attributes + operator', () => {

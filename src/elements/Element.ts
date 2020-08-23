@@ -1,6 +1,7 @@
-import {Attribute, Attributes} from "../interfaces";
+import {Attribute, Attributes, SimpleObject} from "../interfaces";
 import {Renderable} from "../core/Renderable";
 import {isAttributes, isString} from "../Util";
+import {StringLiteral} from "../core/StringLiteral";
 
 /** @ignore */
 const CLASS_IDENTIFIER = '.';
@@ -199,10 +200,9 @@ export abstract class Element extends Renderable {
     }
 
     /** Given an object of attributes, converts attributes into the HTML equivalent list. */
-    protected getHtmlAttributeList(): string {
+    protected getHtmlAttributeList(templates?: SimpleObject): string {
         const attributesEntries = Object.entries(this.getAttributes());
-
-        return attributesEntries.reduce((str, [name, value]) => {
+        const attributeString = attributesEntries.reduce((str, [name, value]) => {
             // A null value indicates that the attribute has no value.
             // An attribute like multiple on select would do this: <select multiple></select>
             if (value === null) {
@@ -210,5 +210,7 @@ export abstract class Element extends Renderable {
             }
             return str + ` ${name}="${value}"`;
         }, '');
+
+        return templates ? new StringLiteral(attributeString, false).render(templates) : attributeString;
     }
 }
