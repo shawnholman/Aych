@@ -74,17 +74,35 @@ export class Piper {
     }
 
     /**
+     * Creates a copy of a pipe with a different name.
+     * @param pipeName
+     * @param newPipeName
+     */
+    static alias (pipeName: string, newPipeName: string): void {
+        if (pipeName === newPipeName) {
+            throw new Error(`Cannot alias with the same pipe name.`);
+        }
+        if (Piper.pipes.has(newPipeName)) {
+            throw new Error(`Pipe already exists: ${newPipeName}.`);
+        }
+        this.copy(pipeName, newPipeName);
+    }
+
+    /**
      * Copies an existing pipe over to a new name.
      * @param pipeName The name of the pipe to copy.
      * @param newPipeName The name of the new pipe to make from the copy.
-     * @param func The update pipe function to build the update.
-     * TODO: Fix copy.it does not do what it says it does.
+     * @param func The copy pipe function to build the update.
      */
-    static copy(pipeName: string, newPipeName: string, func: PipeCopyFunc): void {
+    static copy(pipeName: string, newPipeName: string, func?: PipeCopyFunc): void {
         pipeName = pipeName.trim();
         if (Piper.pipes.has(pipeName)) {
-            let pipeFunc: PipeFunc = func.bind(this, Piper.pipes.get(pipeName));
-            Piper.pipes.set(newPipeName, pipeFunc);
+            if (func) {
+                let pipeFunc: PipeFunc = func.bind(this, Piper.pipes.get(pipeName));
+                Piper.pipes.set(newPipeName, pipeFunc);
+            } else {
+                Piper.pipes.set(newPipeName, Piper.pipes.get(pipeName) as PipeFunc);
+            }
         } else {
             throw new Error(`Cannot use non-existing pipe: ${pipeName}.`);
         }
