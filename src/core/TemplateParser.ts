@@ -22,8 +22,12 @@ export class TemplateParser {
     private static readonly FILTER =
         '(' + (TemplateParser.bufferedTags.pipe) + '(([\\w-_<>=!][\\w\\d-_<>=!]*)(\\((([\\w\\d]+)(,\\s*[\\w\\d]+)*)?\\))?))?';
 
-    private static readonly TEMPLATE_TAG =
-        new RegExp(TemplateParser.bufferedTags.start + TemplateParser.FULL_IDENTIFIER + TemplateParser.FILTER + TemplateParser.bufferedTags.end, 'g')
+    private static readonly TEMPLATE_TAG_STRING =
+        TemplateParser.bufferedTags.start + TemplateParser.FULL_IDENTIFIER + TemplateParser.FILTER + TemplateParser.bufferedTags.end;
+
+    private static readonly TEMPLATE_TAG = new RegExp(TemplateParser.TEMPLATE_TAG_STRING, 'g');
+
+    private static readonly EXACT_TEMPLATE_TAG = new RegExp('^' + TemplateParser.TEMPLATE_TAG_STRING + '$');
 
     /** Indexes used to identify key locations in the resulting RegExp match */
     private static readonly templateIndex = {
@@ -40,7 +44,7 @@ export class TemplateParser {
      * @param toTemplate The string to template.
      * @param templates The data to use.
      */
-    public static template(toTemplate: string, templates: SimpleObject) {
+    public static template(toTemplate: string, templates: SimpleObject): string {
         if (!TemplateParser.probablyHasTemplates(toTemplate)) {
             return toTemplate;
         }
@@ -60,8 +64,12 @@ export class TemplateParser {
      * @param toTemplate The string to template.
      * @param templates The data to use.
      */
-    public static evaluate(toTemplate: string, templates: SimpleObject) {
-        const result = TemplateParser.template(toTemplate, templates).trim();
+    public static evaluate(toTemplate: string, templates: SimpleObject): boolean {
+        toTemplate = toTemplate.trim();
+        if (!toTemplate.match(TemplateParser.EXACT_TEMPLATE_TAG)) {
+            return false;
+        }
+        const result = TemplateParser.template(toTemplate, templates);
 
         return result === 'true';
     }
@@ -71,7 +79,7 @@ export class TemplateParser {
      * validate that the potential template is usable.
      * @param string The string to check if it has templates.
      */
-    private static probablyHasTemplates(toTemplate: string) {
+    private static probablyHasTemplates(toTemplate: string): boolean {
         return toTemplate.includes(TemplateParser.tags.start) && toTemplate.includes(TemplateParser.tags.end);
     }
 

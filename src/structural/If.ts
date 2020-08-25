@@ -2,12 +2,13 @@ import {SimpleObject} from "../interfaces";
 import {isString} from "../Util";
 import {Renderable} from "../core/Renderable";
 import {StringLiteral} from "../core/StringLiteral";
+import {TemplateParser} from "../core/TemplateParser";
 
 /**
  * The If class renders a Renderable based on a condition.
  */
 export class If extends Renderable {
-    private readonly condition: boolean;
+    private readonly condition: boolean | string;
     private readonly ifRenderable: Renderable;
     private elseRenderable?: Renderable;
     private elifRenderable?: Renderable;
@@ -18,7 +19,7 @@ export class If extends Renderable {
      * @param toRenderIf The renderable to render if the condition is true.
      * @param toRenderElse The renderable to render if the condition is false (and no truthy elif exists).
      */
-    constructor(condition: boolean, toRenderIf: Renderable | string, toRenderElse?: Renderable | string) {
+    constructor(condition: boolean | string, toRenderIf: Renderable | string, toRenderElse?: Renderable | string) {
         super();
         this.condition = condition;
 
@@ -54,7 +55,9 @@ export class If extends Renderable {
 
     /** @inheritdoc */
     protected internalRender(templates: SimpleObject): string {
-        if (this.condition) {
+        let condition = isString(this.condition) ? TemplateParser.evaluate(this.condition, templates) : this.condition;
+
+        if (condition) {
             return this.ifRenderable.render(templates);
         } else if (this.elifRenderable !== undefined) {
             return this.elifRenderable.render(templates);

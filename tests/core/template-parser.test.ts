@@ -83,6 +83,12 @@ describe('TemplateParser', () => {
         expect(TemplateParser.evaluate('{{num|<=(10)}}', {num: 12})).to.equal(false);
     });
 
+    it('evaluates expression to false if the given string is not just a single template', () => {
+        expect(TemplateParser.evaluate('{{num|<=(10)}} {{num|<=(10)}}', {num: 2})).to.equal(false);
+        expect(TemplateParser.evaluate('{{num|<=(10)}} he', {num: 10})).to.equal(false);
+        expect(TemplateParser.evaluate('hey {{num|<=(10)}}', {num: 2})).to.equal(false);
+    });
+
     it('throws an error if the template cannot be found', () => {
         expect(function () {
             TemplateParser.template('{{this.was.a.deep[2].literal}}', THIS_IS);
