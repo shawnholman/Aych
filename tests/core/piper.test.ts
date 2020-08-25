@@ -1,5 +1,6 @@
 import {expect} from 'chai';
 import {Piper} from '../../src/core/Piper';
+import {TemplateParser} from "../../src/core/TemplateParser";
 
 describe('Piper', () => {
     describe('built-in pipes', () => {
@@ -16,6 +17,32 @@ describe('Piper', () => {
             expect(Piper.pipe('testword', 'substr', '0, 3')).to.equal('tes');
             expect(Piper.pipe('testword', 'substr', '2, 4')).to.equal('stwo');
             expect(Piper.pipe('testword', 'substr', '2, 40')).to.equal('stword');
+        });
+        it('==', () => {
+            expect(Piper.pipe('hello', '==', 'hello')).to.equal('true');
+            expect(Piper.pipe('hey', '==', 'hello')).to.equal('false');
+        });
+        it('!=', () => {
+            expect(Piper.pipe('hello', '!=', 'hello')).to.equal('false');
+            expect(Piper.pipe('hey', '!=', 'hello')).to.equal('true');
+        });
+        it('>', () => {
+            expect(Piper.pipe('2', '>', '10')).to.equal('false');
+            expect(Piper.pipe('12', '>', '10')).to.equal('true');
+        });
+        it('<', () => {
+            expect(Piper.pipe('2', '<', '10')).to.equal('true');
+            expect(Piper.pipe('12', '<', '10')).to.equal('false');
+        });
+        it('>=', () => {
+            expect(Piper.pipe('2', '>=', '10')).to.equal('false');
+            expect(Piper.pipe('10', '>=', '10')).to.equal('true');
+            expect(Piper.pipe('12', '>=', '10')).to.equal('true');
+        });
+        it('<=', () => {
+            expect(Piper.pipe('2', '<=', '10')).to.equal('true');
+            expect(Piper.pipe('10', '<=', '10')).to.equal('true');
+            expect(Piper.pipe('12', '<=', '10')).to.equal('false');
         });
     });
 

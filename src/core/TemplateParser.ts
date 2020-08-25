@@ -1,6 +1,8 @@
 import {SimpleObject} from "../interfaces";
 import {Piper} from "./Piper";
 
+// TODO: Support literals instead of always using tempalte.
+// TODO: Support multiple pipes
 export class TemplateParser {
     private static readonly tags = {
         start: '{{',
@@ -18,7 +20,7 @@ export class TemplateParser {
         '(([\\w-_][\\w\\d-_]*(\\[-?\\d+\\])?\\??)(\\.[\\w-_][\\w\\d-_]*(\\[-?\\d+\\])?\\??)*)';
 
     private static readonly FILTER =
-        '(' + (TemplateParser.bufferedTags.pipe) + '(([\\w-_][\\w\\d-_]*)(\\((([\\w\\d]+)(,\\s*[\\w\\d]+)*)?\\))?))?';
+        '(' + (TemplateParser.bufferedTags.pipe) + '(([\\w-_<>=!][\\w\\d-_<>=!]*)(\\((([\\w\\d]+)(,\\s*[\\w\\d]+)*)?\\))?))?';
 
     private static readonly TEMPLATE_TAG =
         new RegExp(TemplateParser.bufferedTags.start + TemplateParser.FULL_IDENTIFIER + TemplateParser.FILTER + TemplateParser.bufferedTags.end, 'g')
@@ -33,6 +35,11 @@ export class TemplateParser {
         pipeParams: 10,
     }
 
+    /**
+     * Templates a string with given data.
+     * @param toTemplate The string to template.
+     * @param templates The data to use.
+     */
     public static template(toTemplate: string, templates: SimpleObject) {
         if (!TemplateParser.probablyHasTemplates(toTemplate)) {
             return toTemplate;
@@ -46,6 +53,17 @@ export class TemplateParser {
 
             return Piper.pipe(value, pipeFunctionName, pipeParameters);
         });
+    }
+
+    /**
+     * Evaluates a given expression to true or false.
+     * @param toTemplate The string to template.
+     * @param templates The data to use.
+     */
+    public static evaluate(toTemplate: string, templates: SimpleObject) {
+        const result = TemplateParser.template(toTemplate, templates).trim();
+
+        return result === 'true';
     }
 
     /**

@@ -1,11 +1,42 @@
-type PipeFunc = (str: string, ...args: any[]) => string;
-type PipeCopyFunc = (original: PipeFunc, str: string, ...args:any[]) => string;
+type PipeFunc = (str: string, ...args: any[]) => any;
+type PipeCopyFunc = (original: PipeFunc, str: string, ...args:any[]) => any;
+
 /**
  * Piper is the piping engine. Template pipes are defined and executed here.
  * TODO: Scope piper.
  */
 export class Piper {
-    private static pipes = new Map<string, PipeFunc>();
+    private static pipes = new Map<string, PipeFunc>([
+        ['lowercase', (str: string) => {
+            return str.toLowerCase();
+        }],
+        ['uppercase', (str: string) => {
+            return str.toUpperCase();
+        }],
+        ['substr', (str: string, from: number, length: number) => {
+            return str.substr(from, length);
+        }],
+
+        // Expressions:
+        ['==', (str: string, to: string | number | boolean) => {
+            return str === to.toString();
+        }],
+        ['!=', (str: string, to: string | number | boolean) => {
+            return str !== to.toString();
+        }],
+        ['>', (str: string, to: number) => {
+            return Number(str) > to;
+        }],
+        ['<', (str: string, to: number) => {
+            return Number(str) < to;
+        }],
+        ['>=', (str: string, to: number) => {
+            return Number(str) >= to;
+        }],
+        ['<=', (str: string, to: number) => {
+            return Number(str) <= to;
+        }],
+    ]);
 
     /**
      * Register a new pipe with piper.
@@ -47,6 +78,7 @@ export class Piper {
      * @param pipeName The name of the pipe to copy.
      * @param newPipeName The name of the new pipe to make from the copy.
      * @param func The update pipe function to build the update.
+     * TODO: Fix copy.it does not do what it says it does.
      */
     static copy(pipeName: string, newPipeName: string, func: PipeCopyFunc): void {
         pipeName = pipeName.trim();
@@ -76,7 +108,7 @@ export class Piper {
                     if (el === 'false') return false;
                     return el;
                 });
-                return Piper.pipes.get(pipeName)!.call(this, value, ...transformedParams);
+                return Piper.pipes.get(pipeName)!.call(this, value, ...transformedParams).toString();
             } else {
                 throw new Error(`Pipe does not exist: ${pipeName}.`);
             }
@@ -84,15 +116,3 @@ export class Piper {
         return value;
     }
 }
-
-Piper.register('lowercase', (str: string) => {
-    return str.toLowerCase();
-});
-
-Piper.register('uppercase', (str: string) => {
-    return str.toUpperCase();
-});
-
-Piper.register('substr', (str: string, from: number, length: number) => {
-    return str.substr(from, length);
-});
