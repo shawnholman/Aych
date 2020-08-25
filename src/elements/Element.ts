@@ -1,8 +1,7 @@
 import {Attribute, Attributes, SimpleObject} from "../interfaces";
 import {Renderable} from "../core/Renderable";
 import {isAttributes, isString} from "../Util";
-import {StringLiteral} from "../core/StringLiteral";
-import {Templater} from "../core/Templater";
+import {TemplateParser} from "../core/TemplateParser";
 
 /** @ignore */
 const CLASS_IDENTIFIER = '.';
@@ -212,6 +211,6 @@ export abstract class Element extends Renderable {
             return str + ` ${name}="${value}"`;
         }, '');
 
-        return templates ? Templater.template(attributeString, templates) : attributeString;
+        return templates ? TemplateParser.template(attributeString, templates) : attributeString;
     }
 }

@@ -1,5 +1,5 @@
 import {SimpleObject} from "../interfaces";
-import {Templater} from "./Templater";
+import {TemplateParser} from "./TemplateParser";
 import {Renderable} from "./Renderable";
 import {isString} from "../Util";
 
@@ -57,7 +57,7 @@ export class StringLiteral extends Renderable {
 
     /** @inheritdoc */
     internalRender(templates: SimpleObject): string {
-        return Templater.template(this.string, templates);
+        return TemplateParser.template(this.string, templates);
     }
 
     /**

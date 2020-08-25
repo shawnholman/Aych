@@ -1,7 +1,7 @@
 import {SimpleObject} from "../interfaces";
 import {Piper} from "./Piper";
 
-export class Templater {
+export class TemplateParser {
     private static readonly tags = {
         start: '{{',
         end: '}}',
@@ -9,19 +9,19 @@ export class Templater {
     };
 
     private static readonly bufferedTags = {
-        start: Templater.tags.start + '\\s*',
-        end: '\\s*' + Templater.tags.end,
-        pipe: '\\s*\\' + Templater.tags.pipe + '\\s*',
+        start: TemplateParser.tags.start + '\\s*',
+        end: '\\s*' + TemplateParser.tags.end,
+        pipe: '\\s*\\' + TemplateParser.tags.pipe + '\\s*',
     };
 
     private static readonly FULL_IDENTIFIER =
         '(([\\w-_][\\w\\d-_]*(\\[-?\\d+\\])?\\??)(\\.[\\w-_][\\w\\d-_]*(\\[-?\\d+\\])?\\??)*)';
 
     private static readonly FILTER =
-        '(' + (Templater.bufferedTags.pipe) + '(([\\w-_][\\w\\d-_]*)(\\((([\\w\\d]+)(,\\s*[\\w\\d]+)*)?\\))?))?';
+        '(' + (TemplateParser.bufferedTags.pipe) + '(([\\w-_][\\w\\d-_]*)(\\((([\\w\\d]+)(,\\s*[\\w\\d]+)*)?\\))?))?';
 
     private static readonly TEMPLATE_TAG =
-        new RegExp(Templater.bufferedTags.start + Templater.FULL_IDENTIFIER + Templater.FILTER + Templater.bufferedTags.end, 'g')
+        new RegExp(TemplateParser.bufferedTags.start + TemplateParser.FULL_IDENTIFIER + TemplateParser.FILTER + TemplateParser.bufferedTags.end, 'g')
 
     /** Indexes used to identify key locations in the resulting RegExp match */
     private static readonly templateIndex = {
@@ -34,15 +34,15 @@ export class Templater {
     }
 
     public static template(toTemplate: string, templates: SimpleObject) {
-        if (!Templater.probablyHasTemplates(toTemplate)) {
+        if (!TemplateParser.probablyHasTemplates(toTemplate)) {
             return toTemplate;
         }
 
-        return toTemplate.replace(Templater.TEMPLATE_TAG, (...groups) => {
-            const key = groups[Templater.templateIndex.key];
-            const pipeFunctionName = groups[Templater.templateIndex.pipeFuncName];
-            const pipeParameters = groups[Templater.templateIndex.pipeParams];
-            const value = Templater.getValueFromObject(templates, key);
+        return toTemplate.replace(TemplateParser.TEMPLATE_TAG, (...groups) => {
+            const key = groups[TemplateParser.templateIndex.key];
+            const pipeFunctionName = groups[TemplateParser.templateIndex.pipeFuncName];
+            const pipeParameters = groups[TemplateParser.templateIndex.pipeParams];
+            const value = TemplateParser.getValueFromObject(templates, key);
 
             return Piper.pipe(value, pipeFunctionName, pipeParameters);
         });
@@ -54,7 +54,7 @@ export class Templater {
      * @param string The string to check if it has templates.
      */
     private static probablyHasTemplates(toTemplate: string) {
-        return toTemplate.includes(Templater.tags.start) && toTemplate.includes(Templater.tags.end);
+        return toTemplate.includes(TemplateParser.tags.start) && toTemplate.includes(TemplateParser.tags.end);
     }
 
     /**
