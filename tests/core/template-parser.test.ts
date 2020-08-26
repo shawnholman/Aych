@@ -30,6 +30,16 @@ describe('TemplateParser', () => {
         expect(string).to.equal('this1 is a string');
     });
 
+    it('renders string literal after template pipes (with arguments that have spaces)', () => {
+        Piper.register("addString", (str: string, toAdd: string) => {
+            return str + toAdd;
+        });
+        const string = TemplateParser.template('{{empty|addString(hello world)}}', {
+            'empty': ''
+        });
+        expect(string).to.equal('hello world');
+    });
+
     it('renders string with deep literal', () => {
         const string = TemplateParser.template('{{this.is.a.deep[2].literal}}', {
             'this': {

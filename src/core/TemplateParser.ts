@@ -20,7 +20,7 @@ export class TemplateParser {
         '(([\\w-_][\\w\\d-_]*(\\[-?\\d+\\])?\\??)(\\.[\\w-_][\\w\\d-_]*(\\[-?\\d+\\])?\\??)*)';
 
     private static readonly FILTER =
-        '(' + (TemplateParser.bufferedTags.pipe) + '(([\\w-_<>=!][\\w\\d-_<>=!]*)(\\((([\\w\\d]+)(,\\s*[\\w\\d]+)*)?\\))?))?';
+        '(' + (TemplateParser.bufferedTags.pipe) + '(([\\w-_<>=!][\\w\\d-_<>=!]*)(\\((([\\w\\d ]+)(,\\s*[\\w\\d ]+)*)?\\))?))?';
 
     private static readonly TEMPLATE_TAG_STRING =
         TemplateParser.bufferedTags.start + TemplateParser.FULL_IDENTIFIER + TemplateParser.FILTER + TemplateParser.bufferedTags.end;
@@ -45,6 +45,7 @@ export class TemplateParser {
      * @param templates The data to use.
      */
     public static template(toTemplate: string, templates: SimpleObject): string {
+        console.log(TemplateParser.TEMPLATE_TAG);
         if (!TemplateParser.probablyHasTemplates(toTemplate)) {
             return toTemplate;
         }
