@@ -124,6 +124,7 @@ export abstract class Element extends Renderable {
      * @param value The attribute value. Alternatively accepts an array with the form: [condition, string1, string2?]
      * which will use string1 if condition == trye. Otherwise it will use string2 if it exists. If string2 is not
      * defined and condition == false, then the attribute will be omitted.
+     * TODO: Add support for TemplateParser.evaluate
      */
     setAttribute(name: string, value: Attribute): Element {
         // If the attribute is an array like: [true, 'trueAttr', 'falseAttr']

@@ -261,7 +261,7 @@ In fact, those invalid examples would actually register the string as a literal 
 ### Other attributes
 Every other attribute can be given in an object either in place of the identifier string or afterwards.
 
-**This list should always come after the identifier string (if used) and before children.**
+**This list should always come after the identifier string (if used) and before any children.**
 
 The following examples gives some cools ways that the attribute object can be used to help manipulate attributes.
 
@@ -275,21 +275,24 @@ H.span("#example.hello.world", {
     "class": '+awesome',
 
     // Add an attribute with a conditional value.
-    "lang": [true, "en-US", 'en-UK'],
+    "lang": [true, "en-US", 'en-UK'], 
 
     // Conditionally append/remove classes
     "class": [false, '+cool', '-world'],
   
-    // Includes attribute:
+    // Include attribute:
     "title": [true, "a span"],
  
-    // Excluse attribute
+    // Exclude attribute (will not be added to the element at all):
     "data-attr": [false, "value"],
-}); 
+    
+    // Pulls from passed in data (can be used with conditional values as well.
+    "dir": '{{dir}}',
+}).render({ dir: 'ltr' }); 
 ```
 Produces:
 ```html
-<span id="example" class="hello awesome" style="color: red;" lang="en-US" title="a span"></span>
+<span id="example" class="hello awesome" style="color: red;" lang="en-US" title="a span" dir="ltr"></span>
 ```
 
 
@@ -378,14 +381,17 @@ The most powerful way to render is with the `render` method which allows you to 
 rendering. Template data can be used inside of string literals to conveniently access data.
 
 #### Templating
-Aych supports a very simple templating. One of the design goals was to keep this engine very simple. It supports 
+Aych supports a very simple templating system. One of the design goals was to keep this engine very simple. It supports 
 accessing data from the templating object, and it also supports piping. See the piping section for details.
 
 You can access data inside of the template string using the `{{ }}` operators with the name of the data location. Aych
 supports accessing nested objects and arrays.
 
+Lastly, the `?` (optional) operator can be used within the deep look-up of objects to prevent null-pointer errors. If 
+at any point a null is found, the execution will simply stop and return nothing in the place of the template.
+
 ```javascript
-H.div("{{name.first[0]}} {{name.last[1]}}").render({ 
+H.div('{{name.first[0]}} {{name.last[1]}}').render({ 
     name: {
         first: ['John', 'Billy'],
         last: ['Hanks', 'Doe']
@@ -395,7 +401,7 @@ H.div("{{name.first[0]}} {{name.last[1]}}").render({
 
 As mentioned, there is also support for piping, or transforming the data using the pipe operator (`|`):
 ```javascript
-H.div("{{name.first[0]|uppercase}} {{name.last[1]|substr(0, 1)}}").render({ 
+H.div('{{name.first[0]|uppercase}} {{name.last[1]|substr(0, 1)}}').render({ 
     name: {
         first: ['John', 'Billy'],
         last: ['Hanks', 'Doe']
@@ -404,6 +410,20 @@ H.div("{{name.first[0]|uppercase}} {{name.last[1]|substr(0, 1)}}").render({
 ```
 
 As you can see, pipes can even have parameters! The substr pipe is using `String.prototype.substr`.
+
+Lastly, the `?` (optional) operator:
+
+```javascript
+H.div('{{this.was?.a.deep[2].literal}}').render({
+    this: {
+        is: {},
+    }
+}); // output: <div></div>
+```
+
+In the previous example, `this.was` would return `null` because the passed in object to render does not have this 
+location. The `?` is preventing an error (which would be: `was is not a property of this.`) from being thrown in favor
+of return an empty string.
 
 #### Options
 The options are part of an interface called the RenderOptions. You can checkout the API for details on each option.
@@ -517,8 +537,21 @@ Aych.Piper.register('PIPE NAME HERE', (str, optionalArg1, optionalArg2, ...) => 
 
 You can deregister a pipe using `Aych.Piper.deregister('PIPE NAME HERE')`.
 
-Alternatively, if you simply want to update an existing pipe, you can use the update method. The signature used is 
-slightly modified. The previous pipe function will be given to you as the first argument:
+### Copy
+If you want to create a copy of a pipe, then you can call the copy method:
+
+```javascript
+Aych.Piper.copy('PIPE TO COPY', 'PIPE TO COPY TO', false, (original, ...args) => {
+  // optional function which you can redefined the copy using the original.
+});
+```
+The third and fourth argument are optional. The third argument is a boolean that specifies whether the copy should be
+an alias of the original if true. The fourth argument should be used only if the third argument is `false`. It allows
+you to create a copy of the original pipe and modify the original pipe in some way.
+
+### Update Pipe
+If you simply want to update an existing pipe, you can use the update method. The signature of the anonymous function 
+is slightly modified. The previous pipe function will be given to you as the first argument:
 ```javascript
 Aych.Piper.update('PIPE NAME HERE', (original, str, optionalArg1, optionalArg2, ...) => {
     // Do something to str here.
@@ -526,7 +559,30 @@ Aych.Piper.update('PIPE NAME HERE', (original, str, optionalArg1, optionalArg2, 
 });
 ```
 
-An example with all these concepts:
+Updating is the same as calling copy like this:
+
+```javascript
+const pipeToUpdate = 'PIPE NAME HERE';
+Aych.Piper.copy(pipeToUpdate, pipeToUpdate, false, (original, str, optionalArg1, optionalArg2, ...) => {
+   // Do something to str here.
+   return original(str);
+});
+```
+
+### Alias Pipe
+You can use `alias` to create a copy of a pipe with a new name:
+```javascript
+Aych.Piper.alias('PIPE TO COPY', 'PIPE TO COPY TO');
+// Similar to:
+Aych.Piper.copy('PIPE TO COPY', 'PIPE TO COPY TO', true);
+```
+
+Using `.alias()` will add a couple of additional checks when compared to `copy`:
+1. Enforces that the first and second pipe are different.
+2. Enforces that the "pipe to copy to" does not already exist. Thus, with alias, you can't override existing pipes while
+with `copy` you can.
+
+Here is an example with all these concepts:
 ```javascript
 Aych.Piper.register('addLetter', (str, letter) => {
     if (letter === undefined) letter = 'a';
@@ -540,10 +596,20 @@ Aych.Piper.update('addLetter', (original, str, letter) => {
     if (letter === undefined) letter = 'a';
     return letter + original(str, letter);
 });
+Aych.Piper.alias('addLetter', 'letterAdder');
 
 H.div('{{text|addLetter(!)}}').render({text: "Hello"}); // output: "!Hello!"
+H.div('{{text|letterAdder(!)}}').render({text: "Hello"}); // output: "!Hello!"
 
-Aych.Piper.deregister('addLetter');
+Aych.Piper.copy('addLetter', 'doubleLetter', false, (original, str, letter) => {
+    if (letter === undefined) letter = 'a';
+    return letter + original(str, letter) + letter;
+});
+
+H.div('{{text|doubleLetter(!)}}').render({text: "Hello"}); // output: "!!Hello!!"
+
+Aych.Piper.deregister('addLetter'); // deregisters alias 'letterAdder' as well
+Aych.Piper.deregister('doubleLetter');
 // Using addLetter as a pipe after this point will throw an error.
 ```
 
@@ -621,10 +687,35 @@ H.$if(true,
         H.span()
     ),
     H.strong()
-).r // output: <span></span>
+).r; // output: <span></span>
 ```
 
+The if statement can utilize data passed in through the `.render()` method. This functionality is limited to a single
+data-point. Using multiple variables is currently not supported.
 
+```javascript
+const data = {
+    name: "Jimmy",
+    age: 17,
+    hometown: "Atlanta",
+    citizen: true,
+};
+
+// uses citizen as a boolean
+H.$if('{{citizen}}', H.div(), H.span()).render(data); // output: <div></div>
+// OR:
+H.$if('{{citizen | ==(true) }}', H.div(), H.span()).render(data); // output: <div></div>
+
+// if length of name is greater than 5
+H.$if('{{ name.length | >(5) }}', H.div(), H.span()).render(data); // output: <span></span>
+// if age is less than or equal to 17
+H.$if('{{ age | <=(17) }}', H.div(), H.span()).render(data); // output: <div></div>
+// if homework equals 'New York City' 
+H.$if('{{ hometown | ==(New York City) }}', H.div(), H.span()).render(data); // output: <div></div>
+```
+
+As you can see, the if statement combined with the conditional pipes `==`, `!=`, `>`, `>=`, `<`, `<=` are really useful
+for creating simple boolean expressions. 
 
 ### $each
 The `$each` statement renders a renderable for each item in a list. The `eachIn` is similar but instead works with 
