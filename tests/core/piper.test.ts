@@ -77,28 +77,60 @@ describe('Piper', () => {
 
     it ('copies a pipe', () => {
         // This takes the testArgument from the previous test and copies it (alias).
-        Piper.copy('testArgument', 'testArgument2');
+        Piper.copy('testArgument', 'testArgumentTwo');
 
-        const pipe = Piper.pipe('MyValue', 'testArgument2', '1, true, hello, false');
+        const pipe = Piper.pipe('MyValue', 'testArgumentTwo', '1, true, hello, false');
         expect(pipe).to.equal('MyValue1truehellofalse');
     });
 
     it ('copies a pipe and modifies it', () => {
         // This takes the testArgument from the previous test, copies it, and modifies it.
-        Piper.copy('testArgument', 'testArgument3', (original, value, arg1: number, arg2: boolean, arg3: string, arg4: boolean) => {
+        Piper.copy('testArgument', 'testArgumentThree', false, (original, value, arg1: number, arg2: boolean, arg3: string, arg4: boolean) => {
             return original(value, arg1, arg2, arg3, arg4) + "-updated";
         });
 
-        const pipe = Piper.pipe('MyValue', 'testArgument3', '1, true, hello, false');
+        const pipe = Piper.pipe('MyValue', 'testArgumentThree', '1, true, hello, false');
         expect(pipe).to.equal('MyValue1truehellofalse-updated');
     });
 
     it ('creates an alias of a pipe', () => {
         // This takes the testArgument from the previous test and creates an alias.
-        Piper.alias('testArgument', 'testArgument4');
+        Piper.alias('testArgument', 'testArgumentFour');
 
-        const pipe = Piper.pipe('MyValue', 'testArgument4', '1, true, hello, false');
+        const pipe = Piper.pipe('MyValue', 'testArgumentFour', '1, true, hello, false');
         expect(pipe).to.equal('MyValue1truehellofalse');
+    });
+
+
+    it ('deregisters all copies of an alias', () => {
+        Piper.register('somePipeOne', () => 'test');
+        Piper.alias('somePipeOne', 'somePipeTwo');
+        Piper.alias('somePipeOne', 'somePipeThree');
+
+        expect(Piper.pipe('', 'somePipeOne', '')).to.equal('test');
+        expect(Piper.pipe('', 'somePipeThree', '')).to.equal('test');
+        expect(Piper.pipe('', 'somePipeTwo', '')).to.equal('test');
+
+        Piper.deregister('somePipeOne');
+        expect(() => Piper.pipe('', 'somePipeTwo'))
+            .to.throw('Pipe does not exist: somePipeTwo.');
+        expect(() => Piper.pipe('', 'somePipeThree'))
+            .to.throw('Pipe does not exist: somePipeThree.');
+
+        Piper.register('somePipeOne', () => 'test');
+        Piper.alias('somePipeOne', 'somePipeTwo');
+        Piper.alias('somePipeTwo', 'somePipeThree');
+
+
+        expect(Piper.pipe('', 'somePipeOne', '')).to.equal('test');
+        expect(Piper.pipe('', 'somePipeThree', '')).to.equal('test');
+        expect(Piper.pipe('', 'somePipeTwo', '')).to.equal('test');
+
+        Piper.deregister('somePipeTwo');
+        expect(() => Piper.pipe('', 'somePipeOne'))
+            .to.throw('Pipe does not exist: somePipeOne.');
+        expect(() => Piper.pipe('', 'somePipeThree'))
+            .to.throw('Pipe does not exist: somePipeThree.');
     });
 
     it ('updates a pipe', () => {
@@ -111,17 +143,23 @@ describe('Piper', () => {
         expect(pipe).to.equal('MyValue1truehellofalse-updated');
     });
 
+    it('throws an error when trying to create a alias with the copy method and define an update function', () =>{
+        expect(() => {
+            Piper.copy('', ' ', true, (original, str) => str);
+        }).to.throw('Alias should retain original function.');
+    });
+
     it('throws an error when trying to copy a non-existing pipe', () => {
         expect(() => {
-            Piper.copy('undefinedTest', ' ', (original, str) => str);
-        }).to.throw('Cannot use non-existing pipe: undefinedTest.');
+            Piper.copy('undefinedTest', ' ', false, (original, str) => str);
+        }).to.throw('Pipe does not exist: undefinedTest.');
     });
 
     it('throws an error if trying to create an alias with an existing pipe name', () => {
         expect(function () {
             // Already aliased in an earlier test.
-            Piper.alias('testArgument', 'testArgument4');
-        }).to.throw('Pipe already exists: testArgument4')
+            Piper.alias('testArgument', 'testArgumentFour');
+        }).to.throw('Pipe already exists: testArgumentFour')
     });
 
     it('throws an error if trying to create an alias with the same name', () => {
@@ -133,7 +171,7 @@ describe('Piper', () => {
     it('throws an error when trying to update a non-existing pipe', () => {
         expect(() => {
             Piper.update('undefinedTest', (original, str) => str);
-        }).to.throw('Cannot use non-existing pipe: undefinedTest.');
+        }).to.throw('Pipe does not exist: undefinedTest.');
     });
 
     it('throws an error when trying to call a non-existing pipe', () => {
