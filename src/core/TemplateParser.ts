@@ -45,7 +45,6 @@ export class TemplateParser {
      * @param templates The data to use.
      */
     public static template(toTemplate: string, templates: SimpleObject): string {
-        console.log(TemplateParser.TEMPLATE_TAG);
         if (!TemplateParser.probablyHasTemplates(toTemplate)) {
             return toTemplate;
         }
