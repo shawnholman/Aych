@@ -16,6 +16,7 @@ export class Switch<T extends Switchable> extends Renderable {
      * Constructor
      * @param value The value determines which cases is chosen and rendered.
      * @param cases A set of cases with a value associated to it.
+     * TODO: Take value as string for templates.
      */
     constructor(value: T, ...cases: Switch.Case<T>[]) {
         super();

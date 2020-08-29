@@ -131,6 +131,10 @@ export class TemplateParser {
             prevKey = key.value;
         }
 
+        if (track === null || track === undefined) {
+            return '';
+        }
+
         return track.toString();
     }
 
