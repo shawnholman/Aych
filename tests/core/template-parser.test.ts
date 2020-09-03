@@ -40,6 +40,15 @@ describe('TemplateParser', () => {
         expect(string).to.equal('hello world');
     });
 
+    it('ignores null or undefined elements', () => {
+        const string = TemplateParser.template('{{element.null}}', {
+            'element': {
+                'null': null,
+            }
+        });
+        expect(string).to.equal('');
+    });
+
     it('renders string with deep literal', () => {
         const string = TemplateParser.template('{{this.is.a.deep[2].literal}}', {
             'this': {
@@ -68,10 +77,14 @@ describe('TemplateParser', () => {
 
     it('evaluates expression to true or false indirectly', () => {
         const eval1 = TemplateParser.evaluate('{{expression}}', {expression: true});
-        const eval2 = TemplateParser.evaluate('{{expression}}', {expression: false});
+        const eval2 = TemplateParser.evaluate('{{expression}}', {expression: 1});
+        const eval3 = TemplateParser.evaluate('{{expression}}', {expression: '1'});
+        const eval4 = TemplateParser.evaluate('{{expression}}', {expression: false});
 
         expect(eval1).to.equal(true);
-        expect(eval2).to.equal(false);
+        expect(eval2).to.equal(true);
+        expect(eval3).to.equal(true);
+        expect(eval4).to.equal(false);
     });
 
     it('evaluates expression using piper built-in operations', () => {

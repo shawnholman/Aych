@@ -71,7 +71,7 @@ export class TemplateParser {
         }
         const result = TemplateParser.template(toTemplate, templates);
 
-        return result === 'true';
+        return result === 'true' || result === '1';
     }
 
     /**
