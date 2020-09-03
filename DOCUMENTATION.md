@@ -677,6 +677,9 @@ H.$if(true, H.div(), H.span()).r; // output: <div></div>
 H.$if(false, H.div(), H.span()).r; // output: <span></span>
 H.$if(false, H.div()).else(H.span()).r; // output: <span></span>
 
+// if then: 
+H.$if(true).then(H.div()).else(H.span()).r;
+
 // Use else if:
 H.$if(false, H.div()).elif(false, H.span()).elif(true, H.strong()).r; // output: <strong></strong>
 

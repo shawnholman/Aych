@@ -9,7 +9,7 @@ import {TemplateParser} from "../core/TemplateParser";
  */
 export class If extends Renderable {
     private readonly condition: boolean | string;
-    private readonly ifRenderable: Renderable;
+    private ifRenderable: Renderable;
     private elseRenderable?: Renderable;
     private elifRenderable?: Renderable;
 
@@ -19,15 +19,25 @@ export class If extends Renderable {
      * @param toRenderIf The renderable to render if the condition is true.
      * @param toRenderElse The renderable to render if the condition is false (and no truthy elif exists).
      */
-    constructor(condition: boolean | string, toRenderIf: Renderable | string, toRenderElse?: Renderable | string) {
+    constructor(condition: boolean | string, toRenderIf?: Renderable | string, toRenderElse?: Renderable | string) {
         super();
         this.condition = condition;
 
-        this.ifRenderable = isString(toRenderIf) ? new StringLiteral(toRenderIf) : toRenderIf;
-
+        if (toRenderIf) {
+            this.then(toRenderIf);
+        }
         if (toRenderElse) {
             this.else(toRenderElse);
         }
+    }
+
+    /**
+     * Sets the if renderable.
+     * @param toRender The renderable to render if the condition is true (and no truthy elif exists).
+     */
+    then(toRender: Renderable | string): If {
+        this.ifRenderable = isString(toRender) ? new StringLiteral(toRender) : toRender;
+        return this;
     }
 
     /**

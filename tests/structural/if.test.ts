@@ -9,8 +9,20 @@ describe('If', () => {
         expect(rendered).to.equal('<div></div>');
     });
 
+    it('renders the renderable if true (using then)', () => {
+        const element = new If(true).then(new NestableElement('div'));
+        const rendered = element.render();
+        expect(rendered).to.equal('<div></div>');
+    });
+
     it('does not render the renderable if false', () => {
         const element = new If(false, new NestableElement('div'));
+        const rendered = element.render();
+        expect(rendered).to.equal('');
+    });
+
+    it('does not render the renderable if false (using then)', () => {
+        const element = new If(false).then(new NestableElement('div'));
         const rendered = element.render();
         expect(rendered).to.equal('');
     });
