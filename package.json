@@ -1,6 +1,6 @@
 {
   "name": "aych",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "",
   "main": "dist/aych.min.js",
   "types": "dist/aych.min.d.ts",
@@ -8,6 +8,7 @@
     "mocha": "cross-env TS_NODE_FILES=true mocha --recursive --exit --require ts-node/register --colors \"tests/**/*.ts\"",
     "test": "nyc npm run mocha && nyc report --reporter=json > coverage/coverage.json",
     "build": "webpack-cli",
+    "publish": "webpack-cli && npm publish",
     "lint": "npx eslint src",
     "docs": "typedoc --options typedoc.json && cd docs && touch .nojekyll && git add .nojekyll && cd .."
   },
